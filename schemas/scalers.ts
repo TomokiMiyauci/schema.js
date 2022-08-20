@@ -1,4 +1,4 @@
-import { SubTypeSchema, TypeSchema } from "../types.ts";
+import { SubTypeSchema, TypeSchema } from "./types.ts";
 import {
   isBoolean,
   isNull,
@@ -11,9 +11,6 @@ import {
 /** Schema definition of `boolean`. */
 export class BooleanSchema<SubType extends boolean>
   extends SubTypeSchema<"boolean", SubType> {
-  constructor(protected subType?: SubType) {
-    super(subType);
-  }
   protected override type = "boolean" as const;
   protected override typeOf = isBoolean;
 
@@ -25,9 +22,6 @@ export class BooleanSchema<SubType extends boolean>
 /** Schema definition of `string`. */
 export class StringSchema<SubType extends string>
   extends SubTypeSchema<"string", SubType> {
-  constructor(protected subType?: SubType) {
-    super(subType);
-  }
   protected override type = "string" as const;
 
   protected override typeOf = isString;
@@ -40,9 +34,6 @@ export class StringSchema<SubType extends string>
 /** Schema definition of `number`. */
 export class NumberSchema<SubType extends number>
   extends SubTypeSchema<"number", SubType> {
-  constructor(protected subType?: SubType) {
-    super(subType);
-  }
   override type = "number" as const;
 
   override typeOf = isNumber;
@@ -55,10 +46,6 @@ export class NumberSchema<SubType extends number>
 /** Schema definition of `bigint`. */
 export class BigintSchema<SubType extends bigint>
   extends SubTypeSchema<"bigint", SubType> {
-  constructor(protected subType?: SubType) {
-    super(subType);
-  }
-
   override type = "bigint" as const;
 
   override typeOf(value: unknown): value is SubType {
