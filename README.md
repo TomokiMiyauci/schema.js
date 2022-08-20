@@ -26,6 +26,18 @@ const undefinedSchema = new UndefinedSchema();
 const symbolSchema = new SymbolSchema();
 ```
 
+Create JavaScript objective data schema.
+
+```ts
+import {
+  FunctionSchema,
+  ObjectSchema,
+} from "https://deno.land/x/schema_js/mod.ts";
+
+const objectSchema = new ObjectSchema();
+const functionSchema = new FunctionSchema();
+```
+
 ## Assert schema
 
 Assert whether the value satisfies the schema.
