@@ -38,6 +38,24 @@ const objectSchema = new ObjectSchema();
 const functionSchema = new FunctionSchema();
 ```
 
+## Logical operation schema
+
+Provides the logical operations of the schema. Several schemas can be multiplied
+together to create a new schema.
+
+```ts
+import {
+  NumberSchema,
+  OrSchema,
+  StringSchema,
+} from "https://deno.land/x/schema_js/mod.ts";
+
+const stringOrNumberSchema = new OrSchema(
+  new StringSchema(),
+  new NumberSchema(),
+);
+```
+
 ## Assert schema
 
 Assert whether the value satisfies the schema.
