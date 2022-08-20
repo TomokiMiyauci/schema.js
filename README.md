@@ -1,3 +1,3 @@
 # schema.js
 
-Universal, tiny schema validation for JavaScript Object.
+Universal, tiny schema for JavaScript data types.
