@@ -73,3 +73,15 @@ assertSchema(new BooleanSchema(true), value);
 // value is `true`
 assertSchema(new BooleanSchema(false), value); // throws AggregateError
 ```
+
+## Built-in Objects
+
+- Array -> `ArraySchema`
+
+```ts
+import { ArraySchema } from "https://deno.land/x/schema_js/mod.ts";
+
+const value: unknown = undefined;
+assertSchema(new ArraySchema(), value);
+// value is `any[]`
+```

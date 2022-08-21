@@ -15,3 +15,4 @@ export {
   type SchemaErrorOptions,
 } from "./errors.ts";
 export { assertSchema } from "./asserts.ts";
+export { ArraySchema } from "./schemas/built_in.ts";
