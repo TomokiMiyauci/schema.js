@@ -33,3 +33,12 @@ export interface SchemaErrorOptions extends ErrorOptions {
 
   children?: Iterable<SchemaError>;
 }
+
+/** Assertion error. */
+export class AssertionError extends Error {
+  override name = "AssertionError";
+
+  constructor(message: string) {
+    super(message);
+  }
+}
