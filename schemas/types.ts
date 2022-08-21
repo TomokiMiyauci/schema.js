@@ -1,5 +1,5 @@
-import { Result, Schema, UnwrapResult } from "../types.ts";
-import { DataFlow } from "../utils.ts";
+import { Result, Schema, SuccessResult, UnwrapResult } from "../types.ts";
+import { DataFlow, toSchemaError } from "../utils.ts";
 
 export type SuccessType<S extends Schema> = UnwrapResult<
   ReturnType<S["validate"]>
@@ -20,8 +20,14 @@ export abstract class SchemaImpl<Out> implements Schema<Out> {
       };
     } catch (e) {
       return {
-        errors: [e],
+        errors: [toSchemaError(e)],
       };
     }
   }
 }
+
+export type UnwrapSchema<
+  S extends Schema,
+  R extends ReturnType<S["validate"]> = ReturnType<S["validate"]>,
+> = R extends SuccessResult ? R["data"]
+  : never;
