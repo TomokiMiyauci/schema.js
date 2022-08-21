@@ -3,20 +3,27 @@ import { SchemaError } from "../errors.ts";
 import { SchemaImpl, UnwrapSchema } from "./types.ts";
 import { isFailResult, isSuccessResult } from "../type_guards.ts";
 import { DataFlow } from "../utils.ts";
+import { And } from "../deps.ts";
 
 /** Schema definition of logical `OR`.
  *
  * ```ts
  * import {
+ *   assertSchema,
+ *   NullSchema,
  *   NumberSchema,
  *   OrSchema,
  *   StringSchema,
  * } from "https://deno.land/x/schema_js/mod.ts";
  *
- * const stringOrNumberSchema = new OrSchema(
+ * const schema = new OrSchema(
  *   new StringSchema(),
  *   new NumberSchema(),
+ *   new NullSchema(),
  * );
+ * const value: unknown = undefined;
+ * assertSchema(schema, value);
+ * // value is `string` | `number` | null
  * ```
  */
 export class OrSchema<T extends Schema[]>
@@ -52,29 +59,56 @@ export class OrSchema<T extends Schema[]>
     );
 }
 
-export class AndSchema<S extends Schema> implements Schema {
+type UnwrapArraySchema<S extends readonly Schema[]> = S extends
+  [infer F, ...infer R]
+  ? F extends Schema
+    ? R extends Schema[] ? [UnwrapSchema<F>, ...UnwrapArraySchema<R>] : []
+  : []
+  : [];
+
+/** Schema definition of logical `AND`.
+ *
+ * ```ts
+ * import {
+ *   AndSchema,
+ *   assertSchema,
+ *   OrSchema,
+ *   StringSchema,
+ * } from "https://deno.land/x/schema_js/mod.ts";
+ *
+ * const schema = new AndSchema(
+ *   new StringSchema("hello"),
+ *   new StringSchema(),
+ * );
+ * const value: unknown = undefined;
+ * assertSchema(schema, value);
+ * // value is `"hello"`
+ * ```
+ */
+export class AndSchema<T extends Schema[]>
+  extends SchemaImpl<And<UnwrapArraySchema<T>>> {
   #schemas: ReadonlyArray<Schema>;
-  constructor(...schemas: ReadonlyArray<S>) {
+
+  constructor(...schemas: T) {
+    super();
     this.#schemas = schemas;
   }
-  validate(value: unknown) {
-    for (const schema of this.#schemas) {
-      const result = schema.validate(value);
 
-      if (isFailResult(result)) {
-        return {
-          errors: [
-            new SchemaError(
+  protected override dataFlow: DataFlow<And<UnwrapArraySchema<T>>> =
+    new DataFlow().define(
+      (value) => {
+        for (const schema of this.#schemas) {
+          const result = schema.validate(value);
+
+          if (isFailResult(result)) {
+            throw new SchemaError(
               `Logical error. All assertions must be met.`,
-              { children: result.errors },
-            ),
-          ],
-        };
-      }
-    }
-
-    return {
-      data: value,
-    };
-  }
+              {
+                children: result.errors,
+              },
+            );
+          }
+        }
+      },
+    );
 }

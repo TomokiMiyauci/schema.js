@@ -2,7 +2,7 @@
 
 Universal, tiny schema for JavaScript data types.
 
-## Define schema
+## Core schema
 
 Create JavaScript primitive data schema.
 
@@ -38,24 +38,6 @@ const objectSchema = new ObjectSchema();
 const functionSchema = new FunctionSchema();
 ```
 
-## Logical operation schema
-
-Provides the logical operations of the schema. Several schemas can be multiplied
-together to create a new schema.
-
-```ts
-import {
-  NumberSchema,
-  OrSchema,
-  StringSchema,
-} from "https://deno.land/x/schema_js/mod.ts";
-
-const stringOrNumberSchema = new OrSchema(
-  new StringSchema(),
-  new NumberSchema(),
-);
-```
-
 ## Assert schema
 
 Assert whether the value satisfies the schema.
@@ -74,7 +56,62 @@ assertSchema(new BooleanSchema(true), value);
 assertSchema(new BooleanSchema(false), value); // throws AggregateError
 ```
 
-## Built-in Objects
+## Logical operation schema
+
+Provides the logical operations of the schema. Several schemas can be multiplied
+together to create a new schema.
+
+### Logical OR
+
+The logical OR schema (logical disjunction) for a set of schemas is true if and
+only if one or more of its schemas is true.
+
+Type inference works correctly.
+
+```ts
+import {
+  assertSchema,
+  NullSchema,
+  NumberSchema,
+  OrSchema,
+  StringSchema,
+} from "https://deno.land/x/schema_js/mod.ts";
+
+const schema = new OrSchema(
+  new StringSchema(),
+  new NumberSchema(),
+  new NullSchema(),
+);
+const value: unknown = undefined;
+assertSchema(schema, value);
+// value is `string` | `number` | null
+```
+
+### Logical AND
+
+The logical AND schema (logical conjunction) for a set of schemas will be true
+if and only if all the schemas are true. Otherwise it will be false.
+
+Type inference works correctly.
+
+```ts
+import {
+  AndSchema,
+  assertSchema,
+  OrSchema,
+  StringSchema,
+} from "https://deno.land/x/schema_js/mod.ts";
+
+const schema = new AndSchema(
+  new StringSchema("hello"),
+  new StringSchema(),
+);
+const value: unknown = undefined;
+assertSchema(schema, value);
+// value is `"hello"`
+```
+
+## Built-in Objects schema
 
 - Array -> `ArraySchema`
 
