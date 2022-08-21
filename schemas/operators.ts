@@ -1,6 +1,6 @@
 import { Result, Schema } from "../types.ts";
 import { SchemaError } from "../errors.ts";
-import { isFailResult, isSuccessResult } from "../asserts.ts";
+import { isFailResult, isSuccessResult } from "../type_guards.ts";
 
 /** Schema definition of logical `OR`.
  *

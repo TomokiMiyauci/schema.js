@@ -1,9 +1,10 @@
 import { SchemaImpl, Unwrap } from "./types.ts";
 import { Schema } from "../types.ts";
-import { assertFunction, assertObject, isFailResult } from "../asserts.ts";
+import { assertFunction, assertObject } from "../asserts.ts";
 import { SchemaError } from "../errors.ts";
 import { isUndefined } from "../deps.ts";
-import { DataFlow } from "../utils.ts";
+import { DataFlow, inspect } from "../utils.ts";
+import { isFailResult } from "../type_guards.ts";
 
 /** Schema definition of `object`. */
 export class ObjectSchema<T extends Record<any, Schema> | undefined = undefined>
@@ -21,10 +22,12 @@ export class ObjectSchema<T extends Record<any, Schema> | undefined = undefined>
 
             if (isFailResult(result)) {
               const paths = result.errors[0].path.concat(key);
-              const bracketStr = paths.map((path) => `["${path}"]`).join();
+              const bracketStr = paths.map((path) => `[${inspect(path)}]`)
+                .join();
 
               throw new SchemaError(`Invalid field. \`$${bracketStr}\``, {
                 children: result.errors,
+                path: paths,
               });
             }
           }

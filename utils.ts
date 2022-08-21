@@ -1,7 +1,7 @@
 import { Assertion, isString, TypeGuard } from "./deps.ts";
 import { SchemaError } from "./errors.ts";
 import { TypeStr } from "./types.ts";
-import { isSchemaError } from "./asserts.ts";
+import { isAssertionError, isSchemaError } from "./type_guards.ts";
 
 export function createSchemaErrorThrower(
   type: TypeStr,
@@ -62,6 +62,10 @@ export class DataFlow<In = unknown, Out extends In = In> {
 
 export function toSchemaError(e: unknown): SchemaError {
   if (isSchemaError(e)) return e;
+
+  if (isAssertionError(e)) {
+    return new SchemaError(e.message, { cause: e });
+  }
 
   if (e instanceof Error) {
     return new SchemaError(`${e.name} has occurred.`, { cause: e });

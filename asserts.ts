@@ -1,4 +1,5 @@
 import {
+  isBigint,
   isBoolean,
   isFunction,
   isNull,
@@ -8,13 +9,14 @@ import {
   isSymbol,
   isUndefined,
 } from "./deps.ts";
-import { FailResult, Result, Schema, SuccessResult } from "./types.ts";
+import { Schema, SuccessResult } from "./types.ts";
 import {
   createAssertFromTypeGuard,
   createSchemaErrorThrower,
   inspect,
 } from "./utils.ts";
-import { AssertionError, SchemaError } from "./errors.ts";
+import { AssertionError } from "./errors.ts";
+import { isFailResult } from "./type_guards.ts";
 
 /** Assert whether the value satisfies the schema.
  *
@@ -44,31 +46,9 @@ export function assertSchema<
   : never {
   const result = schema.validate(value);
 
-  if ("errors" in result) {
+  if (isFailResult(result)) {
     throw new AggregateError(result.errors, `One or more error has occurred.`);
   }
-}
-
-export function isSuccessResult<T>(
-  result: Result<T>,
-): result is SuccessResult<T> {
-  return "data" in result;
-}
-
-export function isFailResult<T>(result: Result<T>): result is FailResult {
-  return "errors" in result;
-}
-
-export function isSchema(value: unknown): value is Schema {
-  return isFunction(Object(value)["validate"]);
-}
-
-export function isSchemaError(value: unknown): value is SchemaError {
-  return value instanceof SchemaError;
-}
-
-export function isAssertionError(value: unknown): value is AssertionError {
-  return value instanceof AssertionError;
 }
 
 export function assertString(value: unknown): asserts value is string {
@@ -92,15 +72,11 @@ export function assertNumber(value: unknown): asserts value is number {
   ).call(null, value);
 }
 
-function isBigint(value: unknown): value is bigint {
-  return typeof value === "bigint";
-}
-
 export function assertBigint(value: unknown): asserts value is bigint {
-  const _ = createAssertFromTypeGuard(
+  createAssertFromTypeGuard(
     isBigint,
     createSchemaErrorThrower("number"),
-  )(value);
+  ).call(null, value);
 }
 
 export function assertNull(value: unknown): asserts value is null {
