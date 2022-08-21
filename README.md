@@ -79,9 +79,14 @@ assertSchema(new BooleanSchema(false), value); // throws AggregateError
 - Array -> `ArraySchema`
 
 ```ts
-import { ArraySchema } from "https://deno.land/x/schema_js/mod.ts";
+import {
+  ArraySchema,
+  StringSchema,
+} from "https://deno.land/x/schema_js/mod.ts";
 
 const value: unknown = undefined;
 assertSchema(new ArraySchema(), value);
 // value is `any[]`
+assertSchema(new ArraySchema(new StringSchema()), value);
+// value is `string[]`
 ```
