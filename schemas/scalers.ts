@@ -1,79 +1,88 @@
-import { SubTypeSchema, TypeSchema } from "./types.ts";
+import { SchemaImpl } from "./types.ts";
+import { arity, isUndefined } from "../deps.ts";
 import {
-  isBoolean,
-  isNull,
-  isNumber,
-  isString,
-  isSymbol,
-  isUndefined,
-} from "../deps.ts";
+  assertBigint,
+  assertBoolean,
+  assertIs,
+  assertNull,
+  assertNumber,
+  assertString,
+  assertSymbol,
+  assertUndefined,
+} from "../asserts.ts";
+import { DataFlow, rethrow, schemaErrorThrower } from "../utils.ts";
 
 /** Schema definition of `boolean`. */
-export class BooleanSchema<SubType extends boolean>
-  extends SubTypeSchema<"boolean", SubType> {
-  protected override type = "boolean" as const;
-  protected override typeOf = isBoolean;
+export class BooleanSchema<T extends boolean> extends SchemaImpl<T> {
+  constructor(protected subType?: T) {
+    super();
 
-  protected override subTypeOf(value: boolean): value is SubType {
-    return value === this.subType;
+    if (!isUndefined(subType)) {
+      this.dataFlow = new DataFlow(assertBoolean).define(
+        rethrow(arity(assertIs, subType), schemaErrorThrower),
+      );
+    }
   }
+
+  protected override dataFlow = new DataFlow(assertBoolean) as DataFlow<T>;
 }
 
 /** Schema definition of `string`. */
-export class StringSchema<SubType extends string>
-  extends SubTypeSchema<"string", SubType> {
-  protected override type = "string" as const;
+export class StringSchema<T extends string = string> extends SchemaImpl<T> {
+  constructor(protected subType?: T) {
+    super();
 
-  protected override typeOf = isString;
-
-  override subTypeOf(value: string): value is SubType {
-    return value === this.subType;
+    if (!isUndefined(subType)) {
+      this.dataFlow = new DataFlow(assertString).define(
+        rethrow(arity(assertIs, subType), schemaErrorThrower),
+      );
+    }
   }
+
+  protected override dataFlow = new DataFlow(assertString) as DataFlow<T>;
 }
 
 /** Schema definition of `number`. */
-export class NumberSchema<SubType extends number>
-  extends SubTypeSchema<"number", SubType> {
-  override type = "number" as const;
+export class NumberSchema<T extends number = number> extends SchemaImpl<T> {
+  constructor(protected subType?: T) {
+    super();
 
-  override typeOf = isNumber;
-
-  override subTypeOf(value: number): value is SubType {
-    return value === this.subType;
+    if (!isUndefined(subType)) {
+      this.dataFlow = new DataFlow(assertNumber).define(
+        rethrow(arity(assertIs, subType), schemaErrorThrower),
+      );
+    }
   }
+
+  protected override dataFlow = new DataFlow(assertNumber) as DataFlow<T>;
 }
 
 /** Schema definition of `bigint`. */
-export class BigintSchema<SubType extends bigint>
-  extends SubTypeSchema<"bigint", SubType> {
-  override type = "bigint" as const;
+export class BigintSchema<T extends bigint = bigint> extends SchemaImpl<T> {
+  constructor(protected subType?: T) {
+    super();
 
-  override typeOf(value: unknown): value is SubType {
-    return typeof value === "bigint";
+    if (!isUndefined(subType)) {
+      this.dataFlow = new DataFlow(assertBigint).define(
+        rethrow(arity(assertIs, subType), schemaErrorThrower),
+      );
+    }
   }
 
-  override subTypeOf(value: bigint): value is SubType {
-    return value === this.subType;
-  }
+  protected override dataFlow = new DataFlow(assertBigint) as DataFlow<T>;
 }
 
 /** Schema definition of `undefined`. */
-export class UndefinedSchema extends TypeSchema<"undefined"> {
-  protected override type = "undefined" as const;
-
-  protected override typeOf = isUndefined;
+export class UndefinedSchema extends SchemaImpl<undefined> {
+  protected override dataFlow = new DataFlow(assertUndefined);
 }
 
 /** Schema definition of `symbol`. */
-export class SymbolSchema extends TypeSchema<"symbol"> {
-  protected override type = "symbol" as const;
-
-  protected override typeOf = isSymbol;
+export class SymbolSchema extends SchemaImpl<symbol> {
+  protected override dataFlow = new DataFlow(assertSymbol);
 }
 
 /** Schema definition of `null`. */
-export class NullSchema extends TypeSchema<"null"> {
-  protected type = "null" as const;
-
-  protected typeOf = isNull;
+export class NullSchema extends SchemaImpl<null> {
+  protected override dataFlow = new DataFlow(assertNull);
 }

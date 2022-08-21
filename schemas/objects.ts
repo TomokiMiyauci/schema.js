@@ -1,21 +1,42 @@
-import { SubTypeSchema, TypeSchema } from "./types.ts";
-import { isFunction, isPlainObject } from "../deps.ts";
+import { SchemaImpl, Unwrap } from "./types.ts";
+import { Schema } from "../types.ts";
+import { assertFunction, assertObject, isFailResult } from "../asserts.ts";
+import { SchemaError } from "../errors.ts";
+import { isUndefined } from "../deps.ts";
+import { DataFlow } from "../utils.ts";
 
 /** Schema definition of `object`. */
-export class ObjectSchema<SubType extends object>
-  extends SubTypeSchema<"object", SubType> {
-  protected override type = "object" as const;
+export class ObjectSchema<T extends Record<any, Schema> | undefined = undefined>
+  extends SchemaImpl<Unwrap<T extends undefined ? object : T>> {
+  constructor(protected subType?: T) {
+    super();
 
-  protected override typeOf = isPlainObject;
+    if (!isUndefined(subType)) {
+      this.dataFlow = new DataFlow().define(assertObject).define(
+        (value) => {
+          for (const key in this.subType) {
+            const result = this.subType[key].validate(
+              (value as Record<any, any>)[key],
+            );
 
-  protected override subTypeOf(value: object): value is SubType {
-    return this.subType === value;
+            if (isFailResult(result)) {
+              const paths = result.errors[0].path.concat(key);
+              const bracketStr = paths.map((path) => `["${path}"]`).join();
+
+              throw new SchemaError(`Invalid field. \`$${bracketStr}\``, {
+                children: result.errors,
+              });
+            }
+          }
+        },
+      );
+    }
   }
+
+  protected override dataFlow = new DataFlow(assertObject) as DataFlow<any>;
 }
 
 /** Schema definition of `Function`. */
-export class FunctionSchema extends TypeSchema<"function"> {
-  protected override type = "function" as const;
-
-  protected override typeOf = isFunction;
+export class FunctionSchema extends SchemaImpl<Function> {
+  protected override dataFlow = new DataFlow(assertFunction);
 }
