@@ -3,6 +3,7 @@ import {
   isFunction,
   isNull,
   isNumber,
+  isObject,
   isString,
   isSymbol,
   isUndefined,
@@ -14,7 +15,6 @@ import {
   inspect,
 } from "./utils.ts";
 import { AssertionError, SchemaError } from "./errors.ts";
-import { isObject } from "https://deno.land/x/isx@1.0.0-beta.19/mod.ts";
 
 /** Assert whether the value satisfies the schema.
  *
@@ -144,6 +144,17 @@ export function assertIs<T>(base: T, value: unknown): asserts value is T {
   if (!valid) {
     throw new AssertionError(
       `Not equal: ${inspect(base)} <- ${inspect(value)}`,
+    );
+  }
+}
+
+export function assertArray(value: unknown): asserts value is any[] {
+  const result = Array.isArray(value);
+
+  if (!result) {
+    const name = new Object(value).constructor.name;
+    throw new AssertionError(
+      `Invalid constructor. ${inspect("Array")} <- ${inspect(name)}`,
     );
   }
 }
