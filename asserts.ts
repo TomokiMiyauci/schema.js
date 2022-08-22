@@ -24,7 +24,7 @@ import { isFailResult } from "./type_guards.ts";
  * import {
  *   assertSchema,
  *   BooleanSchema,
- * } from "https://deno.land/x/schema_js/mod.ts";
+ * } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
  *
  * const value: unknown = true;
  * assertSchema(new BooleanSchema(), value);
