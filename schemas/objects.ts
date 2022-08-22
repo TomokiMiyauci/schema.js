@@ -1,4 +1,5 @@
-import { SchemaImpl, Unwrap } from "./types.ts";
+import { Unwrap } from "./types.ts";
+import { AssetSchema } from "./utils.ts";
 import { Schema } from "../types.ts";
 import { assertFunction, assertObject } from "../asserts.ts";
 import { SchemaError } from "../errors.ts";
@@ -8,12 +9,12 @@ import { isFailResult } from "../type_guards.ts";
 
 /** Schema definition of `object`. */
 export class ObjectSchema<T extends Record<any, Schema> | undefined = undefined>
-  extends SchemaImpl<Unwrap<T extends undefined ? object : T>> {
+  extends AssetSchema<Unwrap<T extends undefined ? object : T>> {
   constructor(protected subType?: T) {
     super();
 
     if (!isUndefined(subType)) {
-      this.dataFlow = new DataFlow().define(assertObject).define(
+      this.assert = new DataFlow().define(assertObject).define(
         (value) => {
           for (const key in this.subType) {
             const result = this.subType[key].validate(
@@ -32,14 +33,14 @@ export class ObjectSchema<T extends Record<any, Schema> | undefined = undefined>
             }
           }
         },
-      );
+      ).getAssert;
     }
   }
 
-  protected override dataFlow = new DataFlow(assertObject) as DataFlow<any>;
+  override assert = assertObject;
 }
 
 /** Schema definition of `Function`. */
-export class FunctionSchema extends SchemaImpl<Function> {
-  protected override dataFlow = new DataFlow(assertFunction);
+export class FunctionSchema extends AssetSchema<Function> {
+  override assert = assertFunction;
 }

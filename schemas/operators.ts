@@ -1,6 +1,7 @@
 import { Schema, SuperType } from "../types.ts";
+import { AssetSchema } from "./utils.ts";
 import { SchemaError } from "../errors.ts";
-import { SchemaImpl, UnwrapSchema } from "./types.ts";
+import { UnwrapSchema } from "./types.ts";
 import { isFailResult, isSuccessResult } from "../type_guards.ts";
 import { DataFlow } from "../utils.ts";
 import { And, Assertion } from "../deps.ts";
@@ -27,7 +28,7 @@ import { And, Assertion } from "../deps.ts";
  * ```
  */
 export class OrSchema<T extends Schema[]>
-  extends SchemaImpl<UnwrapSchema<T[number]>> {
+  extends AssetSchema<UnwrapSchema<T[number]>> {
   #schemas: ReadonlyArray<Schema>;
 
   constructor(...schemas: T) {
@@ -35,28 +36,27 @@ export class OrSchema<T extends Schema[]>
     this.#schemas = schemas;
   }
 
-  protected override dataFlow: DataFlow<UnwrapSchema<T[number]>> =
-    new DataFlow().define(
-      (value) => {
-        const errors: SchemaError[][] = [];
+  override assert = new DataFlow().define(
+    (value) => {
+      const errors: SchemaError[][] = [];
 
-        for (const schema of this.#schemas) {
-          const result = schema.validate(value);
+      for (const schema of this.#schemas) {
+        const result = schema.validate(value);
 
-          if (isSuccessResult(result)) {
-            return;
-          }
-          errors.push(result.errors);
+        if (isSuccessResult(result)) {
+          return;
         }
+        errors.push(result.errors);
+      }
 
-        throw new SchemaError(
-          `Logical error. One of assertion must be met.`,
-          {
-            children: errors.flat(),
-          },
-        );
-      },
-    );
+      throw new SchemaError(
+        `Logical error. One of assertion must be met.`,
+        {
+          children: errors.flat(),
+        },
+      );
+    },
+  ).getAssert;
 }
 
 type UnwrapArraySchema<S extends readonly Schema[]> = S extends
@@ -86,7 +86,7 @@ type UnwrapArraySchema<S extends readonly Schema[]> = S extends
  * ```
  */
 export class AndSchema<T extends Schema[]>
-  extends SchemaImpl<And<UnwrapArraySchema<T>>> {
+  extends AssetSchema<And<UnwrapArraySchema<T>>> {
   #schemas: ReadonlyArray<Schema>;
 
   constructor(...schemas: T) {
@@ -94,23 +94,22 @@ export class AndSchema<T extends Schema[]>
     this.#schemas = schemas;
   }
 
-  protected override dataFlow: DataFlow<And<UnwrapArraySchema<T>>> =
-    new DataFlow().define(
-      (value) => {
-        for (const schema of this.#schemas) {
-          const result = schema.validate(value);
+  override assert = new DataFlow().define(
+    (value) => {
+      for (const schema of this.#schemas) {
+        const result = schema.validate(value);
 
-          if (isFailResult(result)) {
-            throw new SchemaError(
-              `Logical error. All assertions must be met.`,
-              {
-                children: result.errors,
-              },
-            );
-          }
+        if (isFailResult(result)) {
+          throw new SchemaError(
+            `Logical error. All assertions must be met.`,
+            {
+              children: result.errors,
+            },
+          );
         }
-      },
-    );
+      }
+    },
+  ).getAssert;
 }
 
 /** Schema definition of logical `NOT`.
@@ -130,22 +129,22 @@ export class AndSchema<T extends Schema[]>
  * ```
  */
 export class NotSchema<T extends Schema>
-  extends SchemaImpl<TypedExclude<UnwrapSchema<T>>> {
+  extends AssetSchema<TypedExclude<UnwrapSchema<T>>> {
+  override assert;
+
   constructor(protected schema: T) {
     super();
-  }
 
-  protected override dataFlow: DataFlow<any> = new DataFlow().define(
-    createAssertNot.call(this),
-  );
+    this.assert = createAssertNot(schema);
+  }
 }
 
 function createAssertNot<T extends Schema>(
-  this: NotSchema<T>,
+  schema: T,
 ): Assertion<unknown, T> {
   return (value) => {
-    const result = this.schema.validate(value);
-    const name = this.schema.constructor.name;
+    const result = schema.validate(value);
+    const name = schema.constructor.name;
 
     if (isSuccessResult(result)) {
       throw new SchemaError(

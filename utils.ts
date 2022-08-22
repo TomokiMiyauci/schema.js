@@ -48,6 +48,10 @@ export class DataFlow<In = unknown, Out extends In = In> {
     }
   }
 
+  get getAssert() {
+    return this.assert.bind(this);
+  }
+
   is(value: unknown): value is Out {
     for (const assertion of this.assertions) {
       try {
