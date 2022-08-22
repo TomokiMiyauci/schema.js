@@ -213,6 +213,6 @@ assertSchema(new ArraySchema(new StringSchema()), value);
 
 ## License
 
-Copyright © 2022-present [TomokiMiyauci](https://github.com/TomokiMiyauci).
+Copyright © 2022-present [schemaland](https://github.com/schemaland).
 
 Released under the [MIT](./LICENSE) license
