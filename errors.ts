@@ -1,3 +1,5 @@
+import { isString, isTruthy } from "./deps.ts";
+
 export class SchemaError extends Error implements SchemaErrorOptions {
   actual: unknown;
 
@@ -16,9 +18,7 @@ export class SchemaError extends Error implements SchemaErrorOptions {
     this.children = Array.from(options?.children ?? []);
 
     if (message) {
-      const msg = `${message}
-  ${this.children.map((child) => child.message).join("\n")}`;
-      this.message = msg;
+      this.message = messageTemplate(this);
     }
   }
 
@@ -41,4 +41,23 @@ export class AssertionError extends Error {
   constructor(message: string) {
     super(message);
   }
+}
+
+function messageTemplate({ message, children }: SchemaError): string {
+  const group: Group = [
+    message,
+    children.map((child) => child.message),
+  ];
+
+  return nest(nest(group));
+}
+
+type Group<T = string> = T | Group[];
+
+function nest(group: Group<string>): string {
+  if (isString(group)) {
+    return group;
+  }
+
+  return group.map(nest).filter(isTruthy).join("\n  ");
 }
