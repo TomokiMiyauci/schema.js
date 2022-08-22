@@ -148,3 +148,9 @@ assertSchema(new ArraySchema(), value);
 assertSchema(new ArraySchema(new StringSchema()), value);
 // value is `string[]`
 ```
+
+## License
+
+Copyright © 2022-present [TomokiMiyauci](https://github.com/TomokiMiyauci).
+
+Released under the [MIT](./LICENSE) license
