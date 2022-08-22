@@ -111,6 +111,27 @@ assertSchema(schema, value);
 // value is `"hello"`
 ```
 
+### Logical NOT
+
+The logical NOT schema (logical complement, negation) takes valid schema to
+invalid and vice versa.
+
+Type inference works correctly.
+
+```ts
+import {
+  assertSchema,
+  BooleanSchema,
+  NotSchema,
+} from "https://deno.land/x/schema_js/mod.ts";
+
+const value: unknown = undefined;
+assertSchema(new NotSchema(new BooleanSchema()), value);
+// value is `string` | `number` | ...
+assertSchema(new NotSchema(new BooleanSchema(true)), value);
+// value is `false` | `string` | `number` | ...
+```
+
 ## Built-in Objects schema
 
 - Array -> `ArraySchema`

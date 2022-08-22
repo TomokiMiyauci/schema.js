@@ -8,7 +8,7 @@ export {
   UndefinedSchema,
 } from "./schemas/scalers.ts";
 export { FunctionSchema, ObjectSchema } from "./schemas/objects.ts";
-export { AndSchema, OrSchema } from "./schemas/operators.ts";
+export { AndSchema, NotSchema, OrSchema } from "./schemas/operators.ts";
 export {
   AssertionError,
   SchemaError,

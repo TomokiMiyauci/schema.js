@@ -1,9 +1,9 @@
-import { Schema } from "../types.ts";
+import { Schema, SuperType } from "../types.ts";
 import { SchemaError } from "../errors.ts";
 import { SchemaImpl, UnwrapSchema } from "./types.ts";
 import { isFailResult, isSuccessResult } from "../type_guards.ts";
 import { DataFlow } from "../utils.ts";
-import { And } from "../deps.ts";
+import { And, Assertion } from "../deps.ts";
 
 /** Schema definition of logical `OR`.
  *
@@ -112,3 +112,49 @@ export class AndSchema<T extends Schema[]>
       },
     );
 }
+
+/** Schema definition of logical `NOT`.
+ *
+ * ```ts
+ * import {
+ *   assertSchema,
+ *   BooleanSchema,
+ *   NotSchema,
+ * } from "https://deno.land/x/schema_js/mod.ts";
+ *
+ * const value: unknown = undefined;
+ * assertSchema(new NotSchema(new BooleanSchema()), value);
+ * // value is `string` | `number` | ...
+ * assertSchema(new NotSchema(new BooleanSchema(true)), value);
+ * // value is `false` | `string` | `number` | ...
+ * ```
+ */
+export class NotSchema<T extends Schema>
+  extends SchemaImpl<TypedExclude<UnwrapSchema<T>>> {
+  constructor(protected schema: T) {
+    super();
+  }
+
+  protected override dataFlow: DataFlow<any> = new DataFlow().define(
+    createAssertNot.call(this),
+  );
+}
+
+function createAssertNot<T extends Schema>(
+  this: NotSchema<T>,
+): Assertion<unknown, T> {
+  return (value) => {
+    const result = this.schema.validate(value);
+    const name = this.schema.constructor.name;
+
+    if (isSuccessResult(result)) {
+      throw new SchemaError(
+        `NOT logical operation fail. \`${name}\` should not valid.`,
+      );
+    }
+  };
+}
+
+type TypedExclude<T, U = SuperType> = U extends T ? never
+  : T extends Function ? U
+  : U | Function;
