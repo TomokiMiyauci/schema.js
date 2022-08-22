@@ -19,7 +19,7 @@ export abstract class AssertSchema<Out> implements Schema<Out> {
   }
 }
 
-export abstract class SubTypeSchema<Out> implements Schema<Out> {
+export abstract class CollectiveTypeSchema<Out> implements Schema<Out> {
   abstract assert(value: unknown): asserts value is Out;
 
   #ands: Assertion<any, unknown>[] = [];
@@ -28,9 +28,9 @@ export abstract class SubTypeSchema<Out> implements Schema<Out> {
    * They are executed in the order in which they are added, after the supertype assertion. */
   and<U extends Out = Out>(
     assert: (value: Out) => asserts value is U,
-  ): SubTypeSchema<U> {
+  ): CollectiveTypeSchema<U> {
     this.#ands.push(assert);
-    return this as SubTypeSchema<any>;
+    return this as CollectiveTypeSchema<any>;
   }
 
   validate(value: unknown): Result<Out> {

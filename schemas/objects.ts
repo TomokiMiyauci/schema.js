@@ -1,5 +1,5 @@
 import { Unwrap } from "./types.ts";
-import { AssertSchema, SubTypeSchema } from "./utils.ts";
+import { AssertSchema, CollectiveTypeSchema } from "./utils.ts";
 import { Schema } from "../types.ts";
 import { assertFunction, assertObject } from "../asserts.ts";
 import { SchemaError } from "../errors.ts";
@@ -9,7 +9,7 @@ import { isFailResult } from "../type_guards.ts";
 
 /** Schema definition of `object`. */
 export class ObjectSchema<T extends Record<any, Schema> | undefined = undefined>
-  extends SubTypeSchema<Unwrap<T extends undefined ? object : T>> {
+  extends CollectiveTypeSchema<Unwrap<T extends undefined ? object : T>> {
   override assert;
   constructor(protected subType?: T) {
     super();

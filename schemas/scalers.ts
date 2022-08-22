@@ -1,4 +1,4 @@
-import { AssertSchema, SubTypeSchema } from "./utils.ts";
+import { AssertSchema, CollectiveTypeSchema } from "./utils.ts";
 import { arity, isUndefined } from "../deps.ts";
 import {
   assertBigint,
@@ -13,7 +13,7 @@ import {
 import { DataFlow, rethrow, schemaErrorThrower } from "../utils.ts";
 
 /** Schema definition of `boolean`. */
-export class BooleanSchema<T extends boolean> extends SubTypeSchema<T> {
+export class BooleanSchema<T extends boolean> extends CollectiveTypeSchema<T> {
   override assert;
 
   constructor(protected subType?: T) {
@@ -30,7 +30,7 @@ export class BooleanSchema<T extends boolean> extends SubTypeSchema<T> {
 }
 
 /** Schema definition of `string`. */
-export class StringSchema<T extends string> extends SubTypeSchema<T> {
+export class StringSchema<T extends string> extends CollectiveTypeSchema<T> {
   override assert;
 
   constructor(protected subType?: T) {
@@ -47,7 +47,8 @@ export class StringSchema<T extends string> extends SubTypeSchema<T> {
 }
 
 /** Schema definition of `number`. */
-export class NumberSchema<T extends number = number> extends SubTypeSchema<T> {
+export class NumberSchema<T extends number = number>
+  extends CollectiveTypeSchema<T> {
   override assert;
   constructor(protected subType?: T) {
     super();
@@ -63,7 +64,8 @@ export class NumberSchema<T extends number = number> extends SubTypeSchema<T> {
 }
 
 /** Schema definition of `bigint`. */
-export class BigintSchema<T extends bigint = bigint> extends SubTypeSchema<T> {
+export class BigintSchema<T extends bigint = bigint>
+  extends CollectiveTypeSchema<T> {
   override assert;
   constructor(protected subType?: T) {
     super();
