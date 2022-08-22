@@ -24,8 +24,8 @@ export type SuperType = valueOf<SuperTypeMap>;
 
 export type TypeStr = keyof SuperTypeMap;
 
-export interface Schema<T = unknown> {
-  validate(value: unknown): Result<T>;
+export interface Schema<T = unknown, V = unknown> {
+  validate(value: V): Result<T>;
 }
 
 export type Result<T = unknown> =

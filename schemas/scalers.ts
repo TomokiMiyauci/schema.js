@@ -1,4 +1,4 @@
-import { AssertSchema } from "./utils.ts";
+import { AssertSchema, SubTypeSchema } from "./utils.ts";
 import { arity, isUndefined } from "../deps.ts";
 import {
   assertBigint,
@@ -13,63 +13,69 @@ import {
 import { DataFlow, rethrow, schemaErrorThrower } from "../utils.ts";
 
 /** Schema definition of `boolean`. */
-export class BooleanSchema<T extends boolean> extends AssertSchema<T> {
+export class BooleanSchema<T extends boolean> extends SubTypeSchema<T> {
+  override assert;
+
   constructor(protected subType?: T) {
     super();
 
-    if (!isUndefined(subType)) {
+    if (isUndefined(subType)) {
+      this.assert = assertBoolean;
+    } else {
       this.assert = new DataFlow(assertBoolean).define(
         rethrow(arity(assertIs, subType), schemaErrorThrower),
       ).getAssert;
     }
   }
-
-  override assert = assertBoolean;
 }
 
 /** Schema definition of `string`. */
-export class StringSchema<T extends string = string> extends AssertSchema<T> {
+export class StringSchema<T extends string> extends SubTypeSchema<T> {
+  override assert;
+
   constructor(protected subType?: T) {
     super();
 
-    if (!isUndefined(subType)) {
+    if (isUndefined(subType)) {
+      this.assert = assertString;
+    } else {
       this.assert = new DataFlow(assertString).define(
         rethrow(arity(assertIs, subType), schemaErrorThrower),
       ).getAssert;
     }
   }
-
-  override assert = assertString;
 }
 
 /** Schema definition of `number`. */
-export class NumberSchema<T extends number = number> extends AssertSchema<T> {
+export class NumberSchema<T extends number = number> extends SubTypeSchema<T> {
+  override assert;
   constructor(protected subType?: T) {
     super();
 
-    if (!isUndefined(subType)) {
+    if (isUndefined(subType)) {
+      this.assert = assertNumber;
+    } else {
       this.assert = new DataFlow(assertNumber).define(
         rethrow(arity(assertIs, subType), schemaErrorThrower),
       ).getAssert;
     }
   }
-
-  override assert = assertNumber;
 }
 
 /** Schema definition of `bigint`. */
-export class BigintSchema<T extends bigint = bigint> extends AssertSchema<T> {
+export class BigintSchema<T extends bigint = bigint> extends SubTypeSchema<T> {
+  override assert;
   constructor(protected subType?: T) {
     super();
 
-    if (!isUndefined(subType)) {
+    if (isUndefined(subType)) {
+      this.assert = assertBigint;
+    } else {
       this.assert = new DataFlow(assertBigint).define(
         rethrow(arity(assertIs, subType), schemaErrorThrower),
       ).getAssert;
     }
   }
-
-  override assert = assertBigint;
 }
 
 /** Schema definition of `undefined`. */

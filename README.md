@@ -2,6 +2,29 @@
 
 Universal, tiny schema for JavaScript data types.
 
+## Design
+
+For this project, we will define the schema based on JavaScript data types.
+
+JavaScript can be classified into two data types called primitives and objects.
+
+If we further classify them according to whether they are Unit type or
+Collective types, they can be classified into 8 data types.
+
+Unit type is a type that has only a single value. Collection type is set of Unit
+type.
+
+|           | Unit type   | Collective type                                   |
+| --------- | ----------- | ------------------------------------------------- |
+| Primitive | `undefined` | `string`, `number`, `bigint`, `boolean`, `symbol` |
+| Object    | `null`      | `object`                                          |
+
+A subtype of `object`, `Function` is a special type that JavaScript treats as
+first class.
+
+So for this project, we define `Function` as a supertype in addition to the 8
+types above.
+
 ## Core schema
 
 Create JavaScript primitive data schema.
@@ -10,7 +33,6 @@ Create JavaScript primitive data schema.
 import {
   BigintSchema,
   BooleanSchema,
-  NullSchema,
   NumberSchema,
   StringSchema,
   SymbolSchema,
@@ -21,7 +43,6 @@ const stringSchema = new StringSchema();
 const numberSchema = new NumberSchema();
 const bigintSchema = new BigintSchema();
 const booleanSchema = new BooleanSchema();
-const nullSchema = new NullSchema();
 const undefinedSchema = new UndefinedSchema();
 const symbolSchema = new SymbolSchema();
 ```
@@ -31,11 +52,13 @@ Create JavaScript objective data schema.
 ```ts
 import {
   FunctionSchema,
+  NullSchema,
   ObjectSchema,
 } from "https://deno.land/x/schema_js/mod.ts";
 
 const objectSchema = new ObjectSchema();
 const functionSchema = new FunctionSchema();
+const nullSchema = new NullSchema();
 ```
 
 ## Assert schema
@@ -54,6 +77,45 @@ assertSchema(new BooleanSchema(), value);
 assertSchema(new BooleanSchema(true), value);
 // value is `true`
 assertSchema(new BooleanSchema(false), value); // throws AggregateError
+```
+
+## Additional subtype assertion (narrowing)
+
+For the Collective type, you can add assertions of subtypes.
+
+The Collective type has the `and` method. It adds assertion of the subtype and
+returns a new Collective type. The new Collective type will be type narrowed by
+the added assertion.
+
+Example of creating a string array(`string[]`) schema from an object schema:
+
+```ts
+import {
+  assertArray,
+  assertSchema,
+  ObjectSchema,
+  SchemaError,
+} from "https://deno.land/x/schema_js/mod.ts";
+
+const value: unknown = undefined;
+
+const arraySchema = new ObjectSchema().and(assertArray);
+assertSchema(arraySchema, value);
+// value is `any[]`
+
+function assertStringArray(
+  value: ReadonlyArray<any>,
+): asserts value is string[] {
+  value.forEach((v) => {
+    const type = typeof v;
+    if (type !== "string") {
+      throw new SchemaError(`Invalid member. "string" <- ${type}`);
+    }
+  });
+}
+const stringArraySchema = arraySchema.and(assertStringArray);
+assertSchema(stringArraySchema, v);
+// value is `string[]`
 ```
 
 ## Logical operation schema

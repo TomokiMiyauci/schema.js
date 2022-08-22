@@ -1,5 +1,5 @@
 import { Unwrap } from "./types.ts";
-import { AssertSchema } from "./utils.ts";
+import { SubTypeSchema } from "./utils.ts";
 import { Schema } from "../types.ts";
 import { DataFlow } from "../utils.ts";
 import { assertArray, assertObject } from "../asserts.ts";
@@ -19,7 +19,9 @@ import { SchemaError } from "../errors.ts";
  * ```
  */
 export class ArraySchema<T extends Schema | undefined = undefined>
-  extends AssertSchema<T extends Schema ? Unwrap<T[]> : any[]> {
+  extends SubTypeSchema<T extends Schema ? Unwrap<T[]> : any[]> {
+  override assert;
+
   constructor(subType?: T) {
     super();
 
@@ -37,10 +39,10 @@ export class ArraySchema<T extends Schema | undefined = undefined>
           }
         },
       ).getAssert;
+    } else {
+      this.assert = new DataFlow(assertObject).define(
+        assertArray,
+      ).getAssert;
     }
   }
-
-  override assert = new DataFlow(assertObject).define(
-    assertArray,
-  ).getAssert;
 }
