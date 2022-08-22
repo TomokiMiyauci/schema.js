@@ -1,6 +1,11 @@
 # schema.js
 
+<div align="center">
+<img alt="logo icon" src="./_medias/logo.png" width="180px" height="180px">
+
 Universal, tiny schema for JavaScript data types.
+
+</div>
 
 ## Design
 
