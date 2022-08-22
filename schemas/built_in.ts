@@ -1,5 +1,5 @@
 import { Unwrap } from "./types.ts";
-import { AssetSchema } from "./utils.ts";
+import { AssertSchema } from "./utils.ts";
 import { Schema } from "../types.ts";
 import { DataFlow } from "../utils.ts";
 import { assertArray, assertObject } from "../asserts.ts";
@@ -19,7 +19,7 @@ import { SchemaError } from "../errors.ts";
  * ```
  */
 export class ArraySchema<T extends Schema | undefined = undefined>
-  extends AssetSchema<T extends Schema ? Unwrap<T[]> : any[]> {
+  extends AssertSchema<T extends Schema ? Unwrap<T[]> : any[]> {
   constructor(subType?: T) {
     super();
 

@@ -1,5 +1,5 @@
 import { Unwrap } from "./types.ts";
-import { AssetSchema } from "./utils.ts";
+import { AssertSchema } from "./utils.ts";
 import { Schema } from "../types.ts";
 import { assertFunction, assertObject } from "../asserts.ts";
 import { SchemaError } from "../errors.ts";
@@ -9,7 +9,7 @@ import { isFailResult } from "../type_guards.ts";
 
 /** Schema definition of `object`. */
 export class ObjectSchema<T extends Record<any, Schema> | undefined = undefined>
-  extends AssetSchema<Unwrap<T extends undefined ? object : T>> {
+  extends AssertSchema<Unwrap<T extends undefined ? object : T>> {
   constructor(protected subType?: T) {
     super();
 
@@ -41,6 +41,6 @@ export class ObjectSchema<T extends Record<any, Schema> | undefined = undefined>
 }
 
 /** Schema definition of `Function`. */
-export class FunctionSchema extends AssetSchema<Function> {
+export class FunctionSchema extends AssertSchema<Function> {
   override assert = assertFunction;
 }

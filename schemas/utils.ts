@@ -1,7 +1,7 @@
 import { Result, Schema } from "../types.ts";
 import { toSchemaError } from "../utils.ts";
 
-export abstract class AssetSchema<Out> implements Schema<Out> {
+export abstract class AssertSchema<Out> implements Schema<Out> {
   abstract assert(value: unknown): asserts value is Out;
 
   validate(value: unknown): Result<Out> {
