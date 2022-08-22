@@ -11,6 +11,28 @@ export {
   isUndefined,
 } from "https://deno.land/x/isx@1.0.0-beta.19/mod.ts";
 
+type MaybeFalsy = typeof NaN | 0 | -0 | 0n | "" | null | undefined | false;
+
+type MaybeTruthy =
+  | Extract<string, "">
+  | Extract<number, typeof NaN | 0 | -0>
+  | Extract<bigint, 0n>
+  | symbol
+  | true
+  | object;
+
+export function isFalsy(value: unknown): value is MaybeFalsy {
+  return !value;
+}
+
+export function isBigint(value: unknown): value is bigint {
+  return typeof value === "bigint";
+}
+
+export function isTruthy(value: unknown): value is MaybeTruthy {
+  return !!value;
+}
+
 export type valueOf<T> = T[keyof T];
 
 export type ReturnIsType<T extends (arg: any) => arg is any> = T extends
@@ -43,5 +65,10 @@ export type Upcast<T> = T extends string ? string
   : T extends symbol ? symbol
   : T extends undefined ? undefined
   : T extends null ? null
+  : T extends Function ? Function
   : T extends object ? object
   : never;
+
+export type And<T extends readonly any[]> = T extends [infer F, ...infer R]
+  ? F & And<R>
+  : unknown;
