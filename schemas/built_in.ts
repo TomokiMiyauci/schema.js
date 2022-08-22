@@ -9,7 +9,7 @@ import { SchemaError } from "../errors.ts";
 /** Schema definition of built-in `Array`.
  *
  * ```ts
- * import { ArraySchema } from "https://deno.land/x/schema_js/mod.ts";
+ * import { ArraySchema, assertSchema, StringSchema } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
  *
  * const value: unknown = undefined;
  * assertSchema(new ArraySchema(), value);

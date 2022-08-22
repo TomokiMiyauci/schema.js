@@ -15,7 +15,7 @@ import { And, Assertion } from "../deps.ts";
  *   NumberSchema,
  *   OrSchema,
  *   StringSchema,
- * } from "https://deno.land/x/schema_js/mod.ts";
+ * } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
  *
  * const schema = new OrSchema(
  *   new StringSchema(),
@@ -74,7 +74,7 @@ type UnwrapArraySchema<S extends readonly Schema[]> = S extends
  *   assertSchema,
  *   OrSchema,
  *   StringSchema,
- * } from "https://deno.land/x/schema_js/mod.ts";
+ * } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
  *
  * const schema = new AndSchema(
  *   new StringSchema("hello"),
@@ -119,7 +119,7 @@ export class AndSchema<T extends Schema[]>
  *   assertSchema,
  *   BooleanSchema,
  *   NotSchema,
- * } from "https://deno.land/x/schema_js/mod.ts";
+ * } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
  *
  * const value: unknown = undefined;
  * assertSchema(new NotSchema(new BooleanSchema()), value);

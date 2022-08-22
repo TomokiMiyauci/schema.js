@@ -42,7 +42,7 @@ import {
   StringSchema,
   SymbolSchema,
   UndefinedSchema,
-} from "https://deno.land/x/schema_js/mod.ts";
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
 
 const stringSchema = new StringSchema();
 const numberSchema = new NumberSchema();
@@ -59,7 +59,7 @@ import {
   FunctionSchema,
   NullSchema,
   ObjectSchema,
-} from "https://deno.land/x/schema_js/mod.ts";
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
 
 const objectSchema = new ObjectSchema();
 const functionSchema = new FunctionSchema();
@@ -74,7 +74,7 @@ Assert whether the value satisfies the schema.
 import {
   assertSchema,
   BooleanSchema,
-} from "https://deno.land/x/schema_js/mod.ts";
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
 
 const value: unknown = true;
 assertSchema(new BooleanSchema(), value);
@@ -100,7 +100,7 @@ import {
   assertSchema,
   ObjectSchema,
   SchemaError,
-} from "https://deno.land/x/schema_js/mod.ts";
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
 
 const value: unknown = undefined;
 
@@ -119,7 +119,7 @@ function assertStringArray(
   });
 }
 const stringArraySchema = arraySchema.and(assertStringArray);
-assertSchema(stringArraySchema, v);
+assertSchema(stringArraySchema, value);
 // value is `string[]`
 ```
 
@@ -142,7 +142,7 @@ import {
   NumberSchema,
   OrSchema,
   StringSchema,
-} from "https://deno.land/x/schema_js/mod.ts";
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
 
 const schema = new OrSchema(
   new StringSchema(),
@@ -167,7 +167,7 @@ import {
   assertSchema,
   OrSchema,
   StringSchema,
-} from "https://deno.land/x/schema_js/mod.ts";
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
 
 const schema = new AndSchema(
   new StringSchema("hello"),
@@ -190,7 +190,7 @@ import {
   assertSchema,
   BooleanSchema,
   NotSchema,
-} from "https://deno.land/x/schema_js/mod.ts";
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
 
 const value: unknown = undefined;
 assertSchema(new NotSchema(new BooleanSchema()), value);
@@ -206,8 +206,9 @@ assertSchema(new NotSchema(new BooleanSchema(true)), value);
 ```ts
 import {
   ArraySchema,
+  assertSchema,
   StringSchema,
-} from "https://deno.land/x/schema_js/mod.ts";
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
 
 const value: unknown = undefined;
 assertSchema(new ArraySchema(), value);
