@@ -271,6 +271,9 @@ Benchmark script with comparison to several popular schema library is available.
 deno bench --unstable
 ```
 
+You can check the
+[benchmark](https://github.com/schemaland/schema.js/runs/7979671007?check_suite_focus=true#step:4:26).
+
 ## License
 
 Copyright © 2022-present [schemaland](https://github.com/schemaland).
