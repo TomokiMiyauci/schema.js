@@ -23,3 +23,27 @@ export function isSchemaError(value: unknown): value is SchemaError {
 export function isAssertionError(value: unknown): value is AssertionError {
   return value instanceof AssertionError;
 }
+
+export function isLength<
+  T extends number,
+  V extends { length: number },
+>(
+  length: T,
+  value: V,
+): value is V & { length: T } {
+  return value.length === length;
+}
+
+export function isMaxLength(
+  maxLength: number,
+  value: { length: number },
+): boolean {
+  return value.length <= maxLength;
+}
+
+export function isMinLength(
+  minLength: number,
+  value: { length: number },
+): boolean {
+  return minLength <= value.length;
+}

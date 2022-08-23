@@ -16,7 +16,12 @@ import {
   inspect,
 } from "./utils.ts";
 import { AssertionError } from "./errors.ts";
-import { isFailResult } from "./type_guards.ts";
+import {
+  isFailResult,
+  isLength,
+  isMaxLength,
+  isMinLength,
+} from "./type_guards.ts";
 
 /** Assert whether the value satisfies the schema.
  *
@@ -132,5 +137,32 @@ export function assertArray(value: unknown): asserts value is any[] {
     throw new AssertionError(
       `Invalid constructor. ${inspect("Array")} <- ${inspect(name)}`,
     );
+  }
+}
+
+export function assertLength(
+  length: number,
+  value: string,
+): asserts value is string {
+  if (!isLength(length, value)) {
+    throw new AssertionError(`Must be ${length} characters long.`);
+  }
+}
+
+export function assertMaxLength(
+  length: number,
+  value: string,
+): asserts value is string {
+  if (!isMaxLength(length, value)) {
+    throw new AssertionError(`Must be ${length} or more characters long.`);
+  }
+}
+
+export function assertMinLength(
+  length: number,
+  value: string,
+): asserts value is string {
+  if (!isMinLength(length, value)) {
+    throw new AssertionError(`Must be ${length} or fewer characters long.`);
   }
 }
