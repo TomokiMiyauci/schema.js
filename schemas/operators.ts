@@ -51,7 +51,7 @@ export class OrSchema<T extends Schema[]>
         },
       );
     },
-  ).getAssert;
+  ).getAssert as Assert<unknown, UnwrapSchema<T[number]>>;
 }
 
 type UnwrapArraySchema<S extends readonly Schema[]> = S extends
@@ -103,7 +103,7 @@ export class AndSchema<T extends Schema[]>
         }
       }
     },
-  ).getAssert;
+  ).getAssert as Assert<unknown, And<UnwrapArraySchema<T>>>;
 }
 
 /** Schema definition of logical `NOT`.
@@ -127,7 +127,10 @@ export class NotSchema<T extends Schema>
   assert;
 
   constructor(protected schema: T) {
-    this.assert = createAssertNot(schema);
+    this.assert = createAssertNot(schema) as Assert<
+      unknown,
+      TypedExclude<UnwrapSchema<T>>
+    >;
   }
 }
 
