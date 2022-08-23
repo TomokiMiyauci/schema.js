@@ -19,7 +19,10 @@ import { SchemaError } from "../errors.ts";
  * ```
  */
 export class ArraySchema<T extends Schema | undefined = undefined>
-  extends CollectiveTypeSchema<T extends Schema ? Unwrap<T[]> : any[]> {
+  extends CollectiveTypeSchema<
+    unknown,
+    T extends Schema ? Unwrap<T[]> : any[]
+  > {
   override assert;
 
   constructor(subType?: T) {
