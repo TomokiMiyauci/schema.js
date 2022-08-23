@@ -1,10 +1,9 @@
-import { Unwrap } from "./types.ts";
 import { CollectiveTypeSchema } from "./utils.ts";
-import { Schema } from "../types.ts";
-import { DataFlow } from "../utils.ts";
+import { Schema, UnwrapSchema } from "../types.ts";
+import { DataFlow, toSchemaError } from "../utils.ts";
 import { assertArray, assertObject } from "../asserts.ts";
-import { isFailResult } from "../type_guards.ts";
 import { SchemaError } from "../errors.ts";
+import { Assert } from "../deps.ts";
 
 /** Schema definition of built-in `Array`.
  *
@@ -21,7 +20,7 @@ import { SchemaError } from "../errors.ts";
 export class ArraySchema<T extends Schema | undefined = undefined>
   extends CollectiveTypeSchema<
     unknown,
-    T extends Schema ? Unwrap<T[]> : any[]
+    T extends Schema ? UnwrapSchema<T>[] : any[]
   > {
   override assert;
 
@@ -32,16 +31,20 @@ export class ArraySchema<T extends Schema | undefined = undefined>
       this.assert = new DataFlow(assertObject).define(assertArray).define(
         (value) => {
           for (const [index, v] of value.entries()) {
-            const result = subType.validate(v);
-
-            if (isFailResult(result)) {
+            try {
+              subType.assert?.(v);
+            } catch (e) {
+              const error = toSchemaError(e);
               throw new SchemaError(`Invalid field. $[${index}]`, {
-                children: result.errors,
+                children: [error],
               });
             }
           }
         },
-      ).getAssert;
+      ).getAssert as Assert<
+        unknown,
+        T extends Schema ? UnwrapSchema<T>[] : any[]
+      >;
     } else {
       this.assert = new DataFlow(assertObject).define(
         assertArray,

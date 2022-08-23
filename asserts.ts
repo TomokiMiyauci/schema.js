@@ -1,4 +1,5 @@
 import {
+  Assertion,
   isBigint,
   isBoolean,
   isFunction,
@@ -9,19 +10,14 @@ import {
   isSymbol,
   isUndefined,
 } from "./deps.ts";
-import { Schema, SuccessResult } from "./types.ts";
+import { Schema } from "./types.ts";
 import {
   createAssertFromTypeGuard,
   createSchemaErrorThrower,
   inspect,
 } from "./utils.ts";
 import { AssertionError } from "./errors.ts";
-import {
-  isFailResult,
-  isLength,
-  isMaxLength,
-  isMinLength,
-} from "./type_guards.ts";
+import { isLength, isMaxLength, isMinLength } from "./type_guards.ts";
 
 /** Assert whether the value satisfies the schema.
  *
@@ -42,18 +38,12 @@ import {
  * @throws {@link AggregateError}
  */
 export function assertSchema<
-  S extends Schema,
-  R extends ReturnType<S["validate"]>,
+  S extends Schema<unknown, unknown>,
 >(
   schema: S,
   value: unknown,
-): asserts value is R extends SuccessResult ? R["data"]
-  : never {
-  const result = schema.validate(value);
-
-  if (isFailResult(result)) {
-    throw new AggregateError(result.errors, `One or more error has occurred.`);
-  }
+): asserts value is Assertion<S["assert"]> {
+  schema.assert(value);
 }
 
 export function assertString(value: unknown): asserts value is string {

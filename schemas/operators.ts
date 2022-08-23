@@ -1,10 +1,7 @@
-import { Schema, SuperType } from "../types.ts";
-import { UnitTypeSchema } from "./utils.ts";
+import { Schema, SuperType, UnwrapSchema } from "../types.ts";
 import { SchemaError } from "../errors.ts";
-import { UnwrapSchema } from "./types.ts";
-import { isFailResult, isSuccessResult } from "../type_guards.ts";
-import { DataFlow } from "../utils.ts";
-import { And, Assertion } from "../deps.ts";
+import { DataFlow, toSchemaError } from "../utils.ts";
+import { And, Assert } from "../deps.ts";
 
 /** Schema definition of logical `OR`.
  *
@@ -28,31 +25,29 @@ import { And, Assertion } from "../deps.ts";
  * ```
  */
 export class OrSchema<T extends Schema[]>
-  extends UnitTypeSchema<unknown, UnwrapSchema<T[number]>> {
+  implements Schema<unknown, UnwrapSchema<T[number]>> {
   #schemas: ReadonlyArray<Schema>;
 
   constructor(...schemas: T) {
-    super();
     this.#schemas = schemas;
   }
 
-  override assert = new DataFlow().define(
+  assert = new DataFlow().define(
     (value) => {
-      const errors: SchemaError[][] = [];
+      const errors: SchemaError[] = [];
 
       for (const schema of this.#schemas) {
-        const result = schema.validate(value);
-
-        if (isSuccessResult(result)) {
-          return;
+        try {
+          schema.assert(value);
+        } catch (e) {
+          errors.push(toSchemaError(e));
         }
-        errors.push(result.errors);
       }
 
       throw new SchemaError(
         `Logical error. One of assertion must be met.`,
         {
-          children: errors.flat(),
+          children: errors,
         },
       );
     },
@@ -86,24 +81,23 @@ type UnwrapArraySchema<S extends readonly Schema[]> = S extends
  * ```
  */
 export class AndSchema<T extends Schema[]>
-  extends UnitTypeSchema<unknown, And<UnwrapArraySchema<T>>> {
+  implements Schema<unknown, And<UnwrapArraySchema<T>>> {
   #schemas: ReadonlyArray<Schema>;
 
   constructor(...schemas: T) {
-    super();
     this.#schemas = schemas;
   }
 
-  override assert = new DataFlow().define(
+  assert = new DataFlow().define(
     (value) => {
       for (const schema of this.#schemas) {
-        const result = schema.validate(value);
-
-        if (isFailResult(result)) {
+        try {
+          schema.assert(value);
+        } catch (e) {
           throw new SchemaError(
             `Logical error. All assertions must be met.`,
             {
-              children: result.errors,
+              children: [toSchemaError(e)],
             },
           );
         }
@@ -129,27 +123,26 @@ export class AndSchema<T extends Schema[]>
  * ```
  */
 export class NotSchema<T extends Schema>
-  extends UnitTypeSchema<unknown, TypedExclude<UnwrapSchema<T>>> {
-  override assert;
+  implements Schema<unknown, TypedExclude<UnwrapSchema<T>>> {
+  assert;
 
   constructor(protected schema: T) {
-    super();
-
     this.assert = createAssertNot(schema);
   }
 }
 
 function createAssertNot<T extends Schema>(
   schema: T,
-): Assertion<unknown, T> {
+): Assert<unknown, T> {
   return (value) => {
-    const result = schema.validate(value);
-    const name = schema.constructor.name;
-
-    if (isSuccessResult(result)) {
+    try {
+      schema.assert(value);
+      const name = schema.constructor.name;
       throw new SchemaError(
         `NOT logical operation fail. \`${name}\` should not valid.`,
       );
+    } catch {
+      // noop
     }
   };
 }

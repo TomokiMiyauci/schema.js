@@ -1,4 +1,4 @@
-import { Assertion, isString, TypeGuard } from "./deps.ts";
+import { Assert, isString, TypeGuard } from "./deps.ts";
 import { SchemaError } from "./errors.ts";
 import { TypeStr } from "./types.ts";
 import { isSchemaError } from "./type_guards.ts";
@@ -22,7 +22,7 @@ export function createSchemaErrorThrower(
 export function createAssertFromTypeGuard<V, R extends V>(
   typeGuard: TypeGuard<V, R>,
   onFail: (value: V) => never,
-): Assertion<V, R> {
+): Assert<V, R> {
   return (value) => {
     const result = typeGuard(value);
     if (!result) {
@@ -32,13 +32,13 @@ export function createAssertFromTypeGuard<V, R extends V>(
 }
 
 export class DataFlow<In = unknown, Out extends In = In> {
-  assertions: Assertion<In, Out>[] = [];
+  assertions: Assert<In, Out>[] = [];
 
-  constructor(...assertions: Assertion<In, Out>[]) {
+  constructor(...assertions: Assert<In, Out>[]) {
     this.assertions = assertions;
   }
 
-  define<S extends Out = Out>(assertion: Assertion<In, S>): DataFlow<S, S> {
+  define<S extends Out = Out>(assertion: Assert<In, S>): DataFlow<S, S> {
     return new DataFlow<S, S>(...this.assertions.concat(assertion));
   }
 
