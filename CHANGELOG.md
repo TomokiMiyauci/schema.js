@@ -1,3 +1,19 @@
+# [1.0.0-beta.2](https://github.com/schemaland/schema.js/compare/1.0.0-beta.1...1.0.0-beta.2) (2022-08-23)
+
+
+### Bug Fixes
+
+* **schemas:** fix to operators type infer ([7fbab60](https://github.com/schemaland/schema.js/commit/7fbab60829a1f60dc4586516ef8b92b1ff117acf))
+
+
+### Features
+
+* **asserts:** add string length assertion ([01067d2](https://github.com/schemaland/schema.js/commit/01067d280842371bd1d099433b135cbb0eead704))
+* change definition of schema ([294c0be](https://github.com/schemaland/schema.js/commit/294c0be197ef295ce93452ff0df2bd4efe77351e))
+* **mod:** export `TupleSchema` schema ([b8ba80e](https://github.com/schemaland/schema.js/commit/b8ba80e8a20256d3716a9f26661c47998d590d5c))
+* **schemas:** add string sub-type schemas ([603d557](https://github.com/schemaland/schema.js/commit/603d557922ca780bdc2bff84841f73a8df177565))
+* **schemas:** add tuple schema ([50276d6](https://github.com/schemaland/schema.js/commit/50276d61d57f7fec7010ae9d9b527b2573e594cf))
+
 # 1.0.0-beta.1 (2022-08-22)
 
 
