@@ -263,6 +263,14 @@ assertSchema(arraySchema, unknown);
 // value is [number, "hello", undefined]
 ```
 
+## Performance
+
+Benchmark script with comparison to several popular schema library is available.
+
+```bash
+deno bench --unstable
+```
+
 ## License
 
 Copyright © 2022-present [schemaland](https://github.com/schemaland).
