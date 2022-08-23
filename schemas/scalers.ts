@@ -1,4 +1,3 @@
-import { Assert } from "./../deps.ts";
 import { CollectiveTypeSchema } from "./utils.ts";
 import { arity, isUndefined } from "../deps.ts";
 import {
@@ -17,15 +16,15 @@ import { Schema } from "../types.ts";
 /** Schema definition of `boolean`. */
 export class BooleanSchema<T extends boolean>
   extends CollectiveTypeSchema<unknown, T> {
-  override assert;
+  protected override assertion: (value: unknown) => asserts value is T;
 
   constructor(protected subType?: T) {
     super();
 
     if (isUndefined(subType)) {
-      this.assert = assertBoolean as Assert<unknown, T>;
+      this.assertion = assertBoolean;
     } else {
-      this.assert = new DataFlow(assertBoolean).define(
+      this.assertion = new DataFlow(assertBoolean).define(
         rethrow(arity(assertIs, subType), schemaErrorThrower),
       ).getAssert;
     }
@@ -35,15 +34,15 @@ export class BooleanSchema<T extends boolean>
 /** Schema definition of `string`. */
 export class StringSchema<T extends string>
   extends CollectiveTypeSchema<unknown, T> {
-  override assert;
+  protected override assertion: (value: unknown) => asserts value is T;
 
   constructor(protected subType?: T) {
     super();
 
     if (isUndefined(subType)) {
-      this.assert = assertString as Assert<unknown, T>;
+      this.assertion = assertString;
     } else {
-      this.assert = new DataFlow(assertString).define(
+      this.assertion = new DataFlow(assertString).define(
         rethrow(arity(assertIs, subType), schemaErrorThrower),
       ).getAssert;
     }
@@ -53,14 +52,14 @@ export class StringSchema<T extends string>
 /** Schema definition of `number`. */
 export class NumberSchema<T extends number = number>
   extends CollectiveTypeSchema<unknown, T> {
-  override assert;
+  protected override assertion: (value: unknown) => asserts value is T;
   constructor(protected subType?: T) {
     super();
 
     if (isUndefined(subType)) {
-      this.assert = assertNumber as Assert<unknown, T>;
+      this.assertion = assertNumber;
     } else {
-      this.assert = new DataFlow(assertNumber).define(
+      this.assertion = new DataFlow(assertNumber).define(
         rethrow(arity(assertIs, subType), schemaErrorThrower),
       ).getAssert;
     }
@@ -70,14 +69,14 @@ export class NumberSchema<T extends number = number>
 /** Schema definition of `bigint`. */
 export class BigintSchema<T extends bigint = bigint>
   extends CollectiveTypeSchema<unknown, T> {
-  override assert;
+  protected override assertion: (value: unknown) => asserts value is T;
   constructor(protected subType?: T) {
     super();
 
     if (isUndefined(subType)) {
-      this.assert = assertBigint as Assert<unknown, T>;
+      this.assertion = assertBigint;
     } else {
-      this.assert = new DataFlow(assertBigint).define(
+      this.assertion = new DataFlow(assertBigint).define(
         rethrow(arity(assertIs, subType), schemaErrorThrower),
       ).getAssert;
     }

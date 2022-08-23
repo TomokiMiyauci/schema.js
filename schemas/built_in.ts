@@ -22,13 +22,16 @@ export class ArraySchema<T extends Schema | undefined = undefined>
     unknown,
     T extends Schema ? UnwrapSchema<T>[] : any[]
   > {
-  override assert;
+  protected override assertion: (
+    value: unknown,
+  ) => asserts value is T extends Schema<unknown, unknown> ? UnwrapSchema<T>[]
+    : any[];
 
   constructor(subType?: T) {
     super();
 
     if (subType) {
-      this.assert = new DataFlow(assertObject).define(assertArray).define(
+      this.assertion = new DataFlow(assertObject).define(assertArray).define(
         (value) => {
           for (const [index, v] of value.entries()) {
             try {
@@ -46,7 +49,7 @@ export class ArraySchema<T extends Schema | undefined = undefined>
         T extends Schema ? UnwrapSchema<T>[] : any[]
       >;
     } else {
-      this.assert = new DataFlow(assertObject).define(
+      this.assertion = new DataFlow(assertObject).define(
         assertArray,
       ).getAssert;
     }

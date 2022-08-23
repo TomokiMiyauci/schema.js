@@ -2,7 +2,7 @@ import { CollectiveTypeSchema } from "./utils.ts";
 import { Schema, UnwrapSchema } from "../types.ts";
 import { assertFunction, assertObject, assertSameSize } from "../asserts.ts";
 import { SchemaError } from "../errors.ts";
-import { Assert, isUndefined } from "../deps.ts";
+import { isUndefined } from "../deps.ts";
 import { DataFlow, inspect, toSchemaError } from "../utils.ts";
 
 type Unwrap<T> = {
@@ -16,17 +16,16 @@ export class ObjectSchema<
   unknown,
   Unwrap<T extends undefined ? object : T>
 > {
-  override assert;
+  protected override assertion: (
+    value: unknown,
+  ) => asserts value is Unwrap<T extends undefined ? object : T>;
   constructor(protected subType?: T) {
     super();
 
     if (isUndefined(subType)) {
-      this.assert = assertObject as Assert<
-        unknown,
-        Unwrap<T extends undefined ? object : T>
-      >;
+      this.assertion = assertObject;
     } else {
-      this.assert = new DataFlow().define(assertObject).define(
+      this.assertion = new DataFlow().define(assertObject).define(
         (value) => {
           for (const key in this.subType) {
             try {
@@ -63,7 +62,9 @@ export class TupleSchema<T extends Schema[]>
     super();
     this.#subType = subType;
   }
-  override assert(value: ReadonlyArray<any>): asserts value is Unwrap<T> {
+  protected override assertion: (
+    value: readonly any[],
+  ) => asserts value is Unwrap<T> = (value) => {
     assertSameSize(this.#subType, value);
 
     for (const [index, schema] of this.#subType.entries()) {
@@ -80,5 +81,5 @@ export class TupleSchema<T extends Schema[]>
         });
       }
     }
-  }
+  };
 }
