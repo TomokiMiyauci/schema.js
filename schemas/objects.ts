@@ -42,6 +42,6 @@ export class ObjectSchema<T extends Record<any, Schema> | undefined = undefined>
 }
 
 /** Schema definition of `Function`. */
-export class FunctionSchema extends AssertSchema<Function> {
+export class FunctionSchema extends AssertSchema<unknown, Function> {
   override assert = assertFunction;
 }

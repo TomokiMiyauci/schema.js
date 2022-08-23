@@ -81,16 +81,16 @@ export class BigintSchema<T extends bigint = bigint>
 }
 
 /** Schema definition of `undefined`. */
-export class UndefinedSchema extends AssertSchema<undefined> {
+export class UndefinedSchema extends AssertSchema<unknown, undefined> {
   override assert = assertUndefined;
 }
 
 /** Schema definition of `symbol`. */
-export class SymbolSchema extends AssertSchema<symbol> {
+export class SymbolSchema extends AssertSchema<unknown, symbol> {
   override assert = assertSymbol;
 }
 
 /** Schema definition of `null`. */
-export class NullSchema extends AssertSchema<null> {
+export class NullSchema extends AssertSchema<unknown, null> {
   override assert = assertNull;
 }

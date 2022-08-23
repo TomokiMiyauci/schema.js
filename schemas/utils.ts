@@ -1,13 +1,14 @@
 import { Result, Schema } from "../types.ts";
 import { toSchemaError } from "../utils.ts";
-import { Assertion } from "../deps.ts";
+import { isFailResult } from "../type_guards.ts";
 
-export abstract class AssertSchema<Out> implements Schema<Out> {
-  abstract assert(value: unknown): asserts value is Out;
+export abstract class AssertSchema<In, Out extends In>
+  implements Schema<Out, In> {
+  abstract assert(value: In): asserts value is Out;
 
-  validate(value: unknown): Result<Out> {
+  validate(value: In): Result<Out> {
     try {
-      this.assert.call(this, value);
+      this.assert(value);
       return {
         data: value as Out,
       };
@@ -22,22 +23,25 @@ export abstract class AssertSchema<Out> implements Schema<Out> {
 export abstract class CollectiveTypeSchema<Out> implements Schema<Out> {
   abstract assert(value: unknown): asserts value is Out;
 
-  #ands: Assertion<any, unknown>[] = [];
+  #ands: Schema[] = [];
 
-  /** Add assertion of subtypes.
+  /** Add subtype schema.
    * They are executed in the order in which they are added, after the supertype assertion. */
   and<U extends Out = Out>(
-    assert: (value: Out) => asserts value is U,
+    schema: Schema<Out, Out>,
   ): CollectiveTypeSchema<U> {
-    this.#ands.push(assert);
+    this.#ands.push(schema);
     return this as CollectiveTypeSchema<any>;
   }
 
   validate(value: unknown): Result<Out> {
     try {
-      this.assert.call(this, value);
+      this.assert(value);
       this.#ands.forEach((and) => {
-        and.call(this, value);
+        const result = and.validate(value);
+        if (isFailResult(result)) {
+          throw result.errors[0];
+        }
       });
       return {
         data: value as Out,
