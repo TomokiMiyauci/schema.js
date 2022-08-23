@@ -45,7 +45,7 @@ export type PickBy<T, K extends valueOf<T>> = {
 export type Assert<V, R extends V> = (value: V) => asserts value is R;
 
 export type Assertion<T extends Function> = T extends
-  (value: unknown) => asserts value is infer U ? U : unknown;
+  (value: any) => asserts value is infer U ? U : unknown;
 
 export type TypeGuard<V, R extends V> = (value: V) => value is R;
 

@@ -239,6 +239,36 @@ assertSchema(new ArraySchema(new StringSchema()), value);
 // value is `string[]`
 ```
 
+### Tuple schema
+
+It is a sub-type of the `Array` object and represents an array of a finite
+number of elements.
+
+```ts
+import {
+  ArraySchema,
+  assertSchema,
+  NumberSchema,
+  StringSchema,
+  TupleSchema,
+  UndefinedSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+
+const value: any[] = [];
+const tupleSchema = new TupleSchema(
+  new NumberSchema(),
+  new StringSchema("hello"),
+  new UndefinedSchema(),
+);
+assertSchema(tupleSchema, value);
+// value is [number, "hello", undefined]
+
+const arraySchema = new ArraySchema().and(tupleSchema);
+const unknown: unknown = null;
+assertSchema(arraySchema, unknown);
+// value is [number, "hello", undefined]
+```
+
 ## License
 
 Copyright © 2022-present [schemaland](https://github.com/schemaland).

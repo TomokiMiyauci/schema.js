@@ -15,9 +15,15 @@ import {
   createAssertFromTypeGuard,
   createSchemaErrorThrower,
   inspect,
+  toSchemaError,
 } from "./utils.ts";
 import { AssertionError } from "./errors.ts";
-import { isLength, isMaxLength, isMinLength } from "./type_guards.ts";
+import {
+  isLength,
+  isMaxLength,
+  isMinLength,
+  isSameSize,
+} from "./type_guards.ts";
 
 /** Assert whether the value satisfies the schema.
  *
@@ -35,15 +41,20 @@ import { isLength, isMaxLength, isMinLength } from "./type_guards.ts";
  * assertSchema(new BooleanSchema(false), value); // throws SchemaError
  * ```
  *
- * @throws {@link AggregateError}
+ * @throws {@link SchemaError}
  */
 export function assertSchema<
-  S extends Schema<unknown, unknown>,
+  T,
+  S extends Schema<T>,
 >(
   schema: S,
-  value: unknown,
+  value: T,
 ): asserts value is Assertion<S["assert"]> {
-  schema.assert(value);
+  try {
+    schema.assert(value);
+  } catch (e) {
+    throw toSchemaError(e);
+  }
 }
 
 export function assertString(value: unknown): asserts value is string {
@@ -136,6 +147,28 @@ export function assertLength(
 ): asserts value is string {
   if (!isLength(length, value)) {
     throw new AssertionError(`Must be ${length} characters long.`);
+  }
+}
+
+export function assertSizeBy(
+  size: number,
+  value: Iterable<unknown>,
+): asserts value is string {
+  if (size !== Array.from(value).length) {
+    throw new AssertionError(`Must be ${size} size.`);
+  }
+}
+
+export function assertSameSize(
+  base: Iterable<unknown>,
+  value: Iterable<unknown>,
+): asserts value is string {
+  if (!isSameSize(base, value)) {
+    const baseSize = Array.from(base).length;
+    const valueSize = Array.from(value).length;
+    throw new AssertionError(
+      `Different sizes. ${inspect(baseSize)} <- ${inspect(valueSize)}`,
+    );
   }
 }
 
