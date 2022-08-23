@@ -20,8 +20,13 @@ export abstract class CollectiveTypeSchema<
   public and<T extends Out = Out>(
     schema: Schema<Out, T>,
   ): CollectiveTypeSchema<In, T> {
-    this.#schemas.push(schema);
+    const subClass = new (this as any).constructor() as CollectiveTypeSchema<
+      In,
+      Out
+    >;
 
-    return this;
+    subClass.#schemas = [...this.#schemas, schema];
+
+    return subClass;
   }
 }
