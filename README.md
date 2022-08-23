@@ -88,39 +88,33 @@ assertSchema(new BooleanSchema(false), value); // throws AggregateError
 
 For the Collective type, you can add assertions of subtypes.
 
-The Collective type has the `and` method. It adds assertion of the subtype and
-returns a new Collective type. The new Collective type will be type narrowed by
-the added assertion.
+The Collective type has the `and` method. It accept subtype schema and returns a
+new Collective type. The new Collective type will be type narrowed by the
+subtype schema.
 
-Example of creating a string array(`string[]`) schema from an object schema:
+Example of creating a tuple (`[0, "hi"]`) schema from an object schema:
 
 ```ts
 import {
-  assertArray,
+  ArraySchema,
   assertSchema,
+  NumberSchema,
   ObjectSchema,
   SchemaError,
+  StringSchema,
+  TupleSchema,
 } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
 
 const value: unknown = undefined;
 
-const arraySchema = new ObjectSchema().and(assertArray);
-assertSchema(arraySchema, value);
-// value is `any[]`
-
-function assertStringArray(
-  value: ReadonlyArray<any>,
-): asserts value is string[] {
-  value.forEach((v) => {
-    const type = typeof v;
-    if (type !== "string") {
-      throw new SchemaError(`Invalid member. "string" <- ${type}`);
-    }
-  });
-}
-const stringArraySchema = arraySchema.and(assertStringArray);
-assertSchema(stringArraySchema, value);
-// value is `string[]`
+const tupleSchema = new ObjectSchema().and(new ArraySchema()).and(
+  new TupleSchema(
+    new NumberSchema(0),
+    new StringSchema("hi"),
+  ),
+);
+assertSchema(tupleSchema, value);
+// value is `[0, "hi"]`
 ```
 
 ## Logical operation schema
