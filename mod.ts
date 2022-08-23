@@ -16,3 +16,8 @@ export {
 } from "./errors.ts";
 export { assertArray, assertSchema } from "./asserts.ts";
 export { ArraySchema } from "./schemas/built_in.ts";
+export {
+  LengthSchema,
+  MaxLengthSchema,
+  MinLengthSchema,
+} from "./schemas/strings.ts";

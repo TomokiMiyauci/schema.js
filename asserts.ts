@@ -154,7 +154,7 @@ export function assertMaxLength(
   value: string,
 ): asserts value is string {
   if (!isMaxLength(length, value)) {
-    throw new AssertionError(`Must be ${length} or more characters long.`);
+    throw new AssertionError(`Must be ${length} or fewer characters long.`);
   }
 }
 
@@ -163,6 +163,6 @@ export function assertMinLength(
   value: string,
 ): asserts value is string {
   if (!isMinLength(length, value)) {
-    throw new AssertionError(`Must be ${length} or fewer characters long.`);
+    throw new AssertionError(`Must be ${length} or more characters long.`);
   }
 }

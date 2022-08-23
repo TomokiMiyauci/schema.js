@@ -199,6 +199,28 @@ assertSchema(new NotSchema(new BooleanSchema(true)), value);
 // value is `false` | `string` | `number` | ...
 ```
 
+## String subtype schema
+
+Provides schema for string subtypes.
+
+```ts
+import {
+  assertSchema,
+  LengthSchema,
+  MaxLengthSchema,
+  MinLengthSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+
+const maxLengthSchema = new MaxLengthSchema(255);
+const minLengthSchema = new MinLengthSchema(10);
+const lengthSchema = new LengthSchema(20);
+
+const value: string = "This is string subtype type.";
+assertSchema(maxLengthSchema, value);
+assertSchema(minLengthSchema, value);
+assertSchema(lengthSchema, value); // throw SchemaError
+```
+
 ## Built-in Objects schema
 
 - Array -> `ArraySchema`
