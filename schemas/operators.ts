@@ -1,5 +1,5 @@
 import { Schema, SuperType } from "../types.ts";
-import { AssertSchema } from "./utils.ts";
+import { UnitTypeSchema } from "./utils.ts";
 import { SchemaError } from "../errors.ts";
 import { UnwrapSchema } from "./types.ts";
 import { isFailResult, isSuccessResult } from "../type_guards.ts";
@@ -28,7 +28,7 @@ import { And, Assertion } from "../deps.ts";
  * ```
  */
 export class OrSchema<T extends Schema[]>
-  extends AssertSchema<UnwrapSchema<T[number]>> {
+  extends UnitTypeSchema<unknown, UnwrapSchema<T[number]>> {
   #schemas: ReadonlyArray<Schema>;
 
   constructor(...schemas: T) {
@@ -86,7 +86,7 @@ type UnwrapArraySchema<S extends readonly Schema[]> = S extends
  * ```
  */
 export class AndSchema<T extends Schema[]>
-  extends AssertSchema<And<UnwrapArraySchema<T>>> {
+  extends UnitTypeSchema<unknown, And<UnwrapArraySchema<T>>> {
   #schemas: ReadonlyArray<Schema>;
 
   constructor(...schemas: T) {
@@ -129,7 +129,7 @@ export class AndSchema<T extends Schema[]>
  * ```
  */
 export class NotSchema<T extends Schema>
-  extends AssertSchema<TypedExclude<UnwrapSchema<T>>> {
+  extends UnitTypeSchema<unknown, TypedExclude<UnwrapSchema<T>>> {
   override assert;
 
   constructor(protected schema: T) {

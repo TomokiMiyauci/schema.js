@@ -1,4 +1,4 @@
-import { AssertSchema, CollectiveTypeSchema } from "./utils.ts";
+import { CollectiveTypeSchema, UnitTypeSchema } from "./utils.ts";
 import { arity, isUndefined } from "../deps.ts";
 import {
   assertBigint,
@@ -13,7 +13,8 @@ import {
 import { DataFlow, rethrow, schemaErrorThrower } from "../utils.ts";
 
 /** Schema definition of `boolean`. */
-export class BooleanSchema<T extends boolean> extends CollectiveTypeSchema<T> {
+export class BooleanSchema<T extends boolean>
+  extends CollectiveTypeSchema<unknown, T> {
   override assert;
 
   constructor(protected subType?: T) {
@@ -30,7 +31,8 @@ export class BooleanSchema<T extends boolean> extends CollectiveTypeSchema<T> {
 }
 
 /** Schema definition of `string`. */
-export class StringSchema<T extends string> extends CollectiveTypeSchema<T> {
+export class StringSchema<T extends string>
+  extends CollectiveTypeSchema<unknown, T> {
   override assert;
 
   constructor(protected subType?: T) {
@@ -48,7 +50,7 @@ export class StringSchema<T extends string> extends CollectiveTypeSchema<T> {
 
 /** Schema definition of `number`. */
 export class NumberSchema<T extends number = number>
-  extends CollectiveTypeSchema<T> {
+  extends CollectiveTypeSchema<unknown, T> {
   override assert;
   constructor(protected subType?: T) {
     super();
@@ -65,7 +67,7 @@ export class NumberSchema<T extends number = number>
 
 /** Schema definition of `bigint`. */
 export class BigintSchema<T extends bigint = bigint>
-  extends CollectiveTypeSchema<T> {
+  extends CollectiveTypeSchema<unknown, T> {
   override assert;
   constructor(protected subType?: T) {
     super();
@@ -81,16 +83,16 @@ export class BigintSchema<T extends bigint = bigint>
 }
 
 /** Schema definition of `undefined`. */
-export class UndefinedSchema extends AssertSchema<unknown, undefined> {
+export class UndefinedSchema extends UnitTypeSchema<unknown, undefined> {
   override assert = assertUndefined;
 }
 
 /** Schema definition of `symbol`. */
-export class SymbolSchema extends AssertSchema<unknown, symbol> {
+export class SymbolSchema extends UnitTypeSchema<unknown, symbol> {
   override assert = assertSymbol;
 }
 
 /** Schema definition of `null`. */
-export class NullSchema extends AssertSchema<unknown, null> {
+export class NullSchema extends UnitTypeSchema<unknown, null> {
   override assert = assertNull;
 }
