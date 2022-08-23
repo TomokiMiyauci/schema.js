@@ -41,9 +41,6 @@ export type FailResult = {
   errors: SchemaError[];
 };
 
-export type UnwrapResult<R extends Result> = R extends SuccessResult ? R["data"]
-  : never;
-
 export type UnwrapSchema<
   S extends object,
 > = S extends Schema<unknown, object> ? UnwrapSchema<Assertion<S["assert"]>>
