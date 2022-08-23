@@ -47,3 +47,10 @@ export function isMinLength(
 ): boolean {
   return minLength <= value.length;
 }
+
+export function isSameSize(
+  base: Iterable<unknown>,
+  value: Iterable<unknown>,
+): boolean {
+  return Array.from(base).length === Array.from(value).length;
+}

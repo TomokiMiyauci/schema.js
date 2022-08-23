@@ -26,7 +26,7 @@ export type SuperType = valueOf<SuperTypeMap>;
 export type TypeStr = keyof SuperTypeMap;
 
 export interface Schema<In = unknown, Out extends In = In> {
-  assert(value: In): asserts value is Out;
+  assert: (value: In) => asserts value is Out;
 }
 
 export type Result<T = unknown> =

@@ -5,7 +5,7 @@ export class SchemaError extends Error implements SchemaErrorOptions {
 
   expected: unknown;
 
-  path: ReadonlyArray<string>;
+  path: ReadonlyArray<string | number>;
 
   children: ReadonlyArray<SchemaError>;
 
@@ -29,7 +29,7 @@ export interface SchemaErrorOptions extends ErrorOptions {
   actual?: unknown;
   expected?: unknown;
 
-  path?: Iterable<string>;
+  path?: Iterable<string | number>;
 
   children?: Iterable<SchemaError>;
 }
