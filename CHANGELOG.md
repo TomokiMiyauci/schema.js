@@ -1,3 +1,11 @@
+# [1.0.0-beta.3](https://github.com/schemaland/schema.js/compare/1.0.0-beta.2...1.0.0-beta.3) (2022-08-23)
+
+
+### Bug Fixes
+
+* **schemas:** add schema assertion via and method ([3b3bcb6](https://github.com/schemaland/schema.js/commit/3b3bcb6cb00a3ed11f41d5ab27d699a26ebfd6b8))
+* **schemas:** return new instance on call `and` method ([ace07c5](https://github.com/schemaland/schema.js/commit/ace07c519ec4c690ff976ff5bef4bed77c583658))
+
 # [1.0.0-beta.2](https://github.com/schemaland/schema.js/compare/1.0.0-beta.1...1.0.0-beta.2) (2022-08-23)
 
 
