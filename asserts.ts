@@ -24,7 +24,6 @@ import {
   isMaxLength,
   isMinLength,
   isSameSize,
-  Operand,
 } from "./type_guards.ts";
 
 /** Assert whether the value satisfies the schema.
@@ -217,6 +216,8 @@ export function assertEmailFormat(value: string): asserts value is string {
     );
   }
 }
+
+export type Operand = string | number | bigint | boolean;
 
 export function assertGreaterThanOrEqualTo(
   base: Operand,

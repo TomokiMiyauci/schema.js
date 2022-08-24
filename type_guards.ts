@@ -66,19 +66,3 @@ export function isEmailFormat(value: string): boolean {
 /** @see https://stackoverflow.com/a/46181/1550155 */
 const ReEmail =
   /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-
-export type Operand = string | number | bigint | boolean;
-
-export function greaterThanOrEqualTo(
-  base: Operand,
-  value: Operand,
-): boolean {
-  return base >= value;
-}
-
-export function lessThanOrEqualTo(
-  base: Operand,
-  value: Operand,
-): boolean {
-  return base <= value;
-}
