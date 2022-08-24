@@ -1,3 +1,20 @@
+# [1.0.0-beta.5](https://github.com/schemaland/schema.js/compare/1.0.0-beta.4...1.0.0-beta.5) (2022-08-24)
+
+
+### Bug Fixes
+
+* **schemas:** change internal creating instance method ([2a39ff5](https://github.com/schemaland/schema.js/commit/2a39ff5626824eadcd232501a4eb95f3d18b64d0))
+
+
+### Features
+
+* **errors:** change assertion error interface ([53e6a32](https://github.com/schemaland/schema.js/commit/53e6a32e3f2371d1953dc3f14ea38da02396c6a2))
+* **schemas:** add count schema ([99902f6](https://github.com/schemaland/schema.js/commit/99902f6a42f558dd506916702cf63a192a39d11f))
+* **schemas:** add max schema and min schema for union types ([b2dbdbc](https://github.com/schemaland/schema.js/commit/b2dbdbcf901b11e3e92ceb94281c7c68df7d2f10))
+* **schemas:** add min count schema ([ea8d7ea](https://github.com/schemaland/schema.js/commit/ea8d7ea58d3546e9654d1eb8833f8395790e651e))
+* **schemas:** add min count schema ([c663c3a](https://github.com/schemaland/schema.js/commit/c663c3a5c5cde42f0f1689f713b1e90abedba480))
+* **utils:** add prefix to stringified bigint value ([7b6979c](https://github.com/schemaland/schema.js/commit/7b6979c53638939d130894bd7d1ff0e5e07895af))
+
 # [1.0.0-beta.4](https://github.com/schemaland/schema.js/compare/1.0.0-beta.3...1.0.0-beta.4) (2022-08-24)
 
 
