@@ -19,15 +19,11 @@ import {
 } from "./utils.ts";
 import { AssertionError } from "./errors.ts";
 import {
-  greaterThan,
-  greaterThanOrEqualTo,
   isEmailFormat,
   isLengthBy,
   isMaxLength,
   isMinLength,
   isSameSize,
-  lessThan,
-  lessThanOrEqualTo,
   Operand,
 } from "./type_guards.ts";
 
@@ -222,35 +218,11 @@ export function assertEmailFormat(value: string): asserts value is string {
   }
 }
 
-export function assertGreaterThan(
-  base: Operand,
-  value: Operand,
-): asserts value is Operand {
-  if (!greaterThan(base, value)) {
-    throw new AssertionError(
-      { expect: base, actual: value },
-      `Invalid range. ${inspect(base)} < ${inspect(value)}`,
-    );
-  }
-}
-
 export function assertGreaterThanOrEqualTo(
   base: Operand,
   value: Operand,
 ): asserts value is Operand {
-  if (!greaterThanOrEqualTo(base, value)) {
-    throw new AssertionError(
-      { expect: base, actual: value },
-      `Invalid range. ${inspect(base)} <= ${inspect(value)}`,
-    );
-  }
-}
-
-export function assertLessThan(
-  base: Operand,
-  value: Operand,
-): asserts value is Operand {
-  if (!lessThan(base, value)) {
+  if (base > value) {
     throw new AssertionError(
       { expect: base, actual: value },
       `Invalid range. ${inspect(base)} > ${inspect(value)}`,
@@ -262,10 +234,10 @@ export function assertLessThanOrEqualTo(
   base: Operand,
   value: Operand,
 ): asserts value is Operand {
-  if (!lessThanOrEqualTo(base, value)) {
+  if (base < value) {
     throw new AssertionError(
       { expect: base, actual: value },
-      `Invalid range. ${inspect(base)} >= ${inspect(value)}`,
+      `Invalid range. ${inspect(base)} < ${inspect(value)}`,
     );
   }
 }

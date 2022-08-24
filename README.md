@@ -237,6 +237,44 @@ const emailFormatAndLessThan20 = new StringEmailSchema().and(
 assertSchema(emailFormatAndLessThan20, "contact@test.test");
 ```
 
+## Union subtype schema
+
+The union subtype schema is a schema that can be used for multiple types.
+
+### Max schema
+
+type &isin; `number` &#x22C3; `bigint`
+
+Schema of max value for `number` or `bigint` subtype.
+
+```ts
+import {
+  assertSchema,
+  MaxSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+assertSchema(new MaxSchema(10), 5);
+assertThrows(() => assertSchema(new MaxSchema(10), 11));
+```
+
+### Min schema
+
+type &isin; `number` &#x22C3; `bigint`
+
+Schema of min value for `number` or `bigint` subtype.
+
+```ts
+import {
+  assertSchema,
+  MinSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+assertSchema(new MinSchema(5), 10);
+assertThrows(() => assertSchema(new MinSchema(5), 0));
+```
+
 ## Built-in Objects schema
 
 - Array -> `ArraySchema`

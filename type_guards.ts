@@ -24,14 +24,11 @@ export function isAssertionError(value: unknown): value is AssertionError {
   return value instanceof AssertionError;
 }
 
-export function isLength<
-  T extends number,
-  V extends { length: number },
->(
-  length: T,
-  value: V,
-): value is V & { length: T } {
-  return value.length === length;
+export function isLengthBy(
+  length: number | bigint,
+  value: { length: number },
+): boolean {
+  return length === value.length;
 }
 
 export function isMaxLength(
@@ -48,6 +45,13 @@ export function isMinLength(
   return minLength <= value.length;
 }
 
+export function isSizeBy(
+  base: number | bigint,
+  value: Iterable<unknown>,
+): boolean {
+  return base === Array.from(value).length;
+}
+
 export function isSameSize(
   base: Iterable<unknown>,
   value: Iterable<unknown>,
@@ -62,3 +66,19 @@ export function isEmailFormat(value: string): boolean {
 /** @see https://stackoverflow.com/a/46181/1550155 */
 const ReEmail =
   /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+
+export type Operand = string | number | bigint | boolean;
+
+export function greaterThanOrEqualTo(
+  base: Operand,
+  value: Operand,
+): boolean {
+  return base >= value;
+}
+
+export function lessThanOrEqualTo(
+  base: Operand,
+  value: Operand,
+): boolean {
+  return base <= value;
+}
