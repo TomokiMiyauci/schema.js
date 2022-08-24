@@ -123,13 +123,13 @@ export class AndSchema<T extends Schema[]>
  * ```
  */
 export class NotSchema<T extends Schema>
-  implements Schema<unknown, TypedExclude<UnwrapSchema<T>>> {
+  implements Schema<unknown, Exclude<SuperType, UnwrapSchema<T>>> {
   assert;
 
   constructor(schema: T) {
     this.assert = createAssertNot(schema) as Assert<
       unknown,
-      TypedExclude<UnwrapSchema<T>>
+      Exclude<SuperType, UnwrapSchema<T>>
     >;
   }
 }
@@ -149,7 +149,3 @@ function createAssertNot<T extends Schema>(
     }
   };
 }
-
-type TypedExclude<T, U = SuperType> = U extends T ? never
-  : T extends Function ? U
-  : U | Function;
