@@ -1,6 +1,6 @@
 import { CollectiveTypeSchema } from "./utils.ts";
 import { Schema, UnwrapSchema } from "../types.ts";
-import { assertFunction, assertObject, assertSameSize } from "../asserts.ts";
+import { assertFunction, assertObject, assertSameCount } from "../asserts.ts";
 import { SchemaError } from "../errors.ts";
 import { isUndefined } from "../deps.ts";
 import { DataFlow, inspect, toSchemaError } from "../utils.ts";
@@ -65,7 +65,7 @@ export class TupleSchema<T extends Schema[]>
   protected override assertion: (
     value: readonly any[],
   ) => asserts value is Unwrap<T> = (value) => {
-    assertSameSize(this.#subType, value);
+    assertSameCount(this.#subType, value);
 
     for (const [index, schema] of this.#subType.entries()) {
       try {

@@ -45,18 +45,18 @@ export function isMinLength(
   return minLength <= value.length;
 }
 
-export function isSizeBy(
+export function isSameCountBy(
   base: number | bigint,
   value: Iterable<unknown>,
 ): boolean {
   return base === Array.from(value).length;
 }
 
-export function isSameSize(
+export function isSameCount(
   base: Iterable<unknown>,
   value: Iterable<unknown>,
 ): boolean {
-  return Array.from(base).length === Array.from(value).length;
+  return isSameCountBy(Array.from(base).length, value);
 }
 
 export function isEmailFormat(value: string): boolean {
