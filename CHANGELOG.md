@@ -1,3 +1,16 @@
+# [1.0.0-beta.4](https://github.com/schemaland/schema.js/compare/1.0.0-beta.3...1.0.0-beta.4) (2022-08-24)
+
+
+### Bug Fixes
+
+* **schemas:** add past assertion to new instance ([7cd1053](https://github.com/schemaland/schema.js/commit/7cd105308d1dadd9aa4925e53a1dfd8d4fc564c4))
+
+
+### Features
+
+* **schemas:** add string email schema ([9c16de3](https://github.com/schemaland/schema.js/commit/9c16de3c2207bae4900502db289856901f8863ce))
+* **types:** add `InferSchema` that infer data types from schema ([2618b5d](https://github.com/schemaland/schema.js/commit/2618b5dcad943c59a41c7002fac059fb6af81328))
+
 # [1.0.0-beta.3](https://github.com/schemaland/schema.js/compare/1.0.0-beta.2...1.0.0-beta.3) (2022-08-23)
 
 
