@@ -18,6 +18,9 @@ export class BooleanSchema<T extends boolean>
   extends CollectiveTypeSchema<unknown, T> {
   protected override assertion: (value: unknown) => asserts value is T;
 
+  protected override create: () => CollectiveTypeSchema<unknown, T> = () =>
+    new BooleanSchema(this.subType);
+
   constructor(protected subType?: T) {
     super();
 
@@ -47,6 +50,8 @@ export class StringSchema<T extends string>
       ).build();
     }
   }
+
+  protected override create = () => new StringSchema(this.subType);
 }
 
 /** Schema definition of `number`. */
@@ -64,6 +69,8 @@ export class NumberSchema<T extends number = number>
       ).build();
     }
   }
+
+  protected override create = () => new NumberSchema(this.subType);
 }
 
 /** Schema definition of `bigint`. */
@@ -81,6 +88,8 @@ export class BigintSchema<T extends bigint = bigint>
       ).build();
     }
   }
+
+  protected override create = () => new BigintSchema(this.subType);
 }
 
 /** Schema definition of `undefined`. */

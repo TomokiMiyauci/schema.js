@@ -6,6 +6,8 @@ export abstract class CollectiveTypeSchema<
 > implements Schema<In, Out> {
   protected abstract assertion: (value: In) => asserts value is Out;
 
+  protected abstract create: () => CollectiveTypeSchema<In, Out>;
+
   #schemas: Schema<Out, Out>[] = [];
 
   public assert = (value: In): asserts value is Out => {
@@ -20,12 +22,7 @@ export abstract class CollectiveTypeSchema<
   public and<T extends Out = Out>(
     schema: Schema<Out, T>,
   ): CollectiveTypeSchema<In, T> {
-    const subClass = new (this as any).constructor() as CollectiveTypeSchema<
-      In,
-      Out
-    >;
-
-    subClass.assertion = this.assertion;
+    const subClass = this.create();
     subClass.#schemas = [...this.#schemas, schema];
 
     return subClass;

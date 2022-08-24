@@ -27,7 +27,9 @@ export class MaxSchema extends CollectiveTypeSchema<number | bigint> {
     value: number | bigint,
   ) => asserts value is number | bigint;
 
-  constructor(maxValue: number | bigint) {
+  protected override create = () => new MaxSchema(this.maxValue);
+
+  constructor(private maxValue: number | bigint) {
     super();
     this.assertion = arity(assertLessThanOrEqualTo, maxValue);
   }
@@ -51,7 +53,9 @@ export class MinSchema extends CollectiveTypeSchema<number | bigint> {
     value: number | bigint,
   ) => asserts value is number | bigint;
 
-  constructor(minValue: number | bigint) {
+  protected override create = () => new MinSchema(this.minValue);
+
+  constructor(private minValue: number | bigint) {
     super();
     this.assertion = arity(assertGreaterThanOrEqualTo, minValue);
   }
@@ -79,7 +83,9 @@ export class CountSchema extends CollectiveTypeSchema<Iterable<unknown>> {
     value: Iterable<unknown>,
   ) => asserts value is Iterable<unknown>;
 
-  constructor(count: number) {
+  protected override create = () => new CountSchema(this.count);
+
+  constructor(private count: number) {
     super();
 
     assertNoNNegativeInteger(count);
@@ -109,7 +115,9 @@ export class MinCountSchema extends CollectiveTypeSchema<Iterable<unknown>> {
     value: Iterable<unknown>,
   ) => asserts value is Iterable<unknown>;
 
-  constructor(count: number) {
+  protected override create = () => new MinCountSchema(this.count);
+
+  constructor(private count: number) {
     super();
 
     assertNoNNegativeInteger(count);
@@ -139,7 +147,9 @@ export class MaxCountSchema extends CollectiveTypeSchema<Iterable<unknown>> {
     value: Iterable<unknown>,
   ) => asserts value is Iterable<unknown>;
 
-  constructor(count: number) {
+  protected override create = () => new MaxCountSchema(this.count);
+
+  constructor(private count: number) {
     super();
 
     assertNoNNegativeInteger(count);

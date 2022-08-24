@@ -11,30 +11,36 @@ export class LengthSchema<T extends string>
   extends CollectiveTypeSchema<string, T> {
   protected override assertion: (value: string) => asserts value is T;
 
-  constructor(length: number) {
+  constructor(private length: number) {
     super();
     this.assertion = arity(assertLength, length);
   }
+
+  protected override create = () => new LengthSchema(this.length);
 }
 
 export class MaxLengthSchema<T extends string>
   extends CollectiveTypeSchema<string, T> {
   protected override assertion: (value: string) => asserts value is T;
 
-  constructor(length: number) {
+  constructor(private length: number) {
     super();
     this.assertion = arity(assertMaxLength, length);
   }
+
+  protected override create = () => new MaxLengthSchema(this.length);
 }
 
 export class MinLengthSchema<T extends string>
   extends CollectiveTypeSchema<string, T> {
   protected override assertion: (value: string) => asserts value is T;
 
-  constructor(length: number) {
+  constructor(private length: number) {
     super();
     this.assertion = arity(assertMinLength, length);
   }
+
+  protected override create = () => new MinLengthSchema(this.length);
 }
 
 /** Schema of `string` subtype of email format.
@@ -55,4 +61,6 @@ export class MinLengthSchema<T extends string>
 export class StringEmailSchema extends CollectiveTypeSchema<string> {
   protected override assertion: (value: string) => asserts value is string =
     assertEmailFormat;
+
+  protected override create = () => new StringEmailSchema();
 }

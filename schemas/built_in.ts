@@ -26,7 +26,7 @@ export class ArraySchema<T extends Schema | undefined = undefined>
   ) => asserts value is T extends Schema<unknown, unknown> ? UnwrapSchema<T>[]
     : any[];
 
-  constructor(subType?: T) {
+  constructor(private subType?: T) {
     super();
 
     if (subType) {
@@ -50,4 +50,6 @@ export class ArraySchema<T extends Schema | undefined = undefined>
       ).build();
     }
   }
+
+  protected override create = () => new ArraySchema(this.subType);
 }

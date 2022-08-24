@@ -47,6 +47,8 @@ export class ObjectSchema<
       ).build();
     }
   }
+
+  protected override create = () => new ObjectSchema(this.subType);
 }
 
 /** Schema definition of `Function`. */
@@ -82,4 +84,6 @@ export class TupleSchema<T extends Schema[]>
       }
     }
   };
+
+  protected override create = () => new TupleSchema(...this.#subType);
 }
