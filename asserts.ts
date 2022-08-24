@@ -19,11 +19,16 @@ import {
 } from "./utils.ts";
 import { AssertionError } from "./errors.ts";
 import {
+  greaterThan,
+  greaterThanOrEqualTo,
   isEmailFormat,
-  isLength,
+  isLengthBy,
   isMaxLength,
   isMinLength,
   isSameSize,
+  lessThan,
+  lessThanOrEqualTo,
+  Operand,
 } from "./type_guards.ts";
 
 /** Assert whether the value satisfies the schema.
@@ -126,6 +131,7 @@ export function assertIs<T>(base: T, value: unknown): asserts value is T {
 
   if (!valid) {
     throw new AssertionError(
+      { expect: base, actual: value },
       `Not equal: ${inspect(base)} <- ${inspect(value)}`,
     );
   }
@@ -135,8 +141,10 @@ export function assertArray(value: unknown): asserts value is any[] {
   const result = Array.isArray(value);
 
   if (!result) {
-    const name = new Object(value).constructor.name;
+    const constructor = new Object(value).constructor;
+    const name = constructor.name;
     throw new AssertionError(
+      { expect: Array, actual: constructor },
       `Invalid constructor. ${inspect("Array")} <- ${inspect(name)}`,
     );
   }
@@ -144,10 +152,13 @@ export function assertArray(value: unknown): asserts value is any[] {
 
 export function assertLength(
   length: number,
-  value: string,
+  value: { length: number },
 ): asserts value is string {
-  if (!isLength(length, value)) {
-    throw new AssertionError(`Must be ${length} characters long.`);
+  if (!isLengthBy(length, value)) {
+    throw new AssertionError({
+      actual: value.length,
+      expect: length,
+    }, `Must be ${length} length.`);
   }
 }
 
@@ -155,8 +166,12 @@ export function assertSizeBy(
   size: number,
   value: Iterable<unknown>,
 ): asserts value is string {
-  if (size !== Array.from(value).length) {
-    throw new AssertionError(`Must be ${size} size.`);
+  const actual = Array.from(value).length;
+  if (size !== actual) {
+    throw new AssertionError({
+      expect: size,
+      actual,
+    }, `Must be ${size} size.`);
   }
 }
 
@@ -168,6 +183,7 @@ export function assertSameSize(
     const baseSize = Array.from(base).length;
     const valueSize = Array.from(value).length;
     throw new AssertionError(
+      { actual: valueSize, expect: baseSize },
       `Different sizes. ${inspect(baseSize)} <- ${inspect(valueSize)}`,
     );
   }
@@ -178,7 +194,10 @@ export function assertMaxLength(
   value: string,
 ): asserts value is string {
   if (!isMaxLength(length, value)) {
-    throw new AssertionError(`Must be ${length} or fewer characters long.`);
+    throw new AssertionError(
+      { actual: value.length, expect: length },
+      `Must be ${length} or fewer characters long.`,
+    );
   }
 }
 
@@ -187,12 +206,66 @@ export function assertMinLength(
   value: string,
 ): asserts value is string {
   if (!isMinLength(length, value)) {
-    throw new AssertionError(`Must be ${length} or more characters long.`);
+    throw new AssertionError(
+      { actual: value.length, expect: length },
+      `Must be ${length} or more characters long.`,
+    );
   }
 }
 
 export function assertEmailFormat(value: string): asserts value is string {
   if (!isEmailFormat(value)) {
-    throw new AssertionError(`Invalid email format.`);
+    throw new AssertionError(
+      { actual: value, expect: "email format" },
+      `Invalid email format.`,
+    );
+  }
+}
+
+export function assertGreaterThan(
+  base: Operand,
+  value: Operand,
+): asserts value is Operand {
+  if (!greaterThan(base, value)) {
+    throw new AssertionError(
+      { expect: base, actual: value },
+      `Invalid range. ${inspect(base)} < ${inspect(value)}`,
+    );
+  }
+}
+
+export function assertGreaterThanOrEqualTo(
+  base: Operand,
+  value: Operand,
+): asserts value is Operand {
+  if (!greaterThanOrEqualTo(base, value)) {
+    throw new AssertionError(
+      { expect: base, actual: value },
+      `Invalid range. ${inspect(base)} <= ${inspect(value)}`,
+    );
+  }
+}
+
+export function assertLessThan(
+  base: Operand,
+  value: Operand,
+): asserts value is Operand {
+  if (!lessThan(base, value)) {
+    throw new AssertionError(
+      { expect: base, actual: value },
+      `Invalid range. ${inspect(base)} > ${inspect(value)}`,
+    );
+  }
+}
+
+export function assertLessThanOrEqualTo(
+  base: Operand,
+  value: Operand,
+): asserts value is Operand {
+  if (!lessThanOrEqualTo(base, value)) {
+    throw new AssertionError(
+      { expect: base, actual: value },
+      `Invalid range. ${inspect(base)} >= ${inspect(value)}`,
+    );
   }
 }

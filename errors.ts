@@ -34,12 +34,32 @@ export interface SchemaErrorOptions extends ErrorOptions {
   children?: Iterable<SchemaError>;
 }
 
+/** Assert context. */
+
+export interface AssertContext {
+  /** Actual value or behavior. */
+  actual: unknown;
+
+  /** Expect value or behavior. */
+  expect: unknown;
+}
+
 /** Assertion error. */
-export class AssertionError extends Error {
+export class AssertionError extends Error implements AssertContext {
   override name = "AssertionError";
 
-  constructor(message: string) {
-    super(message);
+  actual: unknown;
+
+  expect: unknown;
+
+  constructor(
+    { actual, expect }: AssertContext,
+    message: string,
+    options?: ErrorOptions,
+  ) {
+    super(message, options);
+    this.actual = actual;
+    this.expect = expect;
   }
 }
 
