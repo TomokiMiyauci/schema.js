@@ -202,6 +202,20 @@ export function assertGreaterThanCount(
   }
 }
 
+export function assertLessThanCount(
+  count: number,
+  value: Iterable<unknown>,
+): asserts value is Iterable<unknown> {
+  const valueCount = getCount(value);
+  if (count < valueCount) {
+    const countStr = inspect(count);
+    throw new AssertionError(
+      { actual: valueCount, expect: `less than ${countStr}` },
+      `The element numbers must be less than ${countStr}.`,
+    );
+  }
+}
+
 export function assertMaxLength(
   length: number,
   value: string,

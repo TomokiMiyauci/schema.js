@@ -1,6 +1,7 @@
 import {
   assertGreaterThanCount,
   assertGreaterThanOrEqualTo,
+  assertLessThanCount,
   assertLessThanOrEqualTo,
   assertNoNNegativeInteger,
   assertSameCountBy,
@@ -113,5 +114,35 @@ export class MinCountSchema extends CollectiveTypeSchema<Iterable<unknown>> {
 
     assertNoNNegativeInteger(count);
     this.assertion = arity(assertGreaterThanCount, count);
+  }
+}
+
+/** Schema of max number of elements for `Iterable` data types.
+ *
+ * ```ts
+ * import {
+ *   assertSchema,
+ *   MaxCountSchema,
+ * } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+ * import {
+ *   assertEquals,
+ *   assertThrows,
+ * } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+ *
+ * const schema = new MaxCountSchema(255);
+ * assertSchema(schema, "https://test.com");
+ * assertThrows(() => assertSchema(schema, new Array(1000)));
+ * ```
+ */
+export class MaxCountSchema extends CollectiveTypeSchema<Iterable<unknown>> {
+  protected override assertion: (
+    value: Iterable<unknown>,
+  ) => asserts value is Iterable<unknown>;
+
+  constructor(count: number) {
+    super();
+
+    assertNoNNegativeInteger(count);
+    this.assertion = arity(assertLessThanCount, count);
   }
 }

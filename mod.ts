@@ -29,6 +29,7 @@ export {
 export { type InferSchema } from "./types.ts";
 export {
   CountSchema,
+  MaxCountSchema,
   MaxSchema,
   MinCountSchema,
   MinSchema,

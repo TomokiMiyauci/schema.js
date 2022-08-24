@@ -317,6 +317,27 @@ assertSchema(schema, "password");
 assertThrows(() => assertSchema(schema, new Array(4)));
 ```
 
+### Max count schema
+
+type ∈ `Iterable<unknown>`
+
+Schema of max number of elements for `Iterable` data types.
+
+```ts
+import {
+  assertSchema,
+  MaxCountSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+import {
+  assertEquals,
+  assertThrows,
+} from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+const schema = new MaxCountSchema(255);
+assertSchema(schema, "https://test.com");
+assertThrows(() => assertSchema(schema, new Array(1000)));
+```
+
 #### Difference of Length schema
 
 - Length retrieves a value from the `length` property.
