@@ -38,29 +38,16 @@ export class DataFlow<In = unknown, Out extends In = In> {
     this.assertions = assertions;
   }
 
-  define<S extends Out = Out>(assertion: Assert<In, S>): DataFlow<S, S> {
+  and<S extends Out = Out>(assertion: Assert<In, S>): DataFlow<S, S> {
     return new DataFlow<S, S>(...this.assertions.concat(assertion));
   }
 
-  assert(value: unknown): asserts value is Out {
-    for (const assertion of this.assertions) {
-      assertion(value as Out);
-    }
-  }
-
-  get getAssert() {
-    return this.assert.bind(this);
-  }
-
-  is(value: unknown): value is Out {
-    for (const assertion of this.assertions) {
-      try {
+  build(): (value: unknown) => asserts value is Out {
+    return (value) => {
+      for (const assertion of this.assertions) {
         assertion(value as Out);
-      } catch {
-        return false;
       }
-    }
-    return true;
+    };
   }
 }
 

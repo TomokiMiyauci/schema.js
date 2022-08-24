@@ -3,7 +3,6 @@ import { Schema, UnwrapSchema } from "../types.ts";
 import { DataFlow, toSchemaError } from "../utils.ts";
 import { assertArray, assertObject } from "../asserts.ts";
 import { SchemaError } from "../errors.ts";
-import { Assert } from "../deps.ts";
 
 /** Schema definition of built-in `Array`.
  *
@@ -31,7 +30,7 @@ export class ArraySchema<T extends Schema | undefined = undefined>
     super();
 
     if (subType) {
-      this.assertion = new DataFlow(assertObject).define(assertArray).define(
+      this.assertion = new DataFlow(assertObject).and(assertArray).and(
         (value) => {
           for (const [index, v] of value.entries()) {
             try {
@@ -44,14 +43,11 @@ export class ArraySchema<T extends Schema | undefined = undefined>
             }
           }
         },
-      ).getAssert as Assert<
-        unknown,
-        T extends Schema ? UnwrapSchema<T>[] : any[]
-      >;
+      ).build();
     } else {
-      this.assertion = new DataFlow(assertObject).define(
+      this.assertion = new DataFlow(assertObject).and(
         assertArray,
-      ).getAssert;
+      ).build();
     }
   }
 }

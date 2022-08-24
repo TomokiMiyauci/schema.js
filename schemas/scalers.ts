@@ -24,9 +24,9 @@ export class BooleanSchema<T extends boolean>
     if (isUndefined(subType)) {
       this.assertion = assertBoolean;
     } else {
-      this.assertion = new DataFlow(assertBoolean).define(
+      this.assertion = new DataFlow(assertBoolean).and(
         rethrow(arity(assertIs, subType), schemaErrorThrower),
-      ).getAssert;
+      ).build();
     }
   }
 }
@@ -42,9 +42,9 @@ export class StringSchema<T extends string>
     if (isUndefined(subType)) {
       this.assertion = assertString;
     } else {
-      this.assertion = new DataFlow(assertString).define(
+      this.assertion = new DataFlow(assertString).and(
         rethrow(arity(assertIs, subType), schemaErrorThrower),
-      ).getAssert;
+      ).build();
     }
   }
 }
@@ -59,9 +59,9 @@ export class NumberSchema<T extends number = number>
     if (isUndefined(subType)) {
       this.assertion = assertNumber;
     } else {
-      this.assertion = new DataFlow(assertNumber).define(
+      this.assertion = new DataFlow(assertNumber).and(
         rethrow(arity(assertIs, subType), schemaErrorThrower),
-      ).getAssert;
+      ).build();
     }
   }
 }
@@ -76,9 +76,9 @@ export class BigintSchema<T extends bigint = bigint>
     if (isUndefined(subType)) {
       this.assertion = assertBigint;
     } else {
-      this.assertion = new DataFlow(assertBigint).define(
+      this.assertion = new DataFlow(assertBigint).and(
         rethrow(arity(assertIs, subType), schemaErrorThrower),
-      ).getAssert;
+      ).build();
     }
   }
 }

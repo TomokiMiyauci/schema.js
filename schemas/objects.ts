@@ -25,7 +25,7 @@ export class ObjectSchema<
     if (isUndefined(subType)) {
       this.assertion = assertObject;
     } else {
-      this.assertion = new DataFlow().define(assertObject).define(
+      this.assertion = new DataFlow().and(assertObject).and(
         (value) => {
           for (const key in this.subType) {
             try {
@@ -44,7 +44,7 @@ export class ObjectSchema<
             }
           }
         },
-      ).getAssert;
+      ).build();
     }
   }
 }

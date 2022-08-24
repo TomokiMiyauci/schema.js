@@ -32,7 +32,7 @@ export class OrSchema<T extends Schema[]>
     this.#schemas = schemas;
   }
 
-  assert = new DataFlow().define(
+  assert = new DataFlow().and(
     (value) => {
       const errors: SchemaError[] = [];
 
@@ -51,7 +51,7 @@ export class OrSchema<T extends Schema[]>
         },
       );
     },
-  ).getAssert as Assert<unknown, UnwrapSchema<T[number]>>;
+  ).build() as Assert<unknown, UnwrapSchema<T[number]>>;
 }
 
 type UnwrapArraySchema<S extends readonly Schema[]> = S extends
@@ -88,7 +88,7 @@ export class AndSchema<T extends Schema[]>
     this.#schemas = schemas;
   }
 
-  assert = new DataFlow().define(
+  assert = new DataFlow().and(
     (value) => {
       for (const schema of this.#schemas) {
         try {
@@ -103,7 +103,7 @@ export class AndSchema<T extends Schema[]>
         }
       }
     },
-  ).getAssert as Assert<unknown, And<UnwrapArraySchema<T>>>;
+  ).build() as Assert<unknown, And<UnwrapArraySchema<T>>>;
 }
 
 /** Schema definition of logical `NOT`.
