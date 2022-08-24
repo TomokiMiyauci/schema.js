@@ -45,3 +45,30 @@ export type UnwrapSchema<
   S extends object,
 > = S extends Schema<unknown, object> ? UnwrapSchema<Assertion<S["assert"]>>
   : S;
+
+/** Type inference of TypeScript data types from the schema.
+ *
+ * ```ts
+ * import {
+ *   ArraySchema,
+ *   InferSchema,
+ *   NumberSchema,
+ *   ObjectSchema,
+ *   StringSchema,
+ *   TupleSchema,
+ * } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+ *
+ * const schema = new ObjectSchema({
+ *   a: new StringSchema(),
+ *   b: new ArraySchema().and(
+ *     new TupleSchema(new StringSchema("hello"), new NumberSchema()),
+ *   ),
+ *   c: new ObjectSchema({
+ *     d: new NumberSchema(0),
+ *   }),
+ * });
+ *
+ * type Schema = InferSchema<typeof schema>;
+ * ```
+ */
+export type InferSchema<S extends Schema> = Assertion<S["assert"]>;

@@ -25,3 +25,4 @@ export {
   MaxLengthSchema,
   MinLengthSchema,
 } from "./schemas/strings.ts";
+export { type InferSchema } from "./types.ts";

@@ -263,6 +263,39 @@ assertSchema(arraySchema, unknown);
 // value is [number, "hello", undefined]
 ```
 
+## Type inference
+
+You can derive the correct type inference by assertSchema, but you can do the
+same from TypeScript types.
+
+```ts
+import {
+  ArraySchema,
+  InferSchema,
+  NumberSchema,
+  ObjectSchema,
+  StringSchema,
+  TupleSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+
+const schema = new ObjectSchema({
+  a: new StringSchema(),
+  b: new ArraySchema().and(
+    new TupleSchema(new StringSchema("hello"), new NumberSchema()),
+  ),
+  c: new ObjectSchema({
+    d: new NumberSchema(0),
+  }),
+});
+
+type Schema = InferSchema<typeof schema>;
+type EqualTo = {
+  a: string;
+  b: ["hello", number];
+  c: { d: 0 };
+};
+```
+
 ## Performance
 
 Benchmark script with comparison to several popular schema library is available.
