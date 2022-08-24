@@ -1,7 +1,7 @@
 import { assertEmailFormat } from "./asserts.ts";
 import { describe, expect, it } from "./dev_deps.ts";
 
-describe("isEmailFormat", () => {
+describe("assertEmailFormat", () => {
   it("should throw error when the format is invalid", () => {
     expect(() => assertEmailFormat("")).toThrow(`Invalid email format.`);
   });
