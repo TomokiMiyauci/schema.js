@@ -1,4 +1,4 @@
-import { CountSchema, MaxSchema, MinSchema } from "./unions.ts";
+import { CountSchema, MaxSchema, MinCountSchema, MinSchema } from "./unions.ts";
 import { describe, expect, it } from "../dev_deps.ts";
 
 describe("MaxSchema", () => {
@@ -45,5 +45,23 @@ describe("CountSchema", () => {
     expect(new CountSchema(3).assert("A\uD87E\uDC04Z")).toBeUndefined();
     expect(new CountSchema(0).assert([])).toBeUndefined();
     expect(new CountSchema(4).assert([null, null, null, null])).toBeUndefined();
+  });
+});
+
+describe("MinCountSchema", () => {
+  it("should throw error when the number of elements is greater then argument", () => {
+    expect(() => new MinCountSchema(10).assert?.("")).toThrow(
+      `The element numbers must be greater than 10.`,
+    );
+    expect(() => new MinCountSchema(-1).assert?.("")).toThrow();
+
+    expect(() => new MinCountSchema(3).assert([])).toThrow();
+  });
+
+  it("should be success", () => {
+    expect(new MinCountSchema(0).assert("")).toBeUndefined();
+    expect(new MinCountSchema(3).assert(".".repeat(3))).toBeUndefined();
+    expect(new MinCountSchema(3).assert(".".repeat(10))).toBeUndefined();
+    expect(new MinCountSchema(3).assert(new Array(4))).toBeUndefined();
   });
 });

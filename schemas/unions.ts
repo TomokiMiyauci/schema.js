@@ -1,4 +1,5 @@
 import {
+  assertGreaterThanCount,
   assertGreaterThanOrEqualTo,
   assertLessThanOrEqualTo,
   assertSameCountBy,
@@ -82,5 +83,36 @@ export class CountSchema extends CollectiveTypeSchema<Iterable<unknown>> {
       throw new RangeError(`The argument must be non negative integer.`);
     }
     this.assertion = arity(assertSameCountBy, count);
+  }
+}
+
+/** Schema of min number of elements for `Iterable` data types.
+ *
+ * ```ts
+ * import {
+ *   assertSchema,
+ *   MinCountSchema,
+ * } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+ * import {
+ *   assertEquals,
+ *   assertThrows,
+ * } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+ *
+ * const schema = new MinCountSchema(8);
+ * assertSchema(schema, "password");
+ * assertThrows(() => assertSchema(schema, new Array(4)));
+ * ```
+ */
+export class MinCountSchema extends CollectiveTypeSchema<Iterable<unknown>> {
+  protected override assertion: (
+    value: Iterable<unknown>,
+  ) => asserts value is Iterable<unknown>;
+
+  constructor(count: number) {
+    super();
+    if (!isNonNegativeInteger(count)) {
+      throw new RangeError(`The argument must be non negative integer.`);
+    }
+    this.assertion = arity(assertGreaterThanCount, count);
   }
 }

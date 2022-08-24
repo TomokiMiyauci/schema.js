@@ -52,6 +52,10 @@ export function isSameCountBy(
   return base === Array.from(value).length;
 }
 
+export function getCount(value: Iterable<unknown>): number {
+  return Array.from(value).length;
+}
+
 export function isSameCount(
   base: Iterable<unknown>,
   value: Iterable<unknown>,

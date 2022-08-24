@@ -19,6 +19,7 @@ import {
 } from "./utils.ts";
 import { AssertionError } from "./errors.ts";
 import {
+  getCount,
   isEmailFormat,
   isLengthBy,
   isMaxLength,
@@ -182,6 +183,20 @@ export function assertSameCount(
     throw new AssertionError(
       { actual: valueSize, expect: baseSize },
       `Different sizes. ${inspect(baseSize)} <- ${inspect(valueSize)}`,
+    );
+  }
+}
+
+export function assertGreaterThanCount(
+  count: number,
+  value: Iterable<unknown>,
+): asserts value is Iterable<unknown> {
+  const valueCount = getCount(value);
+  if (count > valueCount) {
+    const countStr = inspect(count);
+    throw new AssertionError(
+      { actual: valueCount, expect: `greater than ${countStr}` },
+      `The element numbers must be greater than ${countStr}.`,
     );
   }
 }
