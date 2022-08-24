@@ -3,6 +3,7 @@ import {
   isBigint,
   isBoolean,
   isFunction,
+  isNonNegativeInteger,
   isNull,
   isNumber,
   isObject,
@@ -257,5 +258,17 @@ export function assertLessThanOrEqualTo(
       { expect: base, actual: value },
       `Invalid range. ${inspect(base)} < ${inspect(value)}`,
     );
+  }
+}
+
+export function assertNoNNegativeInteger(
+  value: number,
+): asserts value is number {
+  if (!isNonNegativeInteger(value)) {
+    const expect = "non negative integer";
+    throw new AssertionError({
+      expect,
+      actual: value,
+    }, `The argument must be ${expect}.`);
   }
 }
