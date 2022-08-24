@@ -313,6 +313,11 @@ type EqualTo = {
 };
 ```
 
+## API
+
+All APIs can be found in the
+[deno doc](https://doc.deno.land/https/deno.land/x/schema_js/mod.ts).
+
 ## Performance
 
 Benchmark script with comparison to several popular schema library is available.
