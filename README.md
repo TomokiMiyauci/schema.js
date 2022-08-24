@@ -1,9 +1,13 @@
+<div align="center">
+
 # schema.js
 
-<div align="center">
 <img alt="logo icon" src="./_medias/logo.png" width="180px" height="180px">
 
 Universal, tiny schema for JavaScript data types.
+
+[![deno land](http://img.shields.io/badge/available%20on-deno.land/x-lightgrey.svg?logo=deno)](https://deno.land/x/http_router)
+[![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/http_router/mod.ts)
 
 </div>
 
