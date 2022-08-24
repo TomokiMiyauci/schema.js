@@ -1,7 +1,7 @@
 import { CollectiveTypeSchema } from "./utils.ts";
 import { Schema, UnwrapSchema } from "../types.ts";
 import { DataFlow, toSchemaError } from "../utils.ts";
-import { assertArray, assertObject } from "../asserts.ts";
+import { assertArray, assertDate, assertObject } from "../asserts.ts";
 import { SchemaError } from "../errors.ts";
 
 /** Schema definition of built-in `Array`.
@@ -52,4 +52,27 @@ export class ArraySchema<T extends Schema | undefined = undefined>
   }
 
   protected override create = () => new ArraySchema(this.subType);
+}
+
+/** Schema of `Date` object.
+ *
+ * ```ts
+ * import {
+ *   assertSchema,
+ *   DateSchema,
+ * } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+ * import {
+ *   assertThrows,
+ * } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+ *
+ * const schema = new DateSchema();
+ * assertSchema(schema, new Date());
+ * assertThrows(() => assertSchema(schema, {}));
+ * ```
+ */
+export class DateSchema extends CollectiveTypeSchema<object, Date> {
+  protected override assertion: (value: object) => asserts value is Date =
+    assertDate;
+
+  protected override create = () => new DateSchema();
 }

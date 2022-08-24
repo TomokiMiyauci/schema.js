@@ -1,5 +1,6 @@
 export {
   isBoolean,
+  isDate,
   isEmpty,
   isFunction,
   isNegativeNumber,

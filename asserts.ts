@@ -2,6 +2,7 @@ import {
   Assertion,
   isBigint,
   isBoolean,
+  isDate,
   isFunction,
   isNonNegativeInteger,
   isNull,
@@ -284,5 +285,17 @@ export function assertNoNNegativeInteger(
       expect,
       actual: value,
     }, `The argument must be ${expect}.`);
+  }
+}
+
+export function assertDate(value: unknown): asserts value is Date {
+  if (!isDate(value)) {
+    const constructor = new Object(value).constructor;
+    const name = constructor.name;
+
+    throw new AssertionError({
+      actual: value,
+      expect: Date,
+    }, `Invalid constructor. ${inspect(Date.name)} <- ${inspect(name)}`);
   }
 }

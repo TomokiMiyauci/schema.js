@@ -357,7 +357,11 @@ You should use the count schema in most cases.
 
 ## Built-in Objects schema
 
-- Array -> `ArraySchema`
+This project provide built-in object schemas.
+
+[All list](./docs/built_in_objects.md)
+
+## Array schema
 
 ```ts
 import {
@@ -401,6 +405,24 @@ const arraySchema = new ArraySchema().and(tupleSchema);
 const unknown: unknown = null;
 assertSchema(arraySchema, unknown);
 // value is [number, "hello", undefined]
+```
+
+## Date schema
+
+Schema of `Date` object.
+
+```ts
+import {
+  assertSchema,
+  DateSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+import {
+  assertThrows,
+} from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+const schema = new DateSchema();
+assertSchema(schema, new Date());
+assertThrows(() => assertSchema(schema, {}));
 ```
 
 ## Type inference

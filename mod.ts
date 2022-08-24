@@ -19,7 +19,7 @@ export {
   type SchemaErrorOptions,
 } from "./errors.ts";
 export { assertArray, assertSchema } from "./asserts.ts";
-export { ArraySchema } from "./schemas/built_in.ts";
+export { ArraySchema, DateSchema } from "./schemas/built_in.ts";
 export {
   LengthSchema,
   MaxLengthSchema,
