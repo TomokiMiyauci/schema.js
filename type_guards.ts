@@ -54,3 +54,11 @@ export function isSameSize(
 ): boolean {
   return Array.from(base).length === Array.from(value).length;
 }
+
+export function isEmailFormat(value: string): boolean {
+  return ReEmail.test(value);
+}
+
+/** @see https://stackoverflow.com/a/46181/1550155 */
+const ReEmail =
+  /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;

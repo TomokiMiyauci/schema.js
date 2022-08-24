@@ -215,6 +215,23 @@ assertSchema(minLengthSchema, value);
 assertSchema(lengthSchema, value); // throw SchemaError
 ```
 
+### Email schema
+
+Schema of `string` subtype of email format.
+
+```ts
+import {
+  assertSchema,
+  MaxLengthSchema,
+  StringEmailSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+
+const emailFormatAndLessThan20 = new StringEmailSchema().and(
+  new MaxLengthSchema(20),
+);
+assertSchema(emailFormatAndLessThan20, "contact@test.test");
+```
+
 ## Built-in Objects schema
 
 - Array -> `ArraySchema`

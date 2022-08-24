@@ -24,5 +24,6 @@ export {
   LengthSchema,
   MaxLengthSchema,
   MinLengthSchema,
+  StringEmailSchema,
 } from "./schemas/strings.ts";
 export { type InferSchema } from "./types.ts";

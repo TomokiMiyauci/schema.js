@@ -19,6 +19,7 @@ import {
 } from "./utils.ts";
 import { AssertionError } from "./errors.ts";
 import {
+  isEmailFormat,
   isLength,
   isMaxLength,
   isMinLength,
@@ -187,5 +188,11 @@ export function assertMinLength(
 ): asserts value is string {
   if (!isMinLength(length, value)) {
     throw new AssertionError(`Must be ${length} or more characters long.`);
+  }
+}
+
+export function assertEmailFormat(value: string): asserts value is string {
+  if (!isEmailFormat(value)) {
+    throw new AssertionError(`Invalid email format.`);
   }
 }
