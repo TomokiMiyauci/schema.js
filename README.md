@@ -8,6 +8,7 @@ Universal, tiny schema for JavaScript data types.
 
 [![deno land](http://img.shields.io/badge/available%20on-deno.land/x-lightgrey.svg?logo=deno)](https://deno.land/x/schema_js)
 [![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/schema_js/mod.ts)
+[![codecov](https://codecov.io/gh/schemaland/schema.js/branch/main/graph/badge.svg?token=nHsoT44zg6)](https://codecov.io/gh/schemaland/schema.js)
 
 </div>
 
