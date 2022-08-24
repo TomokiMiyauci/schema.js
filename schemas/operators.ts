@@ -126,7 +126,7 @@ export class NotSchema<T extends Schema>
   implements Schema<unknown, TypedExclude<UnwrapSchema<T>>> {
   assert;
 
-  constructor(protected schema: T) {
+  constructor(schema: T) {
     this.assert = createAssertNot(schema) as Assert<
       unknown,
       TypedExclude<UnwrapSchema<T>>

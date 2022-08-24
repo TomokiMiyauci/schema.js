@@ -21,7 +21,7 @@ export class BooleanSchema<T extends boolean>
   protected override create: () => CollectiveTypeSchema<unknown, T> = () =>
     new BooleanSchema(this.subType);
 
-  constructor(protected subType?: T) {
+  constructor(private subType?: T) {
     super();
 
     if (isUndefined(subType)) {
@@ -39,7 +39,7 @@ export class StringSchema<T extends string>
   extends CollectiveTypeSchema<unknown, T> {
   protected override assertion: (value: unknown) => asserts value is T;
 
-  constructor(protected subType?: T) {
+  constructor(private subType?: T) {
     super();
 
     if (isUndefined(subType)) {
@@ -58,7 +58,7 @@ export class StringSchema<T extends string>
 export class NumberSchema<T extends number = number>
   extends CollectiveTypeSchema<unknown, T> {
   protected override assertion: (value: unknown) => asserts value is T;
-  constructor(protected subType?: T) {
+  constructor(private subType?: T) {
     super();
 
     if (isUndefined(subType)) {
@@ -77,7 +77,7 @@ export class NumberSchema<T extends number = number>
 export class BigintSchema<T extends bigint = bigint>
   extends CollectiveTypeSchema<unknown, T> {
   protected override assertion: (value: unknown) => asserts value is T;
-  constructor(protected subType?: T) {
+  constructor(private subType?: T) {
     super();
 
     if (isUndefined(subType)) {
