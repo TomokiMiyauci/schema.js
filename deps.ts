@@ -2,6 +2,7 @@ export {
   isBoolean,
   isEmpty,
   isFunction,
+  isNegativeNumber,
   isNull,
   isNumber,
   isObject,
@@ -31,6 +32,10 @@ export function isBigint(value: unknown): value is bigint {
 
 export function isTruthy(value: unknown): value is MaybeTruthy {
   return !!value;
+}
+
+export function isNonNegativeInteger(value: number): boolean {
+  return Number.isInteger(value) && value >= 0;
 }
 
 export type valueOf<T> = T[keyof T];

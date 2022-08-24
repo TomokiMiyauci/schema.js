@@ -23,7 +23,8 @@ import {
   isLengthBy,
   isMaxLength,
   isMinLength,
-  isSameSize,
+  isSameCount,
+  isSameCountBy,
 } from "./type_guards.ts";
 
 /** Assert whether the value satisfies the schema.
@@ -157,24 +158,25 @@ export function assertLength(
   }
 }
 
-export function assertSizeBy(
-  size: number,
+export function assertSameCountBy(
+  count: number | bigint,
   value: Iterable<unknown>,
 ): asserts value is string {
   const actual = Array.from(value).length;
-  if (size !== actual) {
+
+  if (!isSameCountBy(count, value)) {
     throw new AssertionError({
-      expect: size,
+      expect: count,
       actual,
-    }, `Must be ${size} size.`);
+    }, `Must be ${count} element number.`);
   }
 }
 
-export function assertSameSize(
+export function assertSameCount(
   base: Iterable<unknown>,
   value: Iterable<unknown>,
 ): asserts value is string {
-  if (!isSameSize(base, value)) {
+  if (!isSameCount(base, value)) {
     const baseSize = Array.from(base).length;
     const valueSize = Array.from(value).length;
     throw new AssertionError(

@@ -27,4 +27,4 @@ export {
   StringEmailSchema,
 } from "./schemas/strings.ts";
 export { type InferSchema } from "./types.ts";
-export { MaxSchema, MinSchema } from "./schemas/unions.ts";
+export { CountSchema, MaxSchema, MinSchema } from "./schemas/unions.ts";

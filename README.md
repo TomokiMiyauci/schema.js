@@ -260,7 +260,7 @@ assertThrows(() => assertSchema(new MaxSchema(10), 11));
 
 ### Min schema
 
-type &isin; `number` &#x22C3; `bigint`
+type ∈ `number` &#x22C3; `bigint`
 
 Schema of min value for `number` or `bigint` subtype.
 
@@ -274,6 +274,44 @@ import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts"
 assertSchema(new MinSchema(5), 10);
 assertThrows(() => assertSchema(new MinSchema(5), 0));
 ```
+
+### Count schema
+
+type ∈ `Iterable<unknown>`
+
+Schema of number of elements for `Iterable` data types.
+
+```ts
+import {
+  assertSchema,
+  CountSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+import {
+  assertEquals,
+  assertThrows,
+} from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+const schema = new CountSchema(10);
+assertSchema(schema, "abcdefghij");
+assertThrows(() => assertSchema(schema, []));
+```
+
+#### Difference of Length schema
+
+- Length retrieves a value from the `length` property.
+- Count counts the actual number of elements.
+- They differ in the way they count strings.
+
+In strings, Length schema counts the number of code units. In contrast, Count
+schema counts the number of characters.
+
+```ts
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+assertEquals("A\uD87E\uDC04Z".length, 4);
+assertEquals([..."A\uD87E\uDC04Z"].length, 3);
+```
+
+You should use the count schema in most cases.
 
 ## Built-in Objects schema
 
