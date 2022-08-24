@@ -25,6 +25,7 @@ export abstract class CollectiveTypeSchema<
       Out
     >;
 
+    subClass.assertion = this.assertion;
     subClass.#schemas = [...this.#schemas, schema];
 
     return subClass;
