@@ -1,4 +1,4 @@
-import { Assert, isBigint, isString, TypeGuard } from "./deps.ts";
+import { Assert, inspect, TypeGuard } from "./deps.ts";
 import { SchemaError } from "./errors.ts";
 import { TypeStr } from "./types.ts";
 import { isSchemaError } from "./type_guards.ts";
@@ -76,15 +76,4 @@ export function rethrow<F extends (value: unknown) => never | void>(
       thrower(e);
     }
   };
-}
-
-export function inspect(value: unknown): string {
-  if (isString(value)) {
-    return `"${value}"`;
-  }
-  if (isBigint(value)) {
-    return `${value}n`;
-  }
-
-  return String(value);
 }

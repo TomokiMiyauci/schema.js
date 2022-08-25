@@ -1,5 +1,6 @@
 import {
   Assertion,
+  inspect,
   isBigint,
   isBoolean,
   isDate,
@@ -16,7 +17,6 @@ import { Schema } from "./types.ts";
 import {
   createAssertFromTypeGuard,
   createSchemaErrorThrower,
-  inspect,
   toSchemaError,
 } from "./utils.ts";
 import { AssertionError } from "./errors.ts";

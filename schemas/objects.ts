@@ -7,8 +7,8 @@ import {
   assertSameCount,
 } from "../asserts.ts";
 import { SchemaError } from "../errors.ts";
-import { arity, isUndefined } from "../deps.ts";
-import { DataFlow, inspect, toSchemaError } from "../utils.ts";
+import { arity, inspect, isUndefined } from "../deps.ts";
+import { DataFlow, toSchemaError } from "../utils.ts";
 
 type Unwrap<T> = {
   [k in keyof T]: T[k] extends object ? UnwrapSchema<T[k]> : T[k];

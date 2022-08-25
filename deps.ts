@@ -1,3 +1,5 @@
+// TODO:(miyauci) All modules here should be external modules.
+
 export {
   isBoolean,
   isDate,
@@ -12,6 +14,7 @@ export {
   isSymbol,
   isUndefined,
 } from "https://deno.land/x/isx@1.0.0-beta.19/mod.ts";
+import { isString } from "https://deno.land/x/isx@1.0.0-beta.19/mod.ts";
 
 type MaybeFalsy = typeof NaN | 0 | -0 | 0n | "" | null | undefined | false;
 
@@ -60,7 +63,7 @@ export function arity<
   Params extends Parameters<F> = Parameters<F>,
 >(fn: F, arg: Params[0]): (...rest: Rest<Params>) => ReturnType<F> {
   return (...rest) => {
-    return fn.apply(null, [arg, ...rest]);
+    return fn(...[arg, ...rest]);
   };
 }
 
@@ -81,3 +84,14 @@ export type Upcast<T> = T extends string ? string
 export type And<T extends readonly any[]> = T extends [infer F, ...infer R]
   ? F & And<R>
   : unknown;
+
+export function inspect(value: unknown): string {
+  if (isString(value)) {
+    return `"${value}"`;
+  }
+  if (isBigint(value)) {
+    return `${value}n`;
+  }
+
+  return String(value);
+}
