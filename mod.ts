@@ -13,12 +13,8 @@ export {
   TupleSchema,
 } from "./schemas/objects.ts";
 export { AndSchema, NotSchema, OrSchema } from "./schemas/operators.ts";
-export {
-  AssertionError,
-  SchemaError,
-  type SchemaErrorOptions,
-} from "./errors.ts";
-export { assertArray, assertSchema } from "./asserts.ts";
+export { SchemaError, type SchemaErrorOptions } from "./errors.ts";
+export { assertSchema } from "./asserts.ts";
 export { ArraySchema, DateSchema } from "./schemas/built_in.ts";
 export {
   LengthSchema,
@@ -34,3 +30,4 @@ export {
   MinCountSchema,
   MinSchema,
 } from "./schemas/unions.ts";
+export { AssertionError } from "./deps.ts";

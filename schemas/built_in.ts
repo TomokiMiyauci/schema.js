@@ -1,7 +1,7 @@
 import { CollectiveTypeSchema } from "./utils.ts";
 import { Schema, UnwrapSchema } from "../types.ts";
 import { DataFlow, toSchemaError } from "../utils.ts";
-import { assertArray, assertDate, assertObject } from "../asserts.ts";
+import { assertArray, assertDate, assertObject } from "../deps.ts";
 import { SchemaError } from "../errors.ts";
 
 /** Schema definition of built-in `Array`.

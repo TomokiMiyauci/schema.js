@@ -1,12 +1,11 @@
 import {
-  assertGreaterThanCount,
+  arity,
+  assertCountIs,
   assertGreaterThanOrEqualTo,
-  assertLessThanCount,
   assertLessThanOrEqualTo,
   assertNoNNegativeInteger,
-  assertSameCountBy,
-} from "../asserts.ts";
-import { arity } from "../deps.ts";
+} from "../deps.ts";
+import { assertGreaterThanCount, assertLessThanCount } from "../asserts.ts";
 import { CollectiveTypeSchema } from "./utils.ts";
 
 /** Schema of max value for `number` or `bigint` subtype.
@@ -89,7 +88,7 @@ export class CountSchema extends CollectiveTypeSchema<Iterable<unknown>> {
     super();
 
     assertNoNNegativeInteger(count);
-    this.assertion = arity(assertSameCountBy, count);
+    this.assertion = arity(assertCountIs, count);
   }
 }
 

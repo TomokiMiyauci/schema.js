@@ -6,7 +6,7 @@ import {
   StringSchema,
   UndefinedSchema,
 } from "./scalers.ts";
-import { assertObject } from "../asserts.ts";
+import { assertObject } from "../deps.ts";
 
 describe("assertSchemaRecord", () => {
   it("should throw error", () => {

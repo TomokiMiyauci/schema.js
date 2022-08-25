@@ -1,13 +1,15 @@
 import { CollectiveTypeSchema } from "./utils.ts";
 import { Schema, UnwrapSchema } from "../types.ts";
+import { SchemaError } from "../errors.ts";
 import {
+  arity,
+  assertExistsPropertyOf,
   assertFunction,
-  assertHasProperty,
   assertObject,
   assertSameCount,
-} from "../asserts.ts";
-import { SchemaError } from "../errors.ts";
-import { arity, inspect, isUndefined } from "../deps.ts";
+  inspect,
+  isUndefined,
+} from "../deps.ts";
 import { DataFlow, toSchemaError } from "../utils.ts";
 
 type Unwrap<T> = {
@@ -44,7 +46,7 @@ export function assertSchemaRecord<T extends { [k: string]: Schema }>(
   value: object,
 ): asserts value is Unwrap<T> {
   for (const key in record) {
-    assertHasProperty(key, value);
+    assertExistsPropertyOf(key, value);
 
     try {
       record[key].assert?.(

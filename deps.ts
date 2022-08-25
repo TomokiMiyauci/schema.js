@@ -1,46 +1,51 @@
 // TODO:(miyauci) All modules here should be external modules.
 
 export {
+  isBigint,
   isBoolean,
   isDate,
   isEmpty,
+  isFalse,
+  isFalsy,
   isFunction,
   isNegativeNumber,
+  isNonNegativeInteger,
   isNull,
   isNumber,
   isObject,
   isPlainObject,
   isString,
   isSymbol,
+  isTruthy,
   isUndefined,
-} from "https://deno.land/x/isx@1.0.0-beta.19/mod.ts";
-import { isString } from "https://deno.land/x/isx@1.0.0-beta.19/mod.ts";
-
-type MaybeFalsy = typeof NaN | 0 | -0 | 0n | "" | null | undefined | false;
-
-type MaybeTruthy =
-  | Extract<string, "">
-  | Extract<number, typeof NaN | 0 | -0>
-  | Extract<bigint, 0n>
-  | symbol
-  | true
-  | object;
-
-export function isFalsy(value: unknown): value is MaybeFalsy {
-  return !value;
-}
-
-export function isBigint(value: unknown): value is bigint {
-  return typeof value === "bigint";
-}
-
-export function isTruthy(value: unknown): value is MaybeTruthy {
-  return !!value;
-}
-
-export function isNonNegativeInteger(value: number): boolean {
-  return Number.isInteger(value) && value >= 0;
-}
+} from "https://deno.land/x/isx@1.0.0-beta.20/mod.ts";
+import {
+  isBigint,
+  isString,
+} from "https://deno.land/x/isx@1.0.0-beta.20/mod.ts";
+export {
+  assertArray,
+  assertBigint,
+  assertBoolean,
+  assertCountIs,
+  assertDate,
+  assertEmailFormat,
+  assertExistsPropertyOf,
+  assertFunction,
+  assertGreaterThanOrEqualTo,
+  AssertionError,
+  assertIs,
+  assertLengthIs,
+  assertLessThanOrEqualTo,
+  assertNoNNegativeInteger,
+  assertNull,
+  assertNumber,
+  assertObject,
+  assertSameCount,
+  assertString,
+  assertSymbol,
+  assertUndefined,
+} from "https://deno.land/x/assertion@1.0.0-beta.1/mod.ts";
 
 export type valueOf<T> = T[keyof T];
 

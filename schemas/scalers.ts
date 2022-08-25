@@ -1,6 +1,6 @@
 import { CollectiveTypeSchema } from "./utils.ts";
-import { arity, isUndefined } from "../deps.ts";
 import {
+  arity,
   assertBigint,
   assertBoolean,
   assertIs,
@@ -9,7 +9,8 @@ import {
   assertString,
   assertSymbol,
   assertUndefined,
-} from "../asserts.ts";
+  isUndefined,
+} from "../deps.ts";
 import { DataFlow, rethrow, schemaErrorThrower } from "../utils.ts";
 import { Schema } from "../types.ts";
 
