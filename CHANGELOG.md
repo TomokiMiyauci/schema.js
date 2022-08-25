@@ -1,3 +1,10 @@
+# [1.0.0-beta.7](https://github.com/schemaland/schema.js/compare/1.0.0-beta.6...1.0.0-beta.7) (2022-08-25)
+
+
+### Features
+
+* **utils:** improve error message ([2d57a79](https://github.com/schemaland/schema.js/commit/2d57a799d5dd2ac2d5f765d53ef9584739ad0094))
+
 # [1.0.0-beta.6](https://github.com/schemaland/schema.js/compare/1.0.0-beta.5...1.0.0-beta.6) (2022-08-25)
 
 
