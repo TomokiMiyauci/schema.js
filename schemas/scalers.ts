@@ -11,7 +11,7 @@ import {
   assertUndefined,
   isUndefined,
 } from "../deps.ts";
-import { DataFlow, rethrow, schemaErrorThrower } from "../utils.ts";
+import { DataFlow } from "../utils.ts";
 import { Schema } from "../types.ts";
 
 /** Schema definition of `boolean`. */
@@ -29,7 +29,7 @@ export class BooleanSchema<T extends boolean>
       this.assertion = assertBoolean;
     } else {
       this.assertion = new DataFlow(assertBoolean).and(
-        rethrow(arity(assertIs, subType), schemaErrorThrower),
+        arity(assertIs, subType),
       ).build();
     }
   }
@@ -47,7 +47,7 @@ export class StringSchema<T extends string>
       this.assertion = assertString;
     } else {
       this.assertion = new DataFlow(assertString).and(
-        rethrow(arity(assertIs, subType), schemaErrorThrower),
+        arity(assertIs, subType),
       ).build();
     }
   }
@@ -66,7 +66,7 @@ export class NumberSchema<T extends number = number>
       this.assertion = assertNumber;
     } else {
       this.assertion = new DataFlow(assertNumber).and(
-        rethrow(arity(assertIs, subType), schemaErrorThrower),
+        arity(assertIs, subType),
       ).build();
     }
   }
@@ -85,7 +85,7 @@ export class BigintSchema<T extends bigint = bigint>
       this.assertion = assertBigint;
     } else {
       this.assertion = new DataFlow(assertBigint).and(
-        rethrow(arity(assertIs, subType), schemaErrorThrower),
+        arity(assertIs, subType),
       ).build();
     }
   }
