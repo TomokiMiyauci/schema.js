@@ -1,3 +1,4 @@
+import { isUndefined } from "https://deno.land/x/isx@1.0.0-beta.19/mod.ts";
 import { isString, isTruthy } from "./deps.ts";
 
 export class SchemaError extends Error implements SchemaErrorOptions {
@@ -54,13 +55,27 @@ export class AssertionError extends Error implements AssertContext {
 
   constructor(
     { actual, expect }: AssertContext,
-    message: string,
+    message?: string,
     options?: ErrorOptions,
   ) {
     super(message, options);
     this.actual = actual;
     this.expect = expect;
+
+    if (isUndefined(message)) {
+      this.message = assertMessageTemplate(this);
+    }
   }
+}
+
+function assertMessageTemplate(error: AssertionError): string {
+  return `Assertion is fail.
+
+  Actual:
+    ${error.actual}
+  Expected:
+    ${error.expect}
+`;
 }
 
 function messageTemplate({ message, children }: SchemaError): string {
