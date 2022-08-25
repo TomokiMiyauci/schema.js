@@ -1,3 +1,17 @@
+# [1.0.0-beta.6](https://github.com/schemaland/schema.js/compare/1.0.0-beta.5...1.0.0-beta.6) (2022-08-25)
+
+
+### Bug Fixes
+
+* **operators:** remove types for Function what treat speciality ([be7e965](https://github.com/schemaland/schema.js/commit/be7e965ae77f43443c6036e4c7aae8e9a5d51d11))
+
+
+### Features
+
+* **errors:** add default assertion message template ([808b514](https://github.com/schemaland/schema.js/commit/808b514cf193e50e1b6357e8fa78d40251ebf76f))
+* **schemas:** add `Date` object schema ([fe9ffbc](https://github.com/schemaland/schema.js/commit/fe9ffbcdabf6d8ebb7b053c81d2ef1c20a687f3c))
+* **schemas:** add assertion for has property to ObjectSchema and add test case ([ba771b3](https://github.com/schemaland/schema.js/commit/ba771b36b6a80d8fbd8ab28a44d42f928e6d9b0e))
+
 # [1.0.0-beta.5](https://github.com/schemaland/schema.js/compare/1.0.0-beta.4...1.0.0-beta.5) (2022-08-24)
 
 
