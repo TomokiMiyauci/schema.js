@@ -13,7 +13,7 @@
       "exclude": ["npm", "CHANGELOG.md", "CODE_OF_CONDUCT.md"]
     },
     "rules": {
-      "exclude": ["ban-types"]
+      "exclude": ["ban-types", "no-explicit-any"]
     }
   },
   "test": {
