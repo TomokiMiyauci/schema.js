@@ -1,8 +1,13 @@
 import { CollectiveTypeSchema } from "./utils.ts";
 import { Schema, UnwrapSchema } from "../types.ts";
-import { assertFunction, assertObject, assertSameCount } from "../asserts.ts";
+import {
+  assertFunction,
+  assertHasProperty,
+  assertObject,
+  assertSameCount,
+} from "../asserts.ts";
 import { SchemaError } from "../errors.ts";
-import { isUndefined } from "../deps.ts";
+import { arity, isUndefined } from "../deps.ts";
 import { DataFlow, inspect, toSchemaError } from "../utils.ts";
 
 type Unwrap<T> = {
@@ -26,29 +31,36 @@ export class ObjectSchema<
       this.assertion = assertObject;
     } else {
       this.assertion = new DataFlow().and(assertObject).and(
-        (value) => {
-          for (const key in this.subType) {
-            try {
-              this.subType[key].assert?.(
-                (value as Record<any, any>)[key],
-              );
-            } catch (e) {
-              const error = toSchemaError(e);
-              const paths = error.path.concat(key);
-              const bracketStr = paths.map((path) => `[${inspect(path)}]`)
-                .join();
-              throw new SchemaError(`Invalid field. \`$${bracketStr}\``, {
-                children: [error],
-                path: paths,
-              });
-            }
-          }
-        },
+        arity(assertSchemaRecord, subType),
       ).build();
     }
   }
 
   protected override create = () => new ObjectSchema(this.subType);
+}
+
+export function assertSchemaRecord<T extends { [k: string]: Schema }>(
+  record: T,
+  value: object,
+): asserts value is Unwrap<T> {
+  for (const key in record) {
+    assertHasProperty(key, value);
+
+    try {
+      record[key].assert?.(
+        (value as Record<any, any>)[key],
+      );
+    } catch (e) {
+      const error = toSchemaError(e);
+      const paths = error.path.concat(key);
+      const bracketStr = paths.map((path) => `[${inspect(path)}]`)
+        .join();
+      throw new SchemaError(`Invalid field. \`$${bracketStr}\``, {
+        children: [error],
+        path: paths,
+      });
+    }
+  }
 }
 
 /** Schema definition of `Function`. */

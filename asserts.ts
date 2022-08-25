@@ -299,3 +299,15 @@ export function assertDate(value: unknown): asserts value is Date {
     }, `Invalid constructor. ${inspect(Date.name)} <- ${inspect(name)}`);
   }
 }
+
+export function assertHasProperty<T extends PropertyKey>(
+  name: T,
+  value: object,
+): asserts value is { [k in T]: unknown } {
+  if (!Object.hasOwn(value, name)) {
+    throw new AssertionError({
+      actual: `not has ${inspect(name)}`,
+      expect: `has ${inspect(name)}`,
+    });
+  }
+}

@@ -1,4 +1,8 @@
-import { assertEmailFormat, assertNoNNegativeInteger } from "./asserts.ts";
+import {
+  assertEmailFormat,
+  assertHasProperty,
+  assertNoNNegativeInteger,
+} from "./asserts.ts";
 import { describe, expect, it } from "./dev_deps.ts";
 
 describe("assertEmailFormat", () => {
@@ -27,5 +31,27 @@ describe("assertNoNNegativeInteger", () => {
     expect(assertNoNNegativeInteger(1)).toBeUndefined();
     expect(assertNoNNegativeInteger(1.0)).toBeUndefined();
     expect(assertNoNNegativeInteger(100)).toBeUndefined();
+  });
+});
+
+describe("assertHasProperty", () => {
+  it("should throw error when the object has not property of string", () => {
+    expect(() => assertHasProperty("", {})).toThrow();
+  });
+
+  it("should throw error when the object has not property of number", () => {
+    expect(() => assertHasProperty(0, {})).toThrow();
+  });
+
+  it("should throw error when the object has not property of symbol", () => {
+    expect(() => assertHasProperty(Symbol("test"), {})).toThrow();
+  });
+
+  it("should return undefined when the object has property", () => {
+    expect(assertHasProperty("", { "": "0" })).toBeUndefined();
+    expect(assertHasProperty(0, { 0: "0" })).toBeUndefined();
+    expect(assertHasProperty(0, { "0": "0" })).toBeUndefined();
+    expect(assertHasProperty(Symbol.for("t"), { [Symbol.for("t")]: "0" }))
+      .toBeUndefined();
   });
 });
