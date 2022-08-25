@@ -42,7 +42,7 @@ export type FailResult = {
 };
 
 export type UnwrapSchema<
-  S extends object,
+  S,
 > = S extends Schema<unknown, object> ? UnwrapSchema<Assertion<S["assert"]>>
   : S;
 
