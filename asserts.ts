@@ -116,7 +116,9 @@ export function assertOr<A extends readonly Assert[]>(
     }
   }
 
-  throw new AggregateError(errors, "All assertions failed.");
+  if (errors.length) {
+    throw new AggregateError(errors, "All assertions failed.");
+  }
 }
 
 export function assertEquals<T = unknown, U extends T = T>(

@@ -48,6 +48,14 @@ describe("assertOr", () => {
   it("should pass when pass one of more assertion", () => {
     expect(
       assertOr(
+        [],
+        "",
+      ),
+    )
+      .toBeUndefined();
+
+    expect(
+      assertOr(
         [assertBoolean, assertUndefined, assertNull, assertString] as const,
         "",
       ),
