@@ -1,3 +1,17 @@
+# [1.0.0-beta.10](https://github.com/schemaland/schema.js/compare/1.0.0-beta.9...1.0.0-beta.10) (2022-08-26)
+
+
+### Bug Fixes
+
+* **asserts:** fix to `orSchema` when assertion is none ([f1341ed](https://github.com/schemaland/schema.js/commit/f1341ed5e4df2578af04d04192e3b9b303a624de))
+
+
+### Features
+
+* **schemas:** `AndSchema` accept all values but also schemas ([04022e6](https://github.com/schemaland/schema.js/commit/04022e66def2e61463f4ba1b53914e5304f18a33))
+* **schemas:** `NotSchema` accept all values but also schema ([4528ad0](https://github.com/schemaland/schema.js/commit/4528ad0a2bc005487ab0c91c2c109ed7dc00e2b1))
+* **schemas:** `OrSchema` accept any values but also schemas ([a682091](https://github.com/schemaland/schema.js/commit/a682091e4e50ed511376eabd3038f5691b6ca5a7))
+
 # [1.0.0-beta.9](https://github.com/schemaland/schema.js/compare/1.0.0-beta.8...1.0.0-beta.9) (2022-08-26)
 
 
