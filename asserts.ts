@@ -1,7 +1,6 @@
 import {
   Assert,
   assertExistsPropertyOf,
-  Assertion,
   AssertionError,
   assertUndefined,
   has,
@@ -42,7 +41,7 @@ export function assertSchema<
 >(
   schema: S,
   value: T,
-): asserts value is Assertion<S["assert"]> {
+): asserts value is ReturnAssert<S["assert"]> {
   try {
     schema.assert(value);
   } catch (e) {

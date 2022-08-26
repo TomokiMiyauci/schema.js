@@ -1,5 +1,4 @@
 import { ReturnAssert, valueOf } from "./deps.ts";
-import { Assertion } from "./deps.ts";
 
 export interface ScalerTypeMap {
   string: string;
@@ -76,4 +75,4 @@ export type UnwrapSchema<
  * type Schema = InferSchema<typeof schema>;
  * ```
  */
-export type InferSchema<S extends Schema> = Assertion<S["assert"]>;
+export type InferSchema<S extends Schema> = ReturnAssert<S["assert"]>;

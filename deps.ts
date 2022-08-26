@@ -60,10 +60,6 @@ export type Assert<V = unknown, R extends V = V> = (
   value: V,
 ) => asserts value is R;
 
-export type Assertion<T> = T extends (value: any) => asserts value is infer U
-  ? U
-  : never;
-
 export type ReturnAssert<T> = T extends (value: any) => asserts value is infer U
   ? U
   : never;
