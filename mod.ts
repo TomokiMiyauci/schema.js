@@ -32,4 +32,4 @@ export {
   MinSchema,
 } from "./schemas/unions.ts";
 export { AssertionError } from "./deps.ts";
-export { isSchema, validateSchema } from "./validates.ts";
+export { isSchema, type ValidateResult, validateSchema } from "./validates.ts";

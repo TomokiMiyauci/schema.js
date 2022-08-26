@@ -23,6 +23,7 @@ export function isSchema<In = unknown, Out extends In = In>(
   return isFunction(Object(value)["assert"]);
 }
 
+/** Types for validate result. */
 export type ValidateResult<T = unknown> =
   | {
     /** Whether the validation is passed or not. */
