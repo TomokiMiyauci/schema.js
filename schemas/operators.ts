@@ -1,7 +1,7 @@
 import { Schema, SuperType, UnwrapSchema } from "../types.ts";
 import { SchemaError } from "../errors.ts";
 import { DataFlow, toSchema, toSchemaError } from "../utils.ts";
-import { assertOr } from "../asserts.ts";
+import { assertAnd, assertOr } from "../asserts.ts";
 import { And, Assert } from "../deps.ts";
 
 /** Schema definition of logical `OR`.
@@ -41,13 +41,6 @@ export class OrSchema<T extends unknown[]>
   ).build() as Assert<unknown, UnwrapSchema<T[number]>>;
 }
 
-type UnwrapArraySchema<S extends readonly Schema[]> = S extends
-  [infer F, ...infer R]
-  ? F extends Schema
-    ? R extends Schema[] ? [UnwrapSchema<F>, ...UnwrapArraySchema<R>] : []
-  : []
-  : [];
-
 /** Schema definition of logical `AND`.
  *
  * ```ts
@@ -67,9 +60,9 @@ type UnwrapArraySchema<S extends readonly Schema[]> = S extends
  * // value is `"hello"`
  * ```
  */
-export class AndSchema<T extends Schema[]>
-  implements Schema<unknown, And<UnwrapArraySchema<T>>> {
-  #schemas: ReadonlyArray<Schema>;
+export class AndSchema<T extends readonly unknown[]>
+  implements Schema<unknown, And<UnwrapSchema<T>>> {
+  #schemas: readonly unknown[];
 
   constructor(...schemas: T) {
     this.#schemas = schemas;
@@ -77,20 +70,10 @@ export class AndSchema<T extends Schema[]>
 
   assert = new DataFlow().and(
     (value) => {
-      for (const schema of this.#schemas) {
-        try {
-          schema.assert(value);
-        } catch (e) {
-          throw new SchemaError(
-            `Logical error. All assertions must be met.`,
-            {
-              children: [toSchemaError(e)],
-            },
-          );
-        }
-      }
+      const schemas = this.#schemas.map((schema) => toSchema(schema).assert);
+      assertAnd(schemas, value);
     },
-  ).build() as Assert<unknown, And<UnwrapArraySchema<T>>>;
+  ).build() as Assert<unknown, And<UnwrapSchema<T>>>;
 }
 
 /** Schema definition of logical `NOT`.

@@ -1,4 +1,5 @@
 import {
+  assertAnd,
   assertEquals,
   assertOr,
   assertProperty,
@@ -61,6 +62,16 @@ describe("assertOr", () => {
       ),
     )
       .toBeUndefined();
+  });
+});
+
+describe("assertAnd", () => {
+  it("should throw error when one or more assertions is fail", () => {
+    expect(() => assertAnd([assertBoolean] as const, ""))
+      .toThrow();
+
+    expect(() => assertAnd([assertBoolean, assertNull] as const, undefined))
+      .toThrow();
   });
 });
 

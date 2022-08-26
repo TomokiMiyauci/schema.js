@@ -1,11 +1,14 @@
 import {
+  And,
   Assert,
   assertExistsPropertyOf,
   AssertionError,
   assertUndefined,
   has,
   inspect,
+  isError,
   ReturnAssert,
+  ReturnIterable,
 } from "./deps.ts";
 import { Schema, UnwrapSchema } from "./types.ts";
 import { toSchemaError } from "./utils.ts";
@@ -118,6 +121,29 @@ export function assertOr<A extends readonly Assert[]>(
 
   if (errors.length) {
     throw new AggregateError(errors, "All assertions failed.");
+  }
+}
+
+export function assertAnd<A extends Iterable<Assert>>(
+  asserts: A,
+  value: unknown,
+): asserts value is ReturnAssert<ReturnIterable<A>> {
+  for (const assert of Array.from(asserts)) {
+    try {
+      assert?.(value);
+    } catch (e) {
+      const actual = `One or more assertions failed`;
+      const cause = isError(e) ? e : undefined;
+
+      throw new AssertionError(
+        {
+          actual,
+          expect: "All assertions succeeded",
+        },
+        `${actual}.`,
+        { cause },
+      );
+    }
   }
 }
 

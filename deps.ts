@@ -5,6 +5,7 @@ export {
   isBoolean,
   isDate,
   isEmpty,
+  isError,
   isFalse,
   isFalsy,
   isFunction,
@@ -63,6 +64,11 @@ export type Assert<V = unknown, R extends V = V> = (
 export type ReturnAssert<T> = T extends (value: any) => asserts value is infer U
   ? U
   : never;
+
+export type ReturnIterable<T extends Iterable<unknown>> = Exclude<
+  ReturnType<ReturnType<T[typeof Symbol.iterator]>["next"]>,
+  IteratorReturnResult<unknown>
+>["value"];
 
 export type TypeGuard<V, R extends V> = (value: V) => value is R;
 
