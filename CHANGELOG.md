@@ -1,3 +1,10 @@
+# [1.0.0-beta.11](https://github.com/schemaland/schema.js/compare/1.0.0-beta.10...1.0.0-beta.11) (2022-08-26)
+
+
+### Features
+
+* **schemas:** change `ArraySchema` interface what accept array subtype ([5252859](https://github.com/schemaland/schema.js/commit/5252859f42f468f520065d16e19d9eb215054e01))
+
 # [1.0.0-beta.10](https://github.com/schemaland/schema.js/compare/1.0.0-beta.9...1.0.0-beta.10) (2022-08-26)
 
 
