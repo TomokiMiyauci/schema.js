@@ -44,9 +44,13 @@ export type FailResult = {
 /** Utility for unwrap schema.
  *
  * ```ts
- * import { UnwrapSchema, StringSchema, ObjectSchema } from "https://deno.land/x/schema_js@$VERSION/mod.ts"
- * UnwrapSchema<typeof new StringSchema()> // string
- * UnwrapSchema<typeof new SchemaObject({ hello: new String("world")})> // { hello: "world" }
+ * import { UnwrapSchema, StringSchema, ObjectSchema } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+ * const stringSchema = new StringSchema("world");
+ * type a = UnwrapSchema<typeof stringSchema>; // "world"
+ * const objectSchema = new Object({
+ *  hello: stringSchema
+ * })
+ * type b = UnwrapSchema<typeof objectSchema>; // { hello: "world" }
  * ```
  */
 export type UnwrapSchema<
