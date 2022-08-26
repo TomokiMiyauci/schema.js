@@ -1,3 +1,14 @@
+# [1.0.0-beta.9](https://github.com/schemaland/schema.js/compare/1.0.0-beta.8...1.0.0-beta.9) (2022-08-26)
+
+
+### Features
+
+* **schemas:** `ObjectSchema` expand accepting value types ([23c88b1](https://github.com/schemaland/schema.js/commit/23c88b1bfbc9392e85443c35dfd7fdabe74ac06d))
+* **types:** export `Schema` types ([bc8aed7](https://github.com/schemaland/schema.js/commit/bc8aed72d6c6e492e2905e860aed9f6c6e1e9ef5))
+* **validates:** add `validateSchema` that validate value with schema definition ([20be4c3](https://github.com/schemaland/schema.js/commit/20be4c3aa5cce658b10bfed6ec48bc9ab66fb06b))
+* **validates:** export `isSchema` function ([f6c067b](https://github.com/schemaland/schema.js/commit/f6c067b8a3dbdba453c0b9ec3dfe1dc9f7827809))
+* **validates:** export `ValidateResult` types ([38cd161](https://github.com/schemaland/schema.js/commit/38cd161ce5d95574b0d5f1281973cadc627b2216))
+
 # [1.0.0-beta.8](https://github.com/schemaland/schema.js/compare/1.0.0-beta.7...1.0.0-beta.8) (2022-08-26)
 
 
