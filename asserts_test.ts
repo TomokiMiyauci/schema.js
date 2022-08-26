@@ -1,4 +1,4 @@
-import { assertEquals, assertOr } from "./asserts.ts";
+import { assertEquals, assertOr, assertSchema } from "./asserts.ts";
 import {
   assertBoolean,
   assertNull,
@@ -8,6 +8,27 @@ import {
   expect,
   it,
 } from "./dev_deps.ts";
+
+describe("assertSchema", () => {
+  it("should throw error when schema#assert throw error", () => {
+    expect(() =>
+      assertSchema({
+        assert() {
+          throw Error();
+        },
+      }, null)
+    ).toThrow();
+  });
+
+  it("should pass when schema#assert not throw error", () => {
+    expect(
+      assertSchema({
+        assert() {
+        },
+      }, null),
+    ).toBeUndefined();
+  });
+});
 
 describe("assertOr", () => {
   it("should throw error when all assertions is fail", () => {
