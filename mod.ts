@@ -32,3 +32,4 @@ export {
   MinSchema,
 } from "./schemas/unions.ts";
 export { AssertionError } from "./deps.ts";
+export { isSchema } from "./validates.ts";
