@@ -56,10 +56,17 @@ export type PickBy<T, K extends valueOf<T>> = {
   [P in keyof T as T[P] extends K ? P : never]: T[P];
 };
 
-export type Assert<V, R extends V> = (value: V) => asserts value is R;
+export type Assert<V = unknown, R extends V = V> = (
+  value: V,
+) => asserts value is R;
 
-export type Assertion<T extends Function> = T extends
-  (value: any) => asserts value is infer U ? U : unknown;
+export type Assertion<T> = T extends (value: any) => asserts value is infer U
+  ? U
+  : never;
+
+export type ReturnAssert<T> = T extends (value: any) => asserts value is infer U
+  ? U
+  : never;
 
 export type TypeGuard<V, R extends V> = (value: V) => value is R;
 
@@ -99,4 +106,11 @@ export function inspect(value: unknown): string {
   }
 
   return String(value);
+}
+
+export function has<T extends PropertyKey, U extends unknown>(
+  key: PropertyKey,
+  value: U,
+): value is U & { [k in T]: unknown } {
+  return key in Object(value);
 }

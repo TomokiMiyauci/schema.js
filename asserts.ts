@@ -1,7 +1,15 @@
-import { Assertion, AssertionError, inspect } from "./deps.ts";
-import { Schema } from "./types.ts";
+import {
+  Assert,
+  Assertion,
+  AssertionError,
+  assertUndefined,
+  has,
+  inspect,
+  ReturnAssert,
+} from "./deps.ts";
+import { Schema, UnwrapSchema } from "./types.ts";
 import { toSchemaError } from "./utils.ts";
-import { getCount, isMaxLength, isMinLength } from "./type_guards.ts";
+import { getCount, isMaxLength, isMinLength, isSchema } from "./type_guards.ts";
 
 /** Assert whether the value satisfies the schema.
  *
@@ -84,5 +92,56 @@ export function assertMinLength(
       { actual: value.length, expect: length },
       `Must be ${length} or more characters long.`,
     );
+  }
+}
+
+export function assertOr<A extends readonly Assert[]>(
+  asserts: A,
+  value: unknown,
+): asserts value is ReturnAssert<A[number]> {
+  const errors: unknown[] = [];
+
+  for (const assert of Array.from(asserts)) {
+    try {
+      assert?.(value);
+      return;
+    } catch (e) {
+      errors.push(e);
+    }
+  }
+
+  throw new AggregateError(errors, "All assertions failed.");
+}
+
+export function assertEquals<T = unknown, U extends T = T>(
+  a: T,
+  b: U,
+  compare: (a: T, b: T) => boolean = Object.is,
+): asserts b is U {
+  const result = compare(a, b);
+
+  if (!result) {
+    throw new AssertionError({
+      actual: b,
+      expect: a,
+    });
+  }
+}
+
+export function assertPartialProperty<T>(
+  base: T,
+  value: unknown,
+): asserts value is Partial<UnwrapSchema<T>> {
+  for (const key in base) {
+    if (!has(key, value)) continue;
+
+    const maybeSchema = base[key];
+    const v = value[key];
+
+    if (isSchema(maybeSchema)) {
+      assertOr([assertUndefined, maybeSchema.assert], v);
+    } else {
+      assertEquals<unknown>(maybeSchema, v);
+    }
   }
 }
