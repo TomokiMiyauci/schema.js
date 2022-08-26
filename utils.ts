@@ -1,6 +1,8 @@
 import { Assert, AssertionError } from "./deps.ts";
 import { SchemaError } from "./errors.ts";
-import { isSchemaError } from "./validates.ts";
+import { isSchema, isSchemaError } from "./validates.ts";
+import { assertEquals } from "./asserts.ts";
+import { Schema, SchemaContext } from "./types.ts";
 
 export class DataFlow<In = unknown, Out extends In = In> {
   assertions: Assert<In, Out>[] = [];
@@ -34,4 +36,20 @@ export function toSchemaError(e: unknown): SchemaError {
   }
 
   return new SchemaError(`Unknown error has occurred.`);
+}
+
+/** Convert value to schema. */
+export function toSchema(
+  value: unknown,
+  ctx: SchemaContext = { equality: Object.is },
+): Schema {
+  if (isSchema(value)) return value;
+
+  class S implements Schema {
+    assert: (value: unknown) => asserts value is unknown = (value2) => {
+      assertEquals(value, value2, ctx.equality);
+    };
+  }
+
+  return new S();
 }

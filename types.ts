@@ -76,3 +76,12 @@ export type UnwrapSchema<
  * ```
  */
 export type InferSchema<S extends Schema> = ReturnAssert<S["assert"]>;
+
+/** Schema context. */
+export interface SchemaContext {
+  /** Definition of equality.
+   *
+   * @default {@link Object.is}
+   */
+  equality: (a: unknown, b: unknown) => boolean;
+}
