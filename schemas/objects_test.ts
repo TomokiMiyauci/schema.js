@@ -1,4 +1,4 @@
-import { assertSchemaRecord, ObjectSchema } from "./objects.ts";
+import { ObjectSchema } from "./objects.ts";
 import { describe, expect, it } from "../dev_deps.ts";
 import {
   NullSchema,
@@ -6,59 +6,6 @@ import {
   StringSchema,
   UndefinedSchema,
 } from "./scalers.ts";
-import { assertObject } from "../deps.ts";
-
-describe("assertSchemaRecord", () => {
-  it("should throw error", () => {
-    expect(() => assertSchemaRecord({ a: new StringSchema() }, {})).toThrow();
-  });
-
-  it("should throw error when the key is not exists", () => {
-    expect(() =>
-      assertSchemaRecord({
-        a: new UndefinedSchema(),
-      }, {})
-    ).toThrow();
-  });
-
-  it("should throw error when the nested schema record is invalid", () => {
-    expect(
-      () =>
-        assertSchemaRecord({
-          a: {
-            assert(value: unknown): asserts value is object {
-              assertObject(value);
-
-              assertSchemaRecord({
-                b: new StringSchema(),
-              }, value);
-            },
-          },
-        }, { a: { b: 0 } }),
-    ).toThrow();
-  });
-
-  it("should not throw error", () => {
-    const record = { a: new StringSchema() };
-    expect(assertSchemaRecord(record, { a: "" })).toBeUndefined();
-  });
-
-  it("should not throw error when the schema record is nested object", () => {
-    expect(
-      assertSchemaRecord({
-        a: {
-          assert(value: unknown): asserts value is object {
-            assertObject(value);
-
-            assertSchemaRecord({
-              b: new StringSchema(),
-            }, value);
-          },
-        },
-      }, { a: { b: "" } }),
-    ).toBeUndefined();
-  });
-});
 
 describe("ObjectSchema", () => {
   it("should throw error when the data type is not object", () => {

@@ -3,6 +3,7 @@ export { expect } from "https://deno.land/x/unitest@v1.0.0-beta.82/mod.ts";
 export {
   assertBoolean,
   assertNull,
+  assertObject,
   assertString,
   assertUndefined,
 } from "https://deno.land/x/assertion@1.0.0-beta.1/mod.ts";

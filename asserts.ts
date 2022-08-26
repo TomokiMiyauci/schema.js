@@ -1,5 +1,6 @@
 import {
   Assert,
+  assertExistsPropertyOf,
   Assertion,
   AssertionError,
   assertUndefined,
@@ -9,7 +10,13 @@ import {
 } from "./deps.ts";
 import { Schema, UnwrapSchema } from "./types.ts";
 import { toSchemaError } from "./utils.ts";
-import { getCount, isMaxLength, isMinLength, isSchema } from "./validates.ts";
+import {
+  getConstructor,
+  getCount,
+  isMaxLength,
+  isMinLength,
+  isSchema,
+} from "./validates.ts";
 
 /** Assert whether the value satisfies the schema.
  *
@@ -143,5 +150,40 @@ export function assertPartialProperty<T>(
     } else {
       assertEquals<unknown>(maybeSchema, v);
     }
+  }
+}
+
+export function assertProperty<T>(
+  record: T,
+  value: object,
+): asserts value is UnwrapSchema<T> {
+  assertSameConstructor(record, value);
+
+  for (const key in record) {
+    assertExistsPropertyOf(key, value);
+
+    const maybeSchema = record[key];
+    const v = value[key];
+
+    if (isSchema(maybeSchema)) {
+      maybeSchema.assert?.(v);
+    } else {
+      assertEquals<unknown>(maybeSchema, v);
+    }
+  }
+}
+
+export function assertSameConstructor(
+  base: unknown,
+  value: unknown,
+): asserts value is unknown {
+  const baseConstructor = getConstructor(base);
+  const valueConstructor = getConstructor(value);
+
+  if (baseConstructor !== valueConstructor) {
+    throw new AssertionError({
+      expect: baseConstructor,
+      actual: valueConstructor,
+    });
   }
 }

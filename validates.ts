@@ -53,3 +53,7 @@ export function isMinLength(
 export function getCount(value: Iterable<unknown>): number {
   return Array.from(value).length;
 }
+
+export function getConstructor(value: unknown): Function {
+  return new Object(value).constructor;
+}

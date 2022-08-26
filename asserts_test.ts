@@ -1,7 +1,14 @@
-import { assertEquals, assertOr, assertSchema } from "./asserts.ts";
+import {
+  assertEquals,
+  assertOr,
+  assertProperty,
+  assertSameConstructor,
+  assertSchema,
+} from "./asserts.ts";
 import {
   assertBoolean,
   assertNull,
+  assertObject,
   assertString,
   assertUndefined,
   describe,
@@ -73,5 +80,80 @@ describe("assertEquals", () => {
       ),
     )
       .toBeUndefined();
+  });
+});
+
+describe("assertProperty", () => {
+  it("should throw error when the constructor is wrong", () => {
+    expect(() => assertProperty("", {})).toThrow();
+    expect(() => assertProperty([], {})).toThrow();
+  });
+
+  it("should throw error when the property value is not equal", () => {
+    expect(() => assertProperty({ a: "" }, {})).toThrow();
+    expect(() => assertProperty({ a: "" }, { a: "t" })).toThrow();
+    expect(() => assertProperty({ a: "", b: 0 }, { a: "" })).toThrow();
+    expect(() => assertProperty({ a: "", b: 0 }, { a: "", b: 1 })).toThrow();
+    expect(() => assertProperty({ a: {} }, { a: {} })).toThrow();
+  });
+
+  it("should throw error when the property is not match to schema", () => {
+    expect(
+      () =>
+        assertProperty({
+          a: {
+            assert(value: unknown): asserts value is object {
+              assertObject(value);
+            },
+          },
+        }, { a: "" }),
+    ).toThrow();
+  });
+
+  it("should not throw error", () => {
+    expect(assertProperty({}, { a: "" })).toBeUndefined();
+    expect(assertProperty({ a: "" }, { a: "" })).toBeUndefined();
+    expect(assertProperty({}, { a: "" })).toBeUndefined();
+  });
+
+  it("should not throw error when the schema record is nested object", () => {
+    expect(
+      assertProperty({
+        a: {
+          assert(value: unknown): asserts value is object {
+            assertObject(value);
+
+            assertProperty({
+              b: {
+                assert: assertString,
+              },
+            }, value);
+          },
+        },
+      }, { a: { b: "" } }),
+    ).toBeUndefined();
+  });
+});
+
+describe("assertSameConstructor", () => {
+  it("should throw error when the constructors is not equal", () => {
+    expect(() => assertSameConstructor("", 0)).toThrow();
+    expect(() => assertSameConstructor(null, 0)).toThrow();
+    expect(() => assertSameConstructor(false, "")).toThrow();
+    expect(() => assertSameConstructor("", {})).toThrow();
+    expect(() => assertSameConstructor("", null)).toThrow();
+    expect(() => assertSameConstructor("", undefined)).toThrow();
+    expect(() => assertSameConstructor(0n, 0)).toThrow();
+    expect(() => assertSameConstructor([], {})).toThrow();
+  });
+
+  it("should pass", () => {
+    expect(assertSameConstructor(null, {})).toBeUndefined();
+    expect(assertSameConstructor(undefined, {})).toBeUndefined();
+    expect(assertSameConstructor(undefined, null)).toBeUndefined();
+    expect(assertSameConstructor(undefined, new Object())).toBeUndefined();
+    expect(assertSameConstructor({}, new Object())).toBeUndefined();
+    expect(assertSameConstructor("", "a")).toBeUndefined();
+    expect(assertSameConstructor([], [])).toBeUndefined();
   });
 });
