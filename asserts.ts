@@ -9,7 +9,7 @@ import {
 } from "./deps.ts";
 import { Schema, UnwrapSchema } from "./types.ts";
 import { toSchemaError } from "./utils.ts";
-import { getCount, isMaxLength, isMinLength, isSchema } from "./type_guards.ts";
+import { getCount, isMaxLength, isMinLength, isSchema } from "./validates.ts";
 
 /** Assert whether the value satisfies the schema.
  *

@@ -1,6 +1,6 @@
 import { Assert, AssertionError } from "./deps.ts";
 import { SchemaError } from "./errors.ts";
-import { isSchemaError } from "./type_guards.ts";
+import { isSchemaError } from "./validates.ts";
 
 export class DataFlow<In = unknown, Out extends In = In> {
   assertions: Assert<In, Out>[] = [];
