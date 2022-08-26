@@ -416,8 +416,8 @@ import {
 
 const value: unknown = undefined;
 assertSchema(new ArraySchema(), value);
-// value is `any[]`
-assertSchema(new ArraySchema(new StringSchema()), value);
+// value is `{}[]`
+assertSchema(new ArraySchema([new StringSchema()]), value);
 // value is `string[]`
 ```
 
