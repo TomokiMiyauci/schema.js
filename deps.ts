@@ -1,46 +1,52 @@
 // TODO:(miyauci) All modules here should be external modules.
 
 export {
+  isBigint,
   isBoolean,
   isDate,
   isEmpty,
+  isError,
+  isFalse,
+  isFalsy,
   isFunction,
   isNegativeNumber,
+  isNonNegativeInteger,
   isNull,
   isNumber,
   isObject,
   isPlainObject,
   isString,
   isSymbol,
+  isTruthy,
   isUndefined,
-} from "https://deno.land/x/isx@1.0.0-beta.19/mod.ts";
-import { isString } from "https://deno.land/x/isx@1.0.0-beta.19/mod.ts";
-
-type MaybeFalsy = typeof NaN | 0 | -0 | 0n | "" | null | undefined | false;
-
-type MaybeTruthy =
-  | Extract<string, "">
-  | Extract<number, typeof NaN | 0 | -0>
-  | Extract<bigint, 0n>
-  | symbol
-  | true
-  | object;
-
-export function isFalsy(value: unknown): value is MaybeFalsy {
-  return !value;
-}
-
-export function isBigint(value: unknown): value is bigint {
-  return typeof value === "bigint";
-}
-
-export function isTruthy(value: unknown): value is MaybeTruthy {
-  return !!value;
-}
-
-export function isNonNegativeInteger(value: number): boolean {
-  return Number.isInteger(value) && value >= 0;
-}
+} from "https://deno.land/x/isx@1.0.0-beta.20/mod.ts";
+import {
+  isBigint,
+  isString,
+} from "https://deno.land/x/isx@1.0.0-beta.20/mod.ts";
+export {
+  assertArray,
+  assertBigint,
+  assertBoolean,
+  assertCountIs,
+  assertDate,
+  assertEmailFormat,
+  assertExistsPropertyOf,
+  assertFunction,
+  assertGreaterThanOrEqualTo,
+  AssertionError,
+  assertIs,
+  assertLengthIs,
+  assertLessThanOrEqualTo,
+  assertNoNNegativeInteger,
+  assertNull,
+  assertNumber,
+  assertObject,
+  assertSameCount,
+  assertString,
+  assertSymbol,
+  assertUndefined,
+} from "https://deno.land/x/assertion@1.0.0-beta.1/mod.ts";
 
 export type valueOf<T> = T[keyof T];
 
@@ -51,10 +57,18 @@ export type PickBy<T, K extends valueOf<T>> = {
   [P in keyof T as T[P] extends K ? P : never]: T[P];
 };
 
-export type Assert<V, R extends V> = (value: V) => asserts value is R;
+export type Assert<V = unknown, R extends V = V> = (
+  value: V,
+) => asserts value is R;
 
-export type Assertion<T extends Function> = T extends
-  (value: any) => asserts value is infer U ? U : unknown;
+export type ReturnAssert<T> = T extends (value: any) => asserts value is infer U
+  ? U
+  : never;
+
+export type ReturnIterable<T extends Iterable<unknown>> = Exclude<
+  ReturnType<ReturnType<T[typeof Symbol.iterator]>["next"]>,
+  IteratorReturnResult<unknown>
+>["value"];
 
 export type TypeGuard<V, R extends V> = (value: V) => value is R;
 
@@ -94,4 +108,11 @@ export function inspect(value: unknown): string {
   }
 
   return String(value);
+}
+
+export function has<T extends PropertyKey, U extends unknown>(
+  key: PropertyKey,
+  value: U,
+): value is U & { [k in T]: unknown } {
+  return key in Object(value);
 }

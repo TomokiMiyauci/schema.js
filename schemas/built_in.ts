@@ -1,8 +1,8 @@
 import { CollectiveTypeSchema } from "./utils.ts";
-import { Schema, UnwrapSchema } from "../types.ts";
-import { DataFlow, toSchemaError } from "../utils.ts";
-import { assertArray, assertDate, assertObject } from "../asserts.ts";
-import { SchemaError } from "../errors.ts";
+import { UnwrapSchema } from "../types.ts";
+import { DataFlow, toSchema } from "../utils.ts";
+import { assertArray, assertDate, isUndefined } from "../deps.ts";
+import { assertOr } from "../asserts.ts";
 
 /** Schema definition of built-in `Array`.
  *
@@ -11,42 +11,31 @@ import { SchemaError } from "../errors.ts";
  *
  * const value: unknown = undefined;
  * assertSchema(new ArraySchema(), value);
- * // value is `any[]`
- * assertSchema(new ArraySchema(new StringSchema()), value);
+ * // value is `{}[]`
+ * assertSchema(new ArraySchema([new StringSchema()]), value);
  * // value is `string[]`
  * ```
  */
-export class ArraySchema<T extends Schema | undefined = undefined>
-  extends CollectiveTypeSchema<
-    unknown,
-    T extends Schema ? UnwrapSchema<T>[] : any[]
-  > {
+export class ArraySchema<T>
+  extends CollectiveTypeSchema<unknown, UnwrapSchema<T>[]> {
   protected override assertion: (
     value: unknown,
-  ) => asserts value is T extends Schema<unknown, unknown> ? UnwrapSchema<T>[]
-    : any[];
+  ) => asserts value is UnwrapSchema<T[]>;
 
-  constructor(private subType?: T) {
+  constructor(private subType?: readonly T[]) {
     super();
 
-    if (subType) {
-      this.assertion = new DataFlow(assertObject).and(assertArray).and(
-        (value) => {
-          for (const [index, v] of value.entries()) {
-            try {
-              subType.assert?.(v);
-            } catch (e) {
-              const error = toSchemaError(e);
-              throw new SchemaError(`Invalid field. $[${index}]`, {
-                children: [error],
-              });
-            }
-          }
-        },
-      ).build();
+    if (isUndefined(this.subType)) {
+      this.assertion = assertArray;
     } else {
-      this.assertion = new DataFlow(assertObject).and(
-        assertArray,
+      const subType = this.subType;
+      this.assertion = new DataFlow().and(assertArray).and(
+        (value) => {
+          value.forEach((v) => {
+            const assertions = subType.map((v) => toSchema(v).assert);
+            assertOr(assertions, v);
+          });
+        },
       ).build();
     }
   }

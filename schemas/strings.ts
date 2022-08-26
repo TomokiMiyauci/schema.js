@@ -1,11 +1,6 @@
-import {
-  assertEmailFormat,
-  assertLength,
-  assertMaxLength,
-  assertMinLength,
-} from "../asserts.ts";
 import { CollectiveTypeSchema } from "./utils.ts";
-import { arity } from "../deps.ts";
+import { arity, assertEmailFormat, assertLengthIs } from "../deps.ts";
+import { assertMaxLength, assertMinLength } from "../asserts.ts";
 
 export class LengthSchema<T extends string>
   extends CollectiveTypeSchema<string, T> {
@@ -13,7 +8,7 @@ export class LengthSchema<T extends string>
 
   constructor(private length: number) {
     super();
-    this.assertion = arity(assertLength, length);
+    this.assertion = arity(assertLengthIs, length);
   }
 
   protected override create = () => new LengthSchema(this.length);

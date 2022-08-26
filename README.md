@@ -8,7 +8,7 @@ Universal, tiny schema for JavaScript data types.
 
 [![deno land](http://img.shields.io/badge/available%20on-deno.land/x-lightgrey.svg?logo=deno)](https://deno.land/x/schema_js)
 [![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/schema_js/mod.ts)
-[![codecov](https://codecov.io/gh/schemaland/schema.js/branch/main/graph/badge.svg?token=nHsoT44zg6)](https://codecov.io/gh/schemaland/schema.js)
+[![codecov](https://codecov.io/gh/schemaland/schema.js/branch/beta/graph/badge.svg?token=nHsoT44zg6)](https://codecov.io/gh/schemaland/schema.js)
 
 </div>
 
@@ -71,7 +71,7 @@ const functionSchema = new FunctionSchema();
 const nullSchema = new NullSchema();
 ```
 
-## Assert schema
+## Assert with schema
 
 Assert whether the value satisfies the schema.
 
@@ -86,7 +86,31 @@ assertSchema(new BooleanSchema(), value);
 // value is `boolean`
 assertSchema(new BooleanSchema(true), value);
 // value is `true`
-assertSchema(new BooleanSchema(false), value); // throws AggregateError
+assertSchema(new BooleanSchema(false), value); // throws SchemaError
+```
+
+## Validate with schema
+
+If you do not want to throw an error, you can use the `validateSchema` function.
+
+```ts
+import {
+  ObjectSchema,
+  StringSchema,
+  validateSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+
+const schema = new ObjectSchema({
+  name: new StringSchema(),
+  type: new StringSchema("dog"),
+});
+
+const result = validateSchema(schema, {});
+if (result.pass) {
+  result.data; // { name: string, type: "dog" }
+} else {
+  result.errors; // SchemaError[]
+}
 ```
 
 ## Additional subtype assertion (narrowing)
@@ -237,6 +261,26 @@ const emailFormatAndLessThan20 = new StringEmailSchema().and(
 assertSchema(emailFormatAndLessThan20, "contact@test.test");
 ```
 
+## Partial schema
+
+Schema of optional properties.
+
+```ts
+import {
+  assertSchema,
+  FunctionSchema,
+  PartialSchema,
+  StringSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+
+const abilitySchema = new PartialSchema({
+  fly: new FunctionSchema(),
+});
+const model = { type: "bird" } as const;
+assertSchema(abilitySchema, model);
+// { type: "bird", fly?: Function }
+```
+
 ## Union subtype schema
 
 The union subtype schema is a schema that can be used for multiple types.
@@ -372,8 +416,8 @@ import {
 
 const value: unknown = undefined;
 assertSchema(new ArraySchema(), value);
-// value is `any[]`
-assertSchema(new ArraySchema(new StringSchema()), value);
+// value is `{}[]`
+assertSchema(new ArraySchema([new StringSchema()]), value);
 // value is `string[]`
 ```
 

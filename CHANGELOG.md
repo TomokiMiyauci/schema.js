@@ -1,3 +1,58 @@
+# [1.0.0-beta.11](https://github.com/schemaland/schema.js/compare/1.0.0-beta.10...1.0.0-beta.11) (2022-08-26)
+
+
+### Features
+
+* **schemas:** change `ArraySchema` interface what accept array subtype ([5252859](https://github.com/schemaland/schema.js/commit/5252859f42f468f520065d16e19d9eb215054e01))
+
+# [1.0.0-beta.10](https://github.com/schemaland/schema.js/compare/1.0.0-beta.9...1.0.0-beta.10) (2022-08-26)
+
+
+### Bug Fixes
+
+* **asserts:** fix to `orSchema` when assertion is none ([f1341ed](https://github.com/schemaland/schema.js/commit/f1341ed5e4df2578af04d04192e3b9b303a624de))
+
+
+### Features
+
+* **schemas:** `AndSchema` accept all values but also schemas ([04022e6](https://github.com/schemaland/schema.js/commit/04022e66def2e61463f4ba1b53914e5304f18a33))
+* **schemas:** `NotSchema` accept all values but also schema ([4528ad0](https://github.com/schemaland/schema.js/commit/4528ad0a2bc005487ab0c91c2c109ed7dc00e2b1))
+* **schemas:** `OrSchema` accept any values but also schemas ([a682091](https://github.com/schemaland/schema.js/commit/a682091e4e50ed511376eabd3038f5691b6ca5a7))
+
+# [1.0.0-beta.9](https://github.com/schemaland/schema.js/compare/1.0.0-beta.8...1.0.0-beta.9) (2022-08-26)
+
+
+### Features
+
+* **schemas:** `ObjectSchema` expand accepting value types ([23c88b1](https://github.com/schemaland/schema.js/commit/23c88b1bfbc9392e85443c35dfd7fdabe74ac06d))
+* **types:** export `Schema` types ([bc8aed7](https://github.com/schemaland/schema.js/commit/bc8aed72d6c6e492e2905e860aed9f6c6e1e9ef5))
+* **validates:** add `validateSchema` that validate value with schema definition ([20be4c3](https://github.com/schemaland/schema.js/commit/20be4c3aa5cce658b10bfed6ec48bc9ab66fb06b))
+* **validates:** export `isSchema` function ([f6c067b](https://github.com/schemaland/schema.js/commit/f6c067b8a3dbdba453c0b9ec3dfe1dc9f7827809))
+* **validates:** export `ValidateResult` types ([38cd161](https://github.com/schemaland/schema.js/commit/38cd161ce5d95574b0d5f1281973cadc627b2216))
+
+# [1.0.0-beta.8](https://github.com/schemaland/schema.js/compare/1.0.0-beta.7...1.0.0-beta.8) (2022-08-26)
+
+
+### Bug Fixes
+
+* **type_guards:** fix `isSchema` logic ([f33abf0](https://github.com/schemaland/schema.js/commit/f33abf02ca132c428df00a8fdf53bc8e58211928))
+
+
+### Features
+
+* **asserts:** add assertion for equality and partial property ([1c5e123](https://github.com/schemaland/schema.js/commit/1c5e12307b772c08e4072f32e5786694a3646cc0))
+* **schemas:** add schema for optional properties ([00953db](https://github.com/schemaland/schema.js/commit/00953dbb0dd92b45c34ba87d900ea3fefaf17793))
+* **types:** export `UnwrapSchema` types ([6cf89fe](https://github.com/schemaland/schema.js/commit/6cf89fe7138bccb85f35121489ecfa29b53f8cbc))
+* **types:** improve `UnwrapSchema` types ([18b4b36](https://github.com/schemaland/schema.js/commit/18b4b365839fa9d485691a9040d41c9b41523bdd))
+* **types:** improve `UnwrapSchema` types infer ([048be33](https://github.com/schemaland/schema.js/commit/048be334bc92b360e176b4d422bb9a6022bb6fe2))
+
+# [1.0.0-beta.7](https://github.com/schemaland/schema.js/compare/1.0.0-beta.6...1.0.0-beta.7) (2022-08-25)
+
+
+### Features
+
+* **utils:** improve error message ([2d57a79](https://github.com/schemaland/schema.js/commit/2d57a799d5dd2ac2d5f765d53ef9584739ad0094))
+
 # [1.0.0-beta.6](https://github.com/schemaland/schema.js/compare/1.0.0-beta.5...1.0.0-beta.6) (2022-08-25)
 
 

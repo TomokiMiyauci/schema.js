@@ -1,34 +1,23 @@
 import {
-  Assertion,
+  Assert,
+  assertExistsPropertyOf,
+  AssertionError,
+  assertUndefined,
+  has,
   inspect,
-  isBigint,
-  isBoolean,
-  isDate,
-  isFunction,
-  isNonNegativeInteger,
-  isNull,
-  isNumber,
-  isObject,
-  isString,
-  isSymbol,
-  isUndefined,
+  isError,
+  ReturnAssert,
+  ReturnIterable,
 } from "./deps.ts";
-import { Schema } from "./types.ts";
+import { Schema, SuperType, UnwrapSchema } from "./types.ts";
+import { toSchemaError } from "./utils.ts";
 import {
-  createAssertFromTypeGuard,
-  createSchemaErrorThrower,
-  toSchemaError,
-} from "./utils.ts";
-import { AssertionError } from "./errors.ts";
-import {
+  getConstructor,
   getCount,
-  isEmailFormat,
-  isLengthBy,
   isMaxLength,
   isMinLength,
-  isSameCount,
-  isSameCountBy,
-} from "./type_guards.ts";
+  isSchema,
+} from "./validates.ts";
 
 /** Assert whether the value satisfies the schema.
  *
@@ -54,138 +43,11 @@ export function assertSchema<
 >(
   schema: S,
   value: T,
-): asserts value is Assertion<S["assert"]> {
+): asserts value is ReturnAssert<S["assert"]> {
   try {
     schema.assert(value);
   } catch (e) {
     throw toSchemaError(e);
-  }
-}
-
-export function assertString(value: unknown): asserts value is string {
-  createAssertFromTypeGuard(
-    isString,
-    createSchemaErrorThrower("string"),
-  ).call(null, value);
-}
-
-export function assertBoolean(value: unknown): asserts value is boolean {
-  createAssertFromTypeGuard(
-    isBoolean,
-    createSchemaErrorThrower("boolean"),
-  ).call(null, value);
-}
-
-export function assertNumber(value: unknown): asserts value is number {
-  createAssertFromTypeGuard(
-    isNumber,
-    createSchemaErrorThrower("number"),
-  ).call(null, value);
-}
-
-export function assertBigint(value: unknown): asserts value is bigint {
-  createAssertFromTypeGuard(
-    isBigint,
-    createSchemaErrorThrower("number"),
-  ).call(null, value);
-}
-
-export function assertNull(value: unknown): asserts value is null {
-  createAssertFromTypeGuard(
-    isNull,
-    createSchemaErrorThrower("null"),
-  ).call(null, value);
-}
-
-export function assertUndefined(value: unknown): asserts value is undefined {
-  createAssertFromTypeGuard(
-    isUndefined,
-    createSchemaErrorThrower("undefined"),
-  ).call(null, value);
-}
-
-export function assertSymbol(value: unknown): asserts value is symbol {
-  createAssertFromTypeGuard(
-    isSymbol,
-    createSchemaErrorThrower("symbol"),
-  ).call(null, value);
-}
-
-export function assertFunction(value: unknown): asserts value is Function {
-  createAssertFromTypeGuard(
-    isFunction,
-    createSchemaErrorThrower("function"),
-  ).call(null, value);
-}
-
-export function assertObject(value: unknown): asserts value is object {
-  createAssertFromTypeGuard(
-    isObject,
-    createSchemaErrorThrower("object"),
-  ).call(null, value);
-}
-
-export function assertIs<T>(base: T, value: unknown): asserts value is T {
-  const valid = Object.is(base, value);
-
-  if (!valid) {
-    throw new AssertionError(
-      { expect: base, actual: value },
-      `Not equal: ${inspect(base)} <- ${inspect(value)}`,
-    );
-  }
-}
-
-export function assertArray(value: unknown): asserts value is any[] {
-  const result = Array.isArray(value);
-
-  if (!result) {
-    const constructor = new Object(value).constructor;
-    const name = constructor.name;
-    throw new AssertionError(
-      { expect: Array, actual: constructor },
-      `Invalid constructor. ${inspect("Array")} <- ${inspect(name)}`,
-    );
-  }
-}
-
-export function assertLength(
-  length: number,
-  value: { length: number },
-): asserts value is string {
-  if (!isLengthBy(length, value)) {
-    throw new AssertionError({
-      actual: value.length,
-      expect: length,
-    }, `Must be ${length} length.`);
-  }
-}
-
-export function assertSameCountBy(
-  count: number | bigint,
-  value: Iterable<unknown>,
-): asserts value is string {
-  const actual = Array.from(value).length;
-
-  if (!isSameCountBy(count, value)) {
-    throw new AssertionError({
-      expect: count,
-      actual,
-    }, `Must be ${count} element number.`);
-  }
-}
-
-export function assertSameCount(
-  base: Iterable<unknown>,
-  value: Iterable<unknown>,
-): asserts value is string {
-  if (!isSameCount(base, value)) {
-    const baseSize = Array.from(base).length;
-    const valueSize = Array.from(value).length;
-    throw new AssertionError(
-      { actual: valueSize, expect: baseSize },
-      `Different sizes. ${inspect(baseSize)} <- ${inspect(valueSize)}`,
-    );
   }
 }
 
@@ -241,73 +103,130 @@ export function assertMinLength(
   }
 }
 
-export function assertEmailFormat(value: string): asserts value is string {
-  if (!isEmailFormat(value)) {
-    throw new AssertionError(
-      { actual: value, expect: "email format" },
-      `Invalid email format.`,
-    );
+export function assertOr<A extends readonly Assert[]>(
+  asserts: A,
+  value: unknown,
+): asserts value is ReturnAssert<A[number]> {
+  const errors: unknown[] = [];
+
+  for (const assert of Array.from(asserts)) {
+    try {
+      assert?.(value);
+      return;
+    } catch (e) {
+      errors.push(e);
+    }
+  }
+
+  if (errors.length) {
+    throw new AggregateError(errors, "All assertions failed.");
   }
 }
 
-export type Operand = string | number | bigint | boolean;
+export function assertAnd<A extends Iterable<Assert>>(
+  asserts: A,
+  value: unknown,
+): asserts value is ReturnAssert<ReturnIterable<A>> {
+  for (const assert of Array.from(asserts)) {
+    try {
+      assert?.(value);
+    } catch (e) {
+      const actual = `One or more assertions failed`;
+      const cause = isError(e) ? e : undefined;
 
-export function assertGreaterThanOrEqualTo(
-  base: Operand,
-  value: Operand,
-): asserts value is Operand {
-  if (base > value) {
-    throw new AssertionError(
-      { expect: base, actual: value },
-      `Invalid range. ${inspect(base)} > ${inspect(value)}`,
-    );
+      throw new AssertionError(
+        {
+          actual,
+          expect: "All assertions succeeded",
+        },
+        `${actual}.`,
+        { cause },
+      );
+    }
   }
 }
 
-export function assertLessThanOrEqualTo(
-  base: Operand,
-  value: Operand,
-): asserts value is Operand {
-  if (base < value) {
-    throw new AssertionError(
-      { expect: base, actual: value },
-      `Invalid range. ${inspect(base)} < ${inspect(value)}`,
-    );
-  }
-}
+export function assertEquals<T = unknown, U extends T = T>(
+  a: T,
+  b: U,
+  compare: (a: T, b: T) => boolean = Object.is,
+): asserts b is U {
+  const result = compare(a, b);
 
-export function assertNoNNegativeInteger(
-  value: number,
-): asserts value is number {
-  if (!isNonNegativeInteger(value)) {
-    const expect = "non negative integer";
+  if (!result) {
     throw new AssertionError({
-      expect,
-      actual: value,
-    }, `The argument must be ${expect}.`);
-  }
-}
-
-export function assertDate(value: unknown): asserts value is Date {
-  if (!isDate(value)) {
-    const constructor = new Object(value).constructor;
-    const name = constructor.name;
-
-    throw new AssertionError({
-      actual: value,
-      expect: Date,
-    }, `Invalid constructor. ${inspect(Date.name)} <- ${inspect(name)}`);
-  }
-}
-
-export function assertHasProperty<T extends PropertyKey>(
-  name: T,
-  value: object,
-): asserts value is { [k in T]: unknown } {
-  if (!Object.hasOwn(value, name)) {
-    throw new AssertionError({
-      actual: `not has ${inspect(name)}`,
-      expect: `has ${inspect(name)}`,
+      actual: b,
+      expect: a,
     });
   }
+}
+
+export function assertPartialProperty<T>(
+  base: T,
+  value: unknown,
+): asserts value is Partial<UnwrapSchema<T>> {
+  for (const key in base) {
+    if (!has(key, value)) continue;
+
+    const maybeSchema = base[key];
+    const v = value[key];
+
+    if (isSchema(maybeSchema)) {
+      assertOr([assertUndefined, maybeSchema.assert], v);
+    } else {
+      assertEquals<unknown>(maybeSchema, v);
+    }
+  }
+}
+
+export function assertProperty<T>(
+  record: T,
+  value: object,
+): asserts value is UnwrapSchema<T> {
+  assertSameConstructor(record, value);
+
+  for (const key in record) {
+    assertExistsPropertyOf(key, value);
+
+    const maybeSchema = record[key];
+    const v = value[key];
+
+    if (isSchema(maybeSchema)) {
+      maybeSchema.assert?.(v);
+    } else {
+      assertEquals<unknown>(maybeSchema, v);
+    }
+  }
+}
+
+export function assertSameConstructor(
+  base: unknown,
+  value: unknown,
+): asserts value is unknown {
+  const baseConstructor = getConstructor(base);
+  const valueConstructor = getConstructor(value);
+
+  if (baseConstructor !== valueConstructor) {
+    throw new AssertionError({
+      expect: baseConstructor,
+      actual: valueConstructor,
+    });
+  }
+}
+
+export function assertNot<T extends Assert>(
+  assert: T,
+  value: unknown,
+): asserts value is Exclude<SuperType, ReturnAssert<T>> {
+  try {
+    assert(value);
+  } catch {
+    // noop
+    return;
+  }
+
+  throw new AssertionError({
+    actual: "Assertion is succeed",
+    expect: "Assertion is failed",
+  });
 }

@@ -1,6 +1,4 @@
-import { SchemaError } from "./errors.ts";
-import { valueOf } from "./deps.ts";
-import { Assertion } from "./deps.ts";
+import { ReturnAssert, valueOf } from "./deps.ts";
 
 export interface ScalerTypeMap {
   string: string;
@@ -25,26 +23,32 @@ export type SuperType = valueOf<SuperTypeMap>;
 
 export type TypeStr = keyof SuperTypeMap;
 
+/** Schema specification. */
+
 export interface Schema<In = unknown, Out extends In = In> {
+  /** Assert the {@link In input} is {@link Out output}. */
   assert: (value: In) => asserts value is Out;
 }
 
-export type Result<T = unknown> =
-  | SuccessResult<T>
-  | FailResult;
-
-export type SuccessResult<T = unknown> = {
-  data: T;
-};
-
-export type FailResult = {
-  errors: SchemaError[];
-};
-
+/** Utility for unwrap schema.
+ *
+ * ```ts
+ * import { UnwrapSchema, StringSchema, ObjectSchema } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+ * const stringSchema = new StringSchema("world");
+ * type a = UnwrapSchema<typeof stringSchema>; // "world"
+ * const objectSchema = new Object({
+ *  hello: stringSchema
+ * })
+ * type b = UnwrapSchema<typeof objectSchema>; // { hello: "world" }
+ * ```
+ */
 export type UnwrapSchema<
-  S extends object,
-> = S extends Schema<unknown, object> ? UnwrapSchema<Assertion<S["assert"]>>
-  : S;
+  S,
+> = S extends Schema ? UnwrapSchema<ReturnAssert<S["assert"]>> : {
+  [k in keyof S]: S[k] extends Schema
+    ? UnwrapSchema<ReturnAssert<S[k]["assert"]>>
+    : S[k];
+};
 
 /** Type inference of TypeScript data types from the schema.
  *
@@ -71,4 +75,13 @@ export type UnwrapSchema<
  * type Schema = InferSchema<typeof schema>;
  * ```
  */
-export type InferSchema<S extends Schema> = Assertion<S["assert"]>;
+export type InferSchema<S extends Schema> = ReturnAssert<S["assert"]>;
+
+/** Schema context. */
+export interface SchemaContext {
+  /** Definition of equality.
+   *
+   * @default {@link Object.is}
+   */
+  equality: (a: unknown, b: unknown) => boolean;
+}
