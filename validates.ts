@@ -1,16 +1,7 @@
-import { isFunction } from "./deps.ts";
-import { FailResult, Result, Schema, SuccessResult } from "./types.ts";
+import { isFunction, ReturnAssert } from "./deps.ts";
+import { Schema } from "./types.ts";
 import { SchemaError } from "./errors.ts";
-
-export function isSuccessResult<T>(
-  result: Result<T>,
-): result is SuccessResult<T> {
-  return "data" in result;
-}
-
-export function isFailResult<T>(result: Result<T>): result is FailResult {
-  return "errors" in result;
-}
+import { toSchemaError } from "./utils.ts";
 
 /** Whether the value is {@link Schema} or not.
  *
@@ -30,6 +21,64 @@ export function isSchema<In = unknown, Out extends In = In>(
   value: unknown,
 ): value is Schema<In, Out> {
   return isFunction(Object(value)["assert"]);
+}
+
+export type ValidateResult<T = unknown> =
+  | {
+    /** Whether the validation is passed or not. */
+    pass: true;
+
+    /** Validated data. */
+    data: T;
+  }
+  | {
+    pass: false;
+
+    /** Schema errors. */
+    errors: SchemaError[];
+  };
+
+/** Validate value with {@link Schema} definition.
+ *
+ * @param schema - Any {@link Schema}.
+ * @param value - Any value.
+ *
+ * ```ts
+ * import {
+ *   ObjectSchema,
+ *   StringSchema,
+ *   validateSchema,
+ * } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+ *
+ * const schema = new ObjectSchema({
+ *   name: new StringSchema(),
+ *   type: new StringSchema("dog"),
+ * });
+ *
+ * const result = validateSchema(schema, {});
+ * if (result.pass) {
+ *   result.data; // { name: string, type: "dog" }
+ * } else {
+ *   result.errors; // SchemaError[]
+ * }
+ * ```
+ */
+export function validateSchema<T, S extends Schema<T>>(
+  schema: S,
+  value: T,
+): ValidateResult<ReturnAssert<S["assert"]>> {
+  try {
+    schema.assert(value);
+    return {
+      pass: true,
+      data: value as never,
+    };
+  } catch (e) {
+    return {
+      pass: false,
+      errors: [toSchemaError(e)],
+    };
+  }
 }
 
 export function isSchemaError(value: unknown): value is SchemaError {

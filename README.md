@@ -71,7 +71,7 @@ const functionSchema = new FunctionSchema();
 const nullSchema = new NullSchema();
 ```
 
-## Assert schema
+## Assert with schema
 
 Assert whether the value satisfies the schema.
 
@@ -86,7 +86,31 @@ assertSchema(new BooleanSchema(), value);
 // value is `boolean`
 assertSchema(new BooleanSchema(true), value);
 // value is `true`
-assertSchema(new BooleanSchema(false), value); // throws AggregateError
+assertSchema(new BooleanSchema(false), value); // throws SchemaError
+```
+
+## Validate with schema
+
+If you do not want to throw an error, you can use the `validateSchema` function.
+
+```ts
+import {
+  ObjectSchema,
+  StringSchema,
+  validateSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+
+const schema = new ObjectSchema({
+  name: new StringSchema(),
+  type: new StringSchema("dog"),
+});
+
+const result = validateSchema(schema, {});
+if (result.pass) {
+  result.data; // { name: string, type: "dog" }
+} else {
+  result.errors; // SchemaError[]
+}
 ```
 
 ## Additional subtype assertion (narrowing)

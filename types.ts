@@ -1,4 +1,3 @@
-import { SchemaError } from "./errors.ts";
 import { ReturnAssert, valueOf } from "./deps.ts";
 import { Assertion } from "./deps.ts";
 
@@ -31,18 +30,6 @@ export interface Schema<In = unknown, Out extends In = In> {
   /** Assert the {@link In input} is {@link Out output}. */
   assert: (value: In) => asserts value is Out;
 }
-
-export type Result<T = unknown> =
-  | SuccessResult<T>
-  | FailResult;
-
-export type SuccessResult<T = unknown> = {
-  data: T;
-};
-
-export type FailResult = {
-  errors: SchemaError[];
-};
 
 /** Utility for unwrap schema.
  *
