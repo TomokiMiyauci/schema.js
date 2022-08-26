@@ -1,6 +1,7 @@
 import {
   assertAnd,
   assertEquals,
+  assertNot,
   assertOr,
   assertProperty,
   assertSameConstructor,
@@ -174,5 +175,15 @@ describe("assertSameConstructor", () => {
     expect(assertSameConstructor({}, new Object())).toBeUndefined();
     expect(assertSameConstructor("", "a")).toBeUndefined();
     expect(assertSameConstructor([], [])).toBeUndefined();
+  });
+});
+
+describe("assertNot", () => {
+  it("should throw error when assertion is succeed", () => {
+    expect(() => assertNot(assertString, "")).toThrow();
+  });
+
+  it("should success when assertion is failed", () => {
+    expect(assertNot(assertString, 0)).toBeUndefined();
   });
 });

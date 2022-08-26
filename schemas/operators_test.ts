@@ -1,4 +1,4 @@
-import { AndSchema, OrSchema } from "./operators.ts";
+import { AndSchema, NotSchema, OrSchema } from "./operators.ts";
 import { describe, expect, it } from "../dev_deps.ts";
 import { NullSchema, StringSchema, UndefinedSchema } from "./scalers.ts";
 
@@ -52,5 +52,26 @@ describe("AndSchema", () => {
         0,
       ),
     ).toBeUndefined();
+  });
+});
+
+describe("NotSchema", () => {
+  it("should throw error when the value is equal to", () => {
+    expect(() => new NotSchema(1).assert(1)).toThrow();
+    expect(() => new NotSchema("test").assert("test")).toThrow();
+    expect(() => new NotSchema(null).assert(null)).toThrow();
+  });
+
+  it("should throw error when the schema satisfy", () => {
+    expect(() => new NotSchema(new StringSchema()).assert("")).toThrow();
+    expect(() => new NotSchema(new StringSchema("test")).assert("test"))
+      .toThrow();
+  });
+
+  it("should return undefined when the value is not satisfy", () => {
+    expect(new NotSchema(1).assert(0)).toBeUndefined();
+    expect(new NotSchema({}).assert({})).toBeUndefined();
+    expect(new NotSchema(new StringSchema()).assert(0)).toBeUndefined();
+    expect(new NotSchema(new StringSchema("")).assert("a")).toBeUndefined();
   });
 });

@@ -1,7 +1,6 @@
 import { Schema, SuperType, UnwrapSchema } from "../types.ts";
-import { SchemaError } from "../errors.ts";
-import { DataFlow, toSchema, toSchemaError } from "../utils.ts";
-import { assertAnd, assertOr } from "../asserts.ts";
+import { DataFlow, toSchema } from "../utils.ts";
+import { assertAnd, assertNot, assertOr } from "../asserts.ts";
 import { And, Assert } from "../deps.ts";
 
 /** Schema definition of logical `OR`.
@@ -92,30 +91,13 @@ export class AndSchema<T extends readonly unknown[]>
  * // value is `false` | `string` | `number` | ...
  * ```
  */
-export class NotSchema<T extends Schema>
+export class NotSchema<T>
   implements Schema<unknown, Exclude<SuperType, UnwrapSchema<T>>> {
-  assert;
-
-  constructor(schema: T) {
-    this.assert = createAssertNot(schema) as Assert<
-      unknown,
-      Exclude<SuperType, UnwrapSchema<T>>
-    >;
-  }
-}
-
-function createAssertNot<T extends Schema>(
-  schema: T,
-): Assert<unknown, T> {
-  return (value) => {
-    try {
-      schema.assert(value);
-      const name = schema.constructor.name;
-      throw new SchemaError(
-        `NOT logical operation fail. \`${name}\` should not valid.`,
-      );
-    } catch {
-      // noop
-    }
+  assert: (
+    value: unknown,
+  ) => asserts value is Exclude<SuperType, UnwrapSchema<T>> = (value) => {
+    assertNot(toSchema(this.value).assert, value);
   };
+
+  constructor(private value: T) {}
 }

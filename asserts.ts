@@ -1,5 +1,4 @@
 import {
-  And,
   Assert,
   assertExistsPropertyOf,
   AssertionError,
@@ -10,7 +9,7 @@ import {
   ReturnAssert,
   ReturnIterable,
 } from "./deps.ts";
-import { Schema, UnwrapSchema } from "./types.ts";
+import { Schema, SuperType, UnwrapSchema } from "./types.ts";
 import { toSchemaError } from "./utils.ts";
 import {
   getConstructor,
@@ -213,4 +212,21 @@ export function assertSameConstructor(
       actual: valueConstructor,
     });
   }
+}
+
+export function assertNot<T extends Assert>(
+  assert: T,
+  value: unknown,
+): asserts value is Exclude<SuperType, ReturnAssert<T>> {
+  try {
+    assert(value);
+  } catch {
+    // noop
+    return;
+  }
+
+  throw new AssertionError({
+    actual: "Assertion is succeed",
+    expect: "Assertion is failed",
+  });
 }
