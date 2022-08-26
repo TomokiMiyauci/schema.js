@@ -1,6 +1,7 @@
 import { Schema, SuperType, UnwrapSchema } from "../types.ts";
 import { SchemaError } from "../errors.ts";
-import { DataFlow, toSchemaError } from "../utils.ts";
+import { DataFlow, toSchema, toSchemaError } from "../utils.ts";
+import { assertOr } from "../asserts.ts";
 import { And, Assert } from "../deps.ts";
 
 /** Schema definition of logical `OR`.
@@ -24,9 +25,9 @@ import { And, Assert } from "../deps.ts";
  * // value is `string` | `number` | null
  * ```
  */
-export class OrSchema<T extends Schema[]>
+export class OrSchema<T extends unknown[]>
   implements Schema<unknown, UnwrapSchema<T[number]>> {
-  #schemas: ReadonlyArray<Schema>;
+  #schemas: readonly unknown[];
 
   constructor(...schemas: T) {
     this.#schemas = schemas;
@@ -34,22 +35,8 @@ export class OrSchema<T extends Schema[]>
 
   assert = new DataFlow().and(
     (value) => {
-      const errors: SchemaError[] = [];
-
-      for (const schema of this.#schemas) {
-        try {
-          schema.assert(value);
-        } catch (e) {
-          errors.push(toSchemaError(e));
-        }
-      }
-
-      throw new SchemaError(
-        `Logical error. One of assertion must be met.`,
-        {
-          children: errors,
-        },
-      );
+      const asserts = this.#schemas.map((schema) => toSchema(schema).assert);
+      assertOr(asserts, value);
     },
   ).build() as Assert<unknown, UnwrapSchema<T[number]>>;
 }
