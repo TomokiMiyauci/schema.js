@@ -23,7 +23,7 @@ export {
   MinLengthSchema,
   StringEmailSchema,
 } from "./schemas/strings.ts";
-export { type InferSchema, type UnwrapSchema } from "./types.ts";
+export { type InferSchema, type Schema, type UnwrapSchema } from "./types.ts";
 export {
   CountSchema,
   MaxCountSchema,

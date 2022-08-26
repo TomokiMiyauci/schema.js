@@ -25,7 +25,10 @@ export type SuperType = valueOf<SuperTypeMap>;
 
 export type TypeStr = keyof SuperTypeMap;
 
+/** Schema specification. */
+
 export interface Schema<In = unknown, Out extends In = In> {
+  /** Assert the {@link In input} is {@link Out output}. */
   assert: (value: In) => asserts value is Out;
 }
 
