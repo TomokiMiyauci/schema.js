@@ -13,7 +13,7 @@ export function isFailResult<T>(result: Result<T>): result is FailResult {
 }
 
 export function isSchema(value: unknown): value is Schema {
-  return isFunction(Object(value)["validate"]);
+  return isFunction(Object(value)["assert"]);
 }
 
 export function isSchemaError(value: unknown): value is SchemaError {
