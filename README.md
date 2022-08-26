@@ -237,6 +237,26 @@ const emailFormatAndLessThan20 = new StringEmailSchema().and(
 assertSchema(emailFormatAndLessThan20, "contact@test.test");
 ```
 
+## Partial schema
+
+Schema of optional properties.
+
+```ts
+import {
+  assertSchema,
+  FunctionSchema,
+  PartialSchema,
+  StringSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+
+const abilitySchema = new PartialSchema({
+  fly: new FunctionSchema(),
+});
+const model = { type: "bird" } as const;
+assertSchema(abilitySchema, model);
+// { type: "bird", fly?: Function }
+```
+
 ## Union subtype schema
 
 The union subtype schema is a schema that can be used for multiple types.
