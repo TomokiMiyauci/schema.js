@@ -1,3 +1,19 @@
+# [1.0.0-beta.8](https://github.com/schemaland/schema.js/compare/1.0.0-beta.7...1.0.0-beta.8) (2022-08-26)
+
+
+### Bug Fixes
+
+* **type_guards:** fix `isSchema` logic ([f33abf0](https://github.com/schemaland/schema.js/commit/f33abf02ca132c428df00a8fdf53bc8e58211928))
+
+
+### Features
+
+* **asserts:** add assertion for equality and partial property ([1c5e123](https://github.com/schemaland/schema.js/commit/1c5e12307b772c08e4072f32e5786694a3646cc0))
+* **schemas:** add schema for optional properties ([00953db](https://github.com/schemaland/schema.js/commit/00953dbb0dd92b45c34ba87d900ea3fefaf17793))
+* **types:** export `UnwrapSchema` types ([6cf89fe](https://github.com/schemaland/schema.js/commit/6cf89fe7138bccb85f35121489ecfa29b53f8cbc))
+* **types:** improve `UnwrapSchema` types ([18b4b36](https://github.com/schemaland/schema.js/commit/18b4b365839fa9d485691a9040d41c9b41523bdd))
+* **types:** improve `UnwrapSchema` types infer ([048be33](https://github.com/schemaland/schema.js/commit/048be334bc92b360e176b4d422bb9a6022bb6fe2))
+
 # [1.0.0-beta.7](https://github.com/schemaland/schema.js/compare/1.0.0-beta.6...1.0.0-beta.7) (2022-08-25)
 
 
