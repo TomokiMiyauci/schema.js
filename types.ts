@@ -43,8 +43,10 @@ export type FailResult = {
 
 export type UnwrapSchema<
   S,
-> = S extends Schema<unknown, object> ? UnwrapSchema<Assertion<S["assert"]>>
-  : S;
+> = S extends Schema ? UnwrapSchema<Assertion<S["assert"]>> : {
+  [k in keyof S]: S[k] extends Schema ? UnwrapSchema<Assertion<S[k]["assert"]>>
+    : S[k];
+};
 
 /** Type inference of TypeScript data types from the schema.
  *
