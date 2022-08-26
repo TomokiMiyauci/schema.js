@@ -1,5 +1,5 @@
 import { SchemaError } from "./errors.ts";
-import { valueOf } from "./deps.ts";
+import { ReturnAssert, valueOf } from "./deps.ts";
 import { Assertion } from "./deps.ts";
 
 export interface ScalerTypeMap {
@@ -41,10 +41,19 @@ export type FailResult = {
   errors: SchemaError[];
 };
 
+/** Utility for unwrap schema.
+ *
+ * ```ts
+ * import { UnwrapSchema, StringSchema, ObjectSchema } from "https://deno.land/x/schema_js@$VERSION/mod.ts"
+ * UnwrapSchema<typeof new StringSchema()> // string
+ * UnwrapSchema<typeof new SchemaObject({ hello: new String("world")})> // { hello: "world" }
+ * ```
+ */
 export type UnwrapSchema<
   S,
-> = S extends Schema ? UnwrapSchema<Assertion<S["assert"]>> : {
-  [k in keyof S]: S[k] extends Schema ? UnwrapSchema<Assertion<S[k]["assert"]>>
+> = S extends Schema ? UnwrapSchema<ReturnAssert<S["assert"]>> : {
+  [k in keyof S]: S[k] extends Schema
+    ? UnwrapSchema<ReturnAssert<S[k]["assert"]>>
     : S[k];
 };
 
