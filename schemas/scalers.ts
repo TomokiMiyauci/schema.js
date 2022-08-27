@@ -14,7 +14,7 @@ import {
 import { DataFlow } from "../utils.ts";
 import { Schema } from "../types.ts";
 
-/** Schema definition of `boolean`. */
+/** Schema of `boolean`. */
 export class BooleanSchema<T extends boolean>
   extends CollectiveTypeSchema<unknown, T> {
   protected override assertion: (value: unknown) => asserts value is T;
@@ -35,7 +35,7 @@ export class BooleanSchema<T extends boolean>
   }
 }
 
-/** Schema definition of `string`. */
+/** Schema of `string`. */
 export class StringSchema<T extends string>
   extends CollectiveTypeSchema<unknown, T> {
   protected override assertion: (value: unknown) => asserts value is T;
@@ -55,7 +55,7 @@ export class StringSchema<T extends string>
   protected override create = () => new StringSchema(this.subType);
 }
 
-/** Schema definition of `number`. */
+/** Schema of `number`. */
 export class NumberSchema<T extends number = number>
   extends CollectiveTypeSchema<unknown, T> {
   protected override assertion: (value: unknown) => asserts value is T;
@@ -74,7 +74,7 @@ export class NumberSchema<T extends number = number>
   protected override create = () => new NumberSchema(this.subType);
 }
 
-/** Schema definition of `bigint`. */
+/** Schema of `bigint`. */
 export class BigintSchema<T extends bigint = bigint>
   extends CollectiveTypeSchema<unknown, T> {
   protected override assertion: (value: unknown) => asserts value is T;
@@ -93,17 +93,17 @@ export class BigintSchema<T extends bigint = bigint>
   protected override create = () => new BigintSchema(this.subType);
 }
 
-/** Schema definition of `undefined`. */
+/** Schema of `undefined`. */
 export class UndefinedSchema implements Schema<unknown, undefined> {
   assert = assertUndefined;
 }
 
-/** Schema definition of `symbol`. */
+/** Schema of `symbol`. */
 export class SymbolSchema implements Schema<unknown, symbol> {
   assert = assertSymbol;
 }
 
-/** Schema definition of `null`. */
+/** Schema of `null`. */
 export class NullSchema implements Schema<unknown, null> {
   assert = assertNull;
 }
