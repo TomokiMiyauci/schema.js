@@ -1,3 +1,12 @@
+# [1.0.0-beta.12](https://github.com/schemaland/schema.js/compare/1.0.0-beta.11...1.0.0-beta.12) (2022-08-27)
+
+
+### Features
+
+* **schemas:** add `RecordSchema` schema ([f69d7c3](https://github.com/schemaland/schema.js/commit/f69d7c3bfca2fdd573f9c23e0cf70ce5d1274df3))
+* **schemas:** remove unnessary feature from scalre schemas ([2abf8ca](https://github.com/schemaland/schema.js/commit/2abf8cab5e9312625ab60680aad878f1183a591c))
+* **schemas:** rename schema from `StringEmailSchema` to `EmailFormatSchema` ([b19d860](https://github.com/schemaland/schema.js/commit/b19d86010cef7a8e455be0bb4f039de083c88446))
+
 # [1.0.0-beta.11](https://github.com/schemaland/schema.js/compare/1.0.0-beta.10...1.0.0-beta.11) (2022-08-26)
 
 
