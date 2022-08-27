@@ -1,6 +1,13 @@
 import { AndSchema, NotSchema, OrSchema } from "./operators.ts";
 import { describe, expect, it } from "../dev_deps.ts";
-import { NullSchema, StringSchema, UndefinedSchema } from "./scalers.ts";
+import {
+  NullSchema,
+  NumberSchema,
+  StringSchema,
+  UndefinedSchema,
+} from "./scalers.ts";
+import { ObjectSchema } from "./objects.ts";
+import { PartialSchema } from "./built_in.ts";
 
 describe("OrSchema", () => {
   it("should throw error when the subtype is not equal", () => {
@@ -29,7 +36,7 @@ describe("OrSchema", () => {
 describe("AndSchema", () => {
   it("should throw error when one or more schema is not satisfy", () => {
     expect(() =>
-      new AndSchema(new StringSchema(), new StringSchema("test")).assert("")
+      new AndSchema(new StringSchema(), new NumberSchema()).assert("")
     ).toThrow();
 
     expect(
@@ -42,10 +49,20 @@ describe("AndSchema", () => {
 
   it("should pass when all schema is satisfy", () => {
     expect(
-      new AndSchema(new StringSchema(), new StringSchema("test")).assert(
+      new AndSchema().assert(
         "test",
       ),
     ).toBeUndefined();
+
+    const schema = new AndSchema(
+      new ObjectSchema({
+        type: new StringSchema(),
+      }),
+      new PartialSchema({
+        payload: new ObjectSchema(),
+      }),
+    );
+    expect(schema.assert({ type: "" }));
 
     expect(
       new AndSchema(0).assert(
@@ -64,7 +81,7 @@ describe("NotSchema", () => {
 
   it("should throw error when the schema satisfy", () => {
     expect(() => new NotSchema(new StringSchema()).assert("")).toThrow();
-    expect(() => new NotSchema(new StringSchema("test")).assert("test"))
+    expect(() => new NotSchema("test").assert("test"))
       .toThrow();
   });
 
@@ -72,6 +89,5 @@ describe("NotSchema", () => {
     expect(new NotSchema(1).assert(0)).toBeUndefined();
     expect(new NotSchema({}).assert({})).toBeUndefined();
     expect(new NotSchema(new StringSchema()).assert(0)).toBeUndefined();
-    expect(new NotSchema(new StringSchema("")).assert("a")).toBeUndefined();
   });
 });

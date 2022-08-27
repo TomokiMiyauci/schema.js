@@ -84,9 +84,6 @@ import {
 const value: unknown = true;
 assertSchema(new BooleanSchema(), value);
 // value is `boolean`
-assertSchema(new BooleanSchema(true), value);
-// value is `true`
-assertSchema(new BooleanSchema(false), value); // throws SchemaError
 ```
 
 ## Validate with schema
@@ -102,7 +99,7 @@ import {
 
 const schema = new ObjectSchema({
   name: new StringSchema(),
-  type: new StringSchema("dog"),
+  type: "dog",
 });
 
 const result = validateSchema(schema, {});
@@ -138,12 +135,12 @@ const value: unknown = undefined;
 
 const tupleSchema = new ObjectSchema().and(new ArraySchema()).and(
   new TupleSchema(
-    new NumberSchema(0),
-    new StringSchema("hi"),
+    new NumberSchema(),
+    new StringSchema(),
   ),
 );
 assertSchema(tupleSchema, value);
-// value is `[0, "hi"]`
+// value is `[number, string]`
 ```
 
 ## Logical operation schema
@@ -188,17 +185,20 @@ Type inference works correctly.
 import {
   AndSchema,
   assertSchema,
-  OrSchema,
+  ObjectSchema,
+  PartialSchema,
   StringSchema,
 } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
 
 const schema = new AndSchema(
-  new StringSchema("hello"),
-  new StringSchema(),
+  new ObjectSchema({
+    type: new StringSchema(),
+  }),
+  new PartialSchema({
+    payload: new ObjectSchema(),
+  }),
 );
-const value: unknown = undefined;
-assertSchema(schema, value);
-// value is `"hello"`
+assertSchema(schema, {});
 ```
 
 ### Logical NOT
@@ -218,7 +218,7 @@ import {
 const value: unknown = undefined;
 assertSchema(new NotSchema(new BooleanSchema()), value);
 // value is `string` | `number` | ...
-assertSchema(new NotSchema(new BooleanSchema(true)), value);
+assertSchema(new NotSchema(true), value);
 // value is `false` | `string` | `number` | ...
 ```
 
@@ -439,16 +439,11 @@ import {
 const value: any[] = [];
 const tupleSchema = new TupleSchema(
   new NumberSchema(),
-  new StringSchema("hello"),
+  new StringSchema(),
   new UndefinedSchema(),
 );
 assertSchema(tupleSchema, value);
-// value is [number, "hello", undefined]
-
-const arraySchema = new ArraySchema().and(tupleSchema);
-const unknown: unknown = null;
-assertSchema(arraySchema, unknown);
-// value is [number, "hello", undefined]
+// value is [number, string, undefined]
 ```
 
 ## Date schema
@@ -487,17 +482,17 @@ import {
 const schema = new ObjectSchema({
   a: new StringSchema(),
   b: new ArraySchema().and(
-    new TupleSchema(new StringSchema("hello"), new NumberSchema()),
+    new TupleSchema(new StringSchema(), new NumberSchema()),
   ),
   c: new ObjectSchema({
-    d: new NumberSchema(0),
+    d: 0,
   }),
 });
 
 type Schema = InferSchema<typeof schema>;
 type EqualTo = {
   a: string;
-  b: ["hello", number];
+  b: [string, number];
   c: { d: 0 };
 };
 ```

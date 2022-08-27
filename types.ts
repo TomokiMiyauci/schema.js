@@ -34,12 +34,12 @@ export interface Schema<In = unknown, Out extends In = In> {
  *
  * ```ts
  * import { UnwrapSchema, StringSchema, ObjectSchema } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
- * const stringSchema = new StringSchema("world");
- * type a = UnwrapSchema<typeof stringSchema>; // "world"
+ * const stringSchema = new StringSchema();
+ * type a = UnwrapSchema<typeof stringSchema>; // string
  * const objectSchema = new Object({
  *  hello: stringSchema
  * })
- * type b = UnwrapSchema<typeof objectSchema>; // { hello: "world" }
+ * type b = UnwrapSchema<typeof objectSchema>; // { hello: string }
  * ```
  */
 export type UnwrapSchema<
@@ -65,10 +65,10 @@ export type UnwrapSchema<
  * const schema = new ObjectSchema({
  *   a: new StringSchema(),
  *   b: new ArraySchema().and(
- *     new TupleSchema(new StringSchema("hello"), new NumberSchema()),
+ *     new TupleSchema(new StringSchema(), new NumberSchema()),
  *   ),
  *   c: new ObjectSchema({
- *     d: new NumberSchema(0),
+ *     d: new NumberSchema(),
  *   }),
  * });
  *

@@ -24,15 +24,15 @@ import {
  * ```ts
  * import {
  *   assertSchema,
- *   BooleanSchema,
+ *   ObjectSchema,
+ *   StringSchema
  * } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
  *
- * const value: unknown = true;
- * assertSchema(new BooleanSchema(), value);
- * // value is `boolean`
- * assertSchema(new BooleanSchema(true), value);
- * // value is `true`
- * assertSchema(new BooleanSchema(false), value); // throws SchemaError
+ * const value: unknown = {};
+ * assertSchema(new ObjectSchema({
+ *   type: new StringSchema()
+ * }), value);
+ * // value is `{ type: string }`
  * ```
  *
  * @throws {@link SchemaError}

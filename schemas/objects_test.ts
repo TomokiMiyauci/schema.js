@@ -23,7 +23,7 @@ describe("ObjectSchema", () => {
       a: new ObjectSchema({
         a: new ObjectSchema({
           a: new ObjectSchema({
-            b: new StringSchema("test"),
+            b: "test",
           }),
         }),
       }),
@@ -66,7 +66,7 @@ describe("ObjectSchema", () => {
       a: new ObjectSchema({
         a: new ObjectSchema({
           a: new ObjectSchema({
-            b: new StringSchema(""),
+            b: new StringSchema(),
           }),
         }),
       }),
@@ -108,9 +108,7 @@ describe("ArraySchema", () => {
 
     expect(() => new ArraySchema([new StringSchema()]).assert(["", " ", 0]))
       .toThrow();
-    expect(() =>
-      new ArraySchema([new StringSchema("test")]).assert(["test", "", "test"])
-    )
+    expect(() => new ArraySchema([""]).assert(["test", "", "test"]))
       .toThrow();
 
     expect(() =>

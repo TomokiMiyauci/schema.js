@@ -47,7 +47,7 @@ describe("PartialSchema", () => {
     expect(new PartialSchema({
       a: new ObjectSchema(),
       b: new ObjectSchema({
-        c: new StringSchema(""),
+        c: new StringSchema(),
       }),
     }).assert({
       a: {

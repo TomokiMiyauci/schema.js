@@ -46,17 +46,20 @@ export class OrSchema<T extends unknown[]>
  * import {
  *   AndSchema,
  *   assertSchema,
- *   OrSchema,
  *   StringSchema,
+ *   PartialSchema,
+ *   ObjectSchema,
  * } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
  *
  * const schema = new AndSchema(
- *   new StringSchema("hello"),
- *   new StringSchema(),
+ *   new ObjectSchema({
+ *     type: new StringSchema()
+ *   }),
+ *   new PartialSchema({
+ *     payload: new ObjectSchema()
+ *   }),
  * );
- * const value: unknown = undefined;
- * assertSchema(schema, value);
- * // value is `"hello"`
+ * assertSchema(schema, {});
  * ```
  */
 export class AndSchema<T extends readonly unknown[]>
@@ -87,7 +90,7 @@ export class AndSchema<T extends readonly unknown[]>
  * const value: unknown = undefined;
  * assertSchema(new NotSchema(new BooleanSchema()), value);
  * // value is `string` | `number` | ...
- * assertSchema(new NotSchema(new BooleanSchema(true)), value);
+ * assertSchema(new NotSchema(true), value);
  * // value is `false` | `string` | `number` | ...
  * ```
  */

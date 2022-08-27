@@ -15,14 +15,8 @@ describe("BooleanSchema", () => {
     expect(() => new BooleanSchema().assert(null)).toThrow();
   });
 
-  it("should throw error when the value is not satisfy with subtype", () => {
-    expect(() => new BooleanSchema(true).assert(false)).toThrow();
-    expect(() => new BooleanSchema(false).assert(true)).toThrow();
-  });
-
   it("should return undefined when the value is satisfy", () => {
     expect(new BooleanSchema().assert(true)).toBeUndefined();
-    expect(new BooleanSchema(true).assert(true)).toBeUndefined();
   });
 });
 
@@ -32,14 +26,8 @@ describe("StringSchema", () => {
     expect(() => new StringSchema().assert(null)).toThrow();
   });
 
-  it("should throw error when the value is not satisfy with subtype", () => {
-    expect(() => new StringSchema("test").assert("")).toThrow();
-    expect(() => new StringSchema("").assert("a")).toThrow();
-  });
-
   it("should return undefined when the value is satisfy", () => {
     expect(new StringSchema().assert("test")).toBeUndefined();
-    expect(new StringSchema("test").assert("test")).toBeUndefined();
   });
 });
 
@@ -49,14 +37,8 @@ describe("NumberSchema", () => {
     expect(() => new NumberSchema().assert(null)).toThrow();
   });
 
-  it("should throw error when the value is not satisfy with subtype", () => {
-    expect(() => new NumberSchema(1).assert(0)).toThrow();
-    expect(() => new NumberSchema(0).assert(0n)).toThrow();
-  });
-
   it("should return undefined when the value is satisfy", () => {
     expect(new NumberSchema().assert(0)).toBeUndefined();
-    expect(new NumberSchema(1).assert(1)).toBeUndefined();
   });
 });
 
@@ -66,14 +48,8 @@ describe("BigintSchema", () => {
     expect(() => new BigintSchema().assert(null)).toThrow();
   });
 
-  it("should throw error when the value is not satisfy with subtype", () => {
-    expect(() => new BigintSchema(0n).assert(0)).toThrow();
-    expect(() => new BigintSchema(0n).assert(1n)).toThrow();
-  });
-
   it("should return undefined when the value is satisfy", () => {
     expect(new BigintSchema().assert(0n)).toBeUndefined();
-    expect(new BigintSchema(1n).assert(1n)).toBeUndefined();
   });
 });
 

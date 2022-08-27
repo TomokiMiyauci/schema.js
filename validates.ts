@@ -53,7 +53,7 @@ export type ValidateResult<T = unknown> =
  *
  * const schema = new ObjectSchema({
  *   name: new StringSchema(),
- *   type: new StringSchema("dog"),
+ *   type: "dog"
  * });
  *
  * const result = validateSchema(schema, {});
