@@ -1,6 +1,6 @@
-import { PartialSchema } from "./built_in.ts";
+import { PartialSchema, RecordSchema } from "./built_in.ts";
 import { ObjectSchema } from "./objects.ts";
-import { StringSchema } from "./scalers.ts";
+import { NumberSchema, StringSchema } from "./scalers.ts";
 import { describe, expect, it } from "../dev_deps.ts";
 
 describe("PartialSchema", () => {
@@ -57,5 +57,93 @@ describe("PartialSchema", () => {
       },
     }))
       .toBeUndefined();
+  });
+});
+
+describe("RecordSchema", () => {
+  it("should throw error when the key is not exists", () => {
+    expect(() => new RecordSchema("0", "").assert({})).toThrow();
+    expect(() => new RecordSchema("", "").assert({ "a": "" })).toThrow();
+  });
+
+  it("should throw error when the value does not match", () => {
+    expect(
+      () =>
+        new RecordSchema(Symbol.for(""), "").assert({
+          [Symbol.for("")]: "",
+          "": "",
+        }),
+    ).toThrow();
+
+    expect(
+      () =>
+        new RecordSchema(new StringSchema(), "test").assert({
+          "": "test",
+          a: "test",
+          b: "test",
+          c: "",
+        }),
+    ).toThrow();
+
+    expect(
+      () =>
+        new RecordSchema(new StringSchema(), new StringSchema()).assert({
+          "": "test",
+          a: "test",
+          b: "test",
+          c: 0,
+        }),
+    ).toThrow();
+  });
+
+  it("should pass when key and value is raw value", () => {
+    expect(new RecordSchema("", "").assert({ "": "" })).toBeUndefined();
+    expect(new RecordSchema("0", "").assert({ "0": "" })).toBeUndefined();
+    expect(new RecordSchema("0", "").assert({ 0: "" })).toBeUndefined();
+    expect(
+      new RecordSchema(Symbol.for(""), "").assert({ [Symbol.for("")]: "" }),
+    ).toBeUndefined();
+  });
+
+  it("should pass when key is schema", () => {
+    expect(new RecordSchema(new StringSchema(), "").assert({})).toBeUndefined();
+    expect(
+      new RecordSchema(new StringSchema(), new StringSchema()).assert({
+        a: "a",
+        b: "b",
+        c: "c",
+      }),
+    )
+      .toBeUndefined();
+
+    expect(
+      new RecordSchema(new StringSchema(), new NumberSchema()).assert({
+        a: 1,
+        b: 2,
+        c: 3,
+      }),
+    )
+      .toBeUndefined();
+
+    expect(
+      new RecordSchema(new StringSchema(), new NumberSchema()).assert({
+        0: 1,
+        1: 2,
+        2: 3,
+      }),
+    )
+      .toBeUndefined();
+  });
+
+  it("should pass when the key is exists and the value is matched", () => {
+    expect(new RecordSchema("0", "").assert({ 0: "" })).toBeUndefined();
+    expect(
+      new RecordSchema(new StringSchema(), "test").assert({
+        "": "test",
+        a: "test",
+        b: "test",
+        c: "test",
+      }),
+    ).toBeUndefined();
   });
 });

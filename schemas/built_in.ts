@@ -1,6 +1,9 @@
 import { CollectiveTypeSchema } from "./utils.ts";
-import { UnwrapSchema } from "../types.ts";
+import { toSchema } from "../utils.ts";
+import { Schema, UnwrapSchema } from "../types.ts";
 import { assertPartialProperty } from "../asserts.ts";
+import { isSchema } from "../validates.ts";
+import { assertExistsPropertyOf } from "../deps.ts";
 
 /** Schema of optional properties.
  *
@@ -32,4 +35,49 @@ export class PartialSchema<T>
     value: unknown,
   ) => asserts value is Partial<UnwrapSchema<T>> = (value) =>
     assertPartialProperty(this.record, value);
+}
+
+/** Schema of `Record` object.
+ *
+ * ```ts
+ * import {
+ *   NumberSchema,
+ *   RecordSchema,
+ *   StringSchema,
+ * } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+ *
+ * const schema = new RecordSchema(new StringSchema(), new NumberSchema());
+ * // Record<string, number>
+ * ```
+ */
+export class RecordSchema<
+  K extends string | symbol | Schema<unknown, string | symbol>,
+  V,
+> extends CollectiveTypeSchema<
+  Record<PropertyKey, unknown>,
+  Record<UnwrapSchema<K>, UnwrapSchema<V>>
+> {
+  constructor(private key: K, private value: V) {
+    super();
+  }
+  protected override assertion: (
+    value: Record<PropertyKey, unknown>,
+  ) => asserts value is Record<UnwrapSchema<K>, UnwrapSchema<V>> = (
+    value,
+  ) => {
+    if (!isSchema(this.key)) {
+      assertExistsPropertyOf(this.key, value);
+    }
+
+    const keySchema = toSchema(this.key);
+    const valueSchema = toSchema(this.value);
+    const objective = Object(value);
+
+    for (const k in value) {
+      keySchema.assert?.(k);
+      valueSchema.assert?.(objective[k]);
+    }
+  };
+
+  protected override create = () => new RecordSchema(this.key, this.value);
 }

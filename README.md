@@ -281,6 +281,27 @@ assertSchema(abilitySchema, model);
 // { type: "bird", fly?: Function }
 ```
 
+## Record schema
+
+Schema of `Record` object.
+
+```ts
+import {
+  NumberSchema,
+  RecordSchema,
+  StringSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+
+const schema = new RecordSchema(new StringSchema(), new NumberSchema());
+// Record<string, number>
+```
+
+> TypeScript accepts `PropertyKey` ( `string` | `number` |`symbol` ) for
+> `Record` type, but this is restricted to `string` and `symbol` only.
+>
+> This is because JavaScript always casts the object key from a `number` to a
+> `string`.
+
 ## Union subtype schema
 
 The union subtype schema is a schema that can be used for multiple types.
