@@ -251,11 +251,11 @@ Schema of `string` subtype of email format.
 ```ts
 import {
   assertSchema,
+  EmailFormatSchema,
   MaxLengthSchema,
-  StringEmailSchema,
 } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
 
-const emailFormatAndLessThan20 = new StringEmailSchema().and(
+const emailFormatAndLessThan20 = new EmailFormatSchema().and(
   new MaxLengthSchema(20),
 );
 assertSchema(emailFormatAndLessThan20, "contact@test.test");
