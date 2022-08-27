@@ -1,4 +1,5 @@
 import {
+  And,
   Assert,
   assertExistsPropertyOf,
   AssertionError,
@@ -7,7 +8,6 @@ import {
   inspect,
   isError,
   ReturnAssert,
-  ReturnIterable,
 } from "./deps.ts";
 import { Schema, SuperType, UnwrapSchema } from "./types.ts";
 import { toSchemaError } from "./utils.ts";
@@ -123,10 +123,26 @@ export function assertOr<A extends readonly Assert[]>(
   }
 }
 
-export function assertAnd<A extends Iterable<Assert>>(
-  asserts: A,
-  value: unknown,
-): asserts value is ReturnAssert<ReturnIterable<A>> {
+type AssertPipeline<T extends readonly any[]> = T extends readonly [
+  infer A,
+  infer _,
+  ...infer Rest,
+] ? readonly [
+    A,
+    ...AssertPipeline<
+      readonly [Assert<ReturnAssert<A>>, ...Rest]
+    >,
+  ]
+  : T;
+
+type Asserts<T> = {
+  [k in keyof T]: ReturnAssert<T[k]>;
+};
+
+export function assertAnd<A extends readonly any[]>(
+  asserts: AssertPipeline<A>,
+  value: Parameters<A[0]>[0],
+): asserts value is And<Asserts<A>> {
   for (const assert of Array.from(asserts)) {
     try {
       assert?.(value);
@@ -139,7 +155,7 @@ export function assertAnd<A extends Iterable<Assert>>(
           actual,
           expect: "All assertions succeeded",
         },
-        `${actual}.`,
+        undefined,
         { cause },
       );
     }

@@ -95,8 +95,8 @@ export type Upcast<T> = T extends string ? string
   : T extends object ? object
   : never;
 
-export type And<T extends readonly any[]> = T extends [infer F, ...infer R]
-  ? F & And<R>
+export type And<T extends readonly any[]> = T extends
+  readonly [infer F, ...infer R] ? F & And<R>
   : unknown;
 
 export function inspect(value: unknown): string {
