@@ -8,15 +8,16 @@ export {
   UndefinedSchema,
 } from "./schemas/scalers.ts";
 export {
+  ArraySchema,
+  DateSchema,
   FunctionSchema,
   ObjectSchema,
   TupleSchema,
 } from "./schemas/objects.ts";
-export { PartialSchema } from "./schemas/unknowns.ts";
+export { PartialSchema } from "./schemas/built_in.ts";
 export { AndSchema, NotSchema, OrSchema } from "./schemas/operators.ts";
 export { SchemaError, type SchemaErrorOptions } from "./errors.ts";
 export { assertSchema } from "./asserts.ts";
-export { ArraySchema, DateSchema } from "./schemas/built_in.ts";
 export {
   LengthSchema,
   MaxLengthSchema,
