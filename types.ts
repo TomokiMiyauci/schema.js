@@ -44,8 +44,8 @@ export interface Schema<In = unknown, Out extends In = In> {
  */
 export type UnwrapSchema<
   S,
-> = S extends Schema ? UnwrapSchema<ReturnAssert<S["assert"]>> : {
-  [k in keyof S]: S[k] extends Schema
+> = S extends Schema<any> ? UnwrapSchema<ReturnAssert<S["assert"]>> : {
+  [k in keyof S]: S[k] extends Schema<any>
     ? UnwrapSchema<ReturnAssert<S[k]["assert"]>>
     : S[k];
 };
@@ -76,6 +76,8 @@ export type UnwrapSchema<
  * ```
  */
 export type InferSchema<S extends Schema> = ReturnAssert<S["assert"]>;
+
+export type SchemaParameter<S extends Schema> = Parameters<S["assert"]>[0];
 
 /** Schema context. */
 export interface SchemaContext {

@@ -38,22 +38,9 @@ describe("AndSchema", () => {
     expect(() =>
       new AndSchema(new StringSchema(), new NumberSchema()).assert("")
     ).toThrow();
-
-    expect(
-      () =>
-        new AndSchema(0, 1, 2).assert(
-          0,
-        ),
-    ).toThrow();
   });
 
   it("should pass when all schema is satisfy", () => {
-    expect(
-      new AndSchema().assert(
-        "test",
-      ),
-    ).toBeUndefined();
-
     const schema = new AndSchema(
       new ObjectSchema({
         type: new StringSchema(),
@@ -63,12 +50,6 @@ describe("AndSchema", () => {
       }),
     );
     expect(schema.assert({ type: "" }));
-
-    expect(
-      new AndSchema(0).assert(
-        0,
-      ),
-    ).toBeUndefined();
   });
 });
 
