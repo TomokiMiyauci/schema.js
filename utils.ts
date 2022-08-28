@@ -2,7 +2,7 @@ import { Assert, AssertionError } from "./deps.ts";
 import { SchemaError } from "./errors.ts";
 import { isSchema, isSchemaError } from "./validates.ts";
 import { assertEquals } from "./asserts.ts";
-import { Schema, SchemaContext } from "./types.ts";
+import { InferSchema, Schema, SchemaContext } from "./types.ts";
 
 export class DataFlow<In = unknown, Out extends In = In> {
   assertions: Assert<In, Out>[] = [];
@@ -53,3 +53,51 @@ export function toSchema(
 
   return new S();
 }
+
+export function defineSchemaProperty<
+  T extends new (...args: any) => Schema<any>,
+  K extends PropertyKey,
+  U extends new (...args: any) => SubSchema<InstanceType<T>>,
+>(
+  schema: T,
+  key: K,
+  subSchema: U,
+): new (
+  ...args: ConstructorParameters<T>
+) =>
+  & InstanceType<T>
+  & Cycle<
+    { [k in K]: (...args: ConstructorParameters<U>) => InstanceType<T> }
+  > {
+  function createSchema(...args: ConstructorParameters<T>) {
+    const Schema = new schema(args);
+    const asserts: Assert<any>[] = [Schema.assert];
+
+    Object.defineProperty(Schema, key, {
+      value: (...args: ConstructorParameters<U>) => {
+        const cls = new subSchema(...args as any);
+        asserts.push(cls.assert);
+
+        return Schema;
+      },
+    });
+
+    Schema.assert = (value) => {
+      asserts.forEach((assert) => {
+        assert?.(value);
+      });
+    };
+
+    return Schema;
+  }
+
+  return createSchema as any;
+}
+
+type Cycle<
+  T extends Record<PropertyKey, (...args: any) => any>,
+> = {
+  [k in keyof T]: (...args: Parameters<T[k]>) => ReturnType<T[k]> & Cycle<T>;
+};
+
+type SubSchema<S extends Schema<any>> = Schema<InferSchema<S>>;
