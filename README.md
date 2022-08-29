@@ -244,7 +244,9 @@ assertSchema(minLengthSchema, value);
 assertSchema(lengthSchema, value); // throw SchemaError
 ```
 
-### Email schema
+## Email schema
+
+∈ `string`
 
 Schema of `string` subtype of email format.
 
@@ -259,6 +261,24 @@ const emailFormatAndLessThan20 = new EmailFormatSchema().and(
   new MaxLengthSchema(20),
 );
 assertSchema(emailFormatAndLessThan20, "contact@test.test");
+```
+
+## UUID schema
+
+∈ `string`
+
+Schema of UUID format. This is `string` subtype.
+
+```ts
+import {
+  assertSchema,
+  UuidFormatSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+const schema = new UuidFormatSchema();
+assertSchema(schema, "00000000-0000-0000-0000-000000000000");
+assertThrows(() => assertSchema(schema, "not valid UUID"));
 ```
 
 ## Partial schema
