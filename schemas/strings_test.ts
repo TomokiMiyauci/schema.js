@@ -1,6 +1,7 @@
 import {
   DateFormatSchema,
   EmailFormatSchema,
+  TimeFormatSchema,
   UrlFormatSchema,
   UuidFormatSchema,
 } from "./strings.ts";
@@ -49,5 +50,17 @@ describe("DateFormatSchema", () => {
 
   it("should return undefined when the value is date format", () => {
     expect(new DateFormatSchema().assert("2000-01-01")).toBeUndefined();
+  });
+});
+
+describe("TimeFormatSchema", () => {
+  it("should throw error when the value is invalid time format", () => {
+    expect(() => new TimeFormatSchema().assert("00:00:00")).toThrow();
+    expect(() => new TimeFormatSchema().assert("00:00:00:X")).toThrow();
+  });
+
+  it("should return undefined when the value is time format", () => {
+    expect(new TimeFormatSchema().assert("00:00:00Z")).toBeUndefined();
+    expect(new TimeFormatSchema().assert("00:00:00+00:00")).toBeUndefined();
   });
 });

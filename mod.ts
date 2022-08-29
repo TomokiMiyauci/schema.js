@@ -24,6 +24,7 @@ export {
   LengthSchema,
   MaxLengthSchema,
   MinLengthSchema,
+  TimeFormatSchema,
   UrlFormatSchema,
   UuidFormatSchema,
 } from "./schemas/strings.ts";

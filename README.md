@@ -321,6 +321,29 @@ assertThrows(() => assertSchema(schema, "0000-00-00"));
 assertThrows(() => assertSchema(schema, "invalid Date"));
 ```
 
+## Date format schema
+
+∈ `string`
+
+Schema of Time format. This is `string` subtype.
+
+Compliant with
+[RFC 3339, section-5.6, full-time](https://www.rfc-editor.org/rfc/rfc3339#section-5.6)
+
+```ts
+import {
+  assertSchema,
+  TimeFormatSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+const schema = new TimeFormatSchema();
+assertSchema(schema, "00:00:00Z");
+assertSchema(schema, "23:59:59+19:59");
+assertThrows(() => assertSchema(schema, "00:00:00"));
+assertThrows(() => assertSchema(schema, "invalid Time"));
+```
+
 ## Partial schema
 
 Schema of optional properties.

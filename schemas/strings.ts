@@ -4,10 +4,11 @@ import {
   assertDateFormat,
   assertMaxLength,
   assertMinLength,
+  assertTimeFormat,
   assertUrlFormat,
   assertUuidFormat,
 } from "../asserts.ts";
-import { DateFormat } from "../validates.ts";
+import { FullDate, FullTime } from "../validates.ts";
 
 export class LengthSchema<T extends string>
   extends CollectiveTypeSchema<string, T> {
@@ -121,8 +122,30 @@ export class UrlFormatSchema extends AssertiveSchema<string> {
  * assertThrows(() => assertSchema(schema, "invalid Date"));
  * ```
  */
-export class DateFormatSchema extends AssertiveSchema<string, DateFormat> {
+export class DateFormatSchema extends AssertiveSchema<string, FullDate> {
   protected override assertion: (
     value: string,
-  ) => asserts value is DateFormat = assertDateFormat;
+  ) => asserts value is FullDate = assertDateFormat;
+}
+
+/** Schema of Time format. This is `string` subtype.
+ * Compliant with {@link https://www.rfc-editor.org/rfc/rfc3339#section-5.6 RFC 3339, section-5.6, full-time}
+ * ```ts
+ * import {
+ *   assertSchema,
+ *   TimeFormatSchema,
+ * } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+ * import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+ *
+ * const schema = new TimeFormatSchema();
+ * assertSchema(schema, "00:00:00Z");
+ * assertSchema(schema, "23:59:59+19:59");
+ * assertThrows(() => assertSchema(schema, "00:00:00"));
+ * assertThrows(() => assertSchema(schema, "invalid Time"));
+ * ```
+ */
+export class TimeFormatSchema extends AssertiveSchema<string, FullTime> {
+  protected override assertion: (
+    value: string,
+  ) => asserts value is FullTime = assertTimeFormat;
 }
