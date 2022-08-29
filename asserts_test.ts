@@ -5,6 +5,7 @@ import {
   assertEquals,
   assertHostnameFormat,
   assertIpv4Format,
+  assertIpv6Format,
   assertMatchPattern,
   assertNot,
   assertOr,
@@ -292,5 +293,16 @@ describe("assertIpv4Format", () => {
 
   it("should return undefined when the value is Ipv4 format", () => {
     expect(assertIpv4Format("0.0.0.0")).toBeUndefined();
+  });
+});
+
+describe("assertIpv6Format", () => {
+  it("should throw error when the value is invalid IPv6 format", () => {
+    expect(() => assertIpv6Format("")).toThrow();
+    expect(() => assertIpv6Format("a")).toThrow();
+  });
+
+  it("should return undefined when the value is Ipv6 format", () => {
+    expect(assertIpv6Format("::")).toBeUndefined();
   });
 });

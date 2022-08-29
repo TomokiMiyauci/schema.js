@@ -23,6 +23,7 @@ import {
   isDateTimeFormat,
   isHostnameFormat,
   isIpv4Format,
+  isIpv6Format,
   isMaxLength,
   isMinLength,
   isSchema,
@@ -339,6 +340,15 @@ export function assertIpv4Format(value: string): asserts value is Ipv4Format {
     throw new AssertionError({
       actual: value,
       expect: `IPv4 format`,
+    });
+  }
+}
+
+export function assertIpv6Format(value: string): asserts value is string {
+  if (!isIpv6Format(value)) {
+    throw new AssertionError({
+      actual: value,
+      expect: `IPv6 format`,
     });
   }
 }

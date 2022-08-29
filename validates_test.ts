@@ -3,6 +3,7 @@ import {
   isDateTimeFormat,
   isHostnameFormat,
   isIpv4Format,
+  isIpv6Format,
   isSchema,
   isTimeFormat,
   validateSchema,
@@ -149,5 +150,28 @@ describe("isIpv4Format", () => {
     expect(isIpv4Format("127.0.0.1")).toBeTruthy();
     expect(isIpv4Format("255.255.255.255")).toBeTruthy();
     expect(isIpv4Format("0.0.0.0")).toBeTruthy();
+  });
+});
+
+describe("isIpv6Format", () => {
+  it("invalid", () => {
+    expect(isIpv6Format("")).toBeFalsy();
+    expect(isIpv6Format(":")).toBeFalsy();
+    expect(isIpv6Format("a")).toBeFalsy();
+  });
+
+  it("valid", () => {
+    expect(isIpv6Format("::")).toBeTruthy();
+    expect(isIpv6Format("1:2:3:4:5:6:7:8")).toBeTruthy();
+    expect(isIpv6Format("1::")).toBeTruthy();
+    expect(isIpv6Format("1:2:3:4:5:6:7::")).toBeTruthy();
+    expect(isIpv6Format("1::8")).toBeTruthy();
+    expect(isIpv6Format("1::7:8")).toBeTruthy();
+    expect(isIpv6Format("1::6:7:8")).toBeTruthy();
+    expect(isIpv6Format("1::5:6:7:8")).toBeTruthy();
+    expect(isIpv6Format("1::4:5:6:7:8")).toBeTruthy();
+    expect(isIpv6Format("1::3:4:5:6:7:8")).toBeTruthy();
+    expect(isIpv6Format("::2:3:4:5:6:7:8")).toBeTruthy();
+    expect(isIpv6Format("2001:db8:3:4::192.0.2.33")).toBeTruthy();
   });
 });
