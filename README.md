@@ -278,7 +278,25 @@ import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts"
 
 const schema = new UuidFormatSchema();
 assertSchema(schema, "00000000-0000-0000-0000-000000000000");
-assertThrows(() => assertSchema(schema, "not valid UUID"));
+assertThrows(() => assertSchema(schema, "invalid UUID"));
+```
+
+## URL schema
+
+∈ `string`
+
+Schema of URL format. This is `string` subtype.
+
+```ts
+import {
+  assertSchema,
+  UrlFormatSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+const schema = new UrlFormatSchema();
+assertSchema(schema, "http://localhost");
+assertThrows(() => assertSchema(schema, "invalid URL"));
 ```
 
 ## Partial schema

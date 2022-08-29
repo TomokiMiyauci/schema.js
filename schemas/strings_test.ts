@@ -1,4 +1,8 @@
-import { EmailFormatSchema, UuidFormatSchema } from "./strings.ts";
+import {
+  EmailFormatSchema,
+  UrlFormatSchema,
+  UuidFormatSchema,
+} from "./strings.ts";
 import { describe, expect, it } from "../dev_deps.ts";
 
 describe("EmailFormatSchema", () => {
@@ -20,6 +24,18 @@ describe("UuidFormatSchema", () => {
   it("should return undefined when the value is UUID format", () => {
     expect(
       new UuidFormatSchema().assert("6ec0bd7f-11c0-43da-975e-2a8ad9ebae0b"),
+    ).toBeUndefined();
+  });
+});
+
+describe("UrlFormatSchema", () => {
+  it("should throw error when the value is invalid URL format", () => {
+    expect(() => new UrlFormatSchema().assert("")).toThrow();
+  });
+
+  it("should return undefined when the value is URL format", () => {
+    expect(
+      new UrlFormatSchema().assert("http://a"),
     ).toBeUndefined();
   });
 });
