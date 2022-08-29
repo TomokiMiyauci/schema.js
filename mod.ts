@@ -20,6 +20,7 @@ export { SchemaError, type SchemaErrorOptions } from "./errors.ts";
 export { assertSchema } from "./asserts.ts";
 export {
   DateFormatSchema,
+  DateTimeFormatSchema,
   EmailFormatSchema,
   LengthSchema,
   MaxLengthSchema,

@@ -303,7 +303,7 @@ assertThrows(() => assertSchema(schema, "invalid URL"));
 
 ∈ `string`
 
-Schema of Date format. This is `string` subtype.
+Schema of date format. This is `string` subtype.
 
 Compliant with
 [RFC 3339, section-5.6, full-date](https://www.rfc-editor.org/rfc/rfc3339#section-5.6)
@@ -321,11 +321,11 @@ assertThrows(() => assertSchema(schema, "0000-00-00"));
 assertThrows(() => assertSchema(schema, "invalid Date"));
 ```
 
-## Date format schema
+## Time format schema
 
 ∈ `string`
 
-Schema of Time format. This is `string` subtype.
+Schema of time format. This is `string` subtype.
 
 Compliant with
 [RFC 3339, section-5.6, full-time](https://www.rfc-editor.org/rfc/rfc3339#section-5.6)
@@ -342,6 +342,29 @@ assertSchema(schema, "00:00:00Z");
 assertSchema(schema, "23:59:59+19:59");
 assertThrows(() => assertSchema(schema, "00:00:00"));
 assertThrows(() => assertSchema(schema, "invalid Time"));
+```
+
+## Date time format schema
+
+∈ `string`
+
+Schema of date time format. This is `string` subtype.
+
+Compliant with
+[RFC 3339, section-5.6, date-time](https://www.rfc-editor.org/rfc/rfc3339#section-5.6)
+
+```ts
+import {
+  assertSchema,
+  DateTimeFormatSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+const schema = new DateTimeFormatSchema();
+assertSchema(schema, "1000-01-01T00:00:00Z");
+assertSchema(schema, "9999-12-31T23:59:59+19:59");
+assertThrows(() => assertSchema(schema, "0000-00-00:00:00:00Z"));
+assertThrows(() => assertSchema(schema, "invalid date time"));
 ```
 
 ## Partial schema

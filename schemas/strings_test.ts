@@ -1,5 +1,6 @@
 import {
   DateFormatSchema,
+  DateTimeFormatSchema,
   EmailFormatSchema,
   TimeFormatSchema,
   UrlFormatSchema,
@@ -62,5 +63,18 @@ describe("TimeFormatSchema", () => {
   it("should return undefined when the value is time format", () => {
     expect(new TimeFormatSchema().assert("00:00:00Z")).toBeUndefined();
     expect(new TimeFormatSchema().assert("00:00:00+00:00")).toBeUndefined();
+  });
+});
+
+describe("DateTimeFormatSchema", () => {
+  it("should throw error when the value is invalid time format", () => {
+    expect(() => new DateTimeFormatSchema().assert("")).toThrow();
+    expect(() => new DateTimeFormatSchema().assert("0000-00-00T00:00:00Z"))
+      .toThrow();
+  });
+
+  it("should return undefined when the value is time format", () => {
+    expect(new DateTimeFormatSchema().assert("1000-01-01T00:00:00+00:00"))
+      .toBeUndefined();
   });
 });
