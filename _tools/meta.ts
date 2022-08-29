@@ -4,7 +4,7 @@ export const makeOptions = (version: string): BuildOptions => ({
   test: false,
   shims: {},
   compilerOptions: {
-    lib: ["es2022"],
+    lib: ["es2022", "dom"],
   },
   typeCheck: true,
   entryPoints: ["./mod.ts"],
