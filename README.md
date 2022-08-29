@@ -389,6 +389,26 @@ assertThrows(() => assertSchema(schema, "0000-00-00:00:00:00Z"));
 assertThrows(() => assertSchema(schema, "invalid date time"));
 ```
 
+## Ipv4 format schema
+
+∈ `string`
+
+Schema of IPv4 format. This is `string` subtype.
+
+```ts
+import {
+  assertSchema,
+  Ipv4FormatSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+const schema = new Ipv4FormatSchema();
+assertSchema(schema, "0.0.0.0");
+assertSchema(schema, "127.0.0.1");
+assertThrows(() => assertSchema(schema, "256.255.255.255"));
+assertThrows(() => assertSchema(schema, "invalid IPv4"));
+```
+
 ## Pattern schema
 
 ∈ `string`

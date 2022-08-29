@@ -3,6 +3,7 @@ import {
   DateTimeFormatSchema,
   EmailFormatSchema,
   HostnameFormatSchema,
+  Ipv4FormatSchema,
   PatternSchema,
   TimeFormatSchema,
   UrlFormatSchema,
@@ -112,5 +113,16 @@ describe("PatternSchema", () => {
       ),
     )
       .toBeUndefined();
+  });
+});
+
+describe("Ipv4FormatSchema", () => {
+  it("should throw error when the value does not match pattern", () => {
+    expect(() => new Ipv4FormatSchema().assert("")).toThrow();
+    expect(() => new Ipv4FormatSchema().assert("256.256.256.256")).toThrow();
+  });
+
+  it("should return undefined when the value match pattern", () => {
+    expect(new Ipv4FormatSchema().assert("0.0.0.0")).toBeUndefined();
   });
 });

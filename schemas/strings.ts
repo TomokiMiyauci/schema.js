@@ -4,6 +4,7 @@ import {
   assertDateFormat,
   assertDateTimeFormat,
   assertHostnameFormat,
+  assertIpv4Format,
   assertMatchPattern,
   assertMaxLength,
   assertMinLength,
@@ -11,7 +12,7 @@ import {
   assertUrlFormat,
   assertUuidFormat,
 } from "../asserts.ts";
-import { DateTime, FullDate, FullTime } from "../validates.ts";
+import { DateTime, FullDate, FullTime, Ipv4Format } from "../validates.ts";
 
 export class LengthSchema<T extends string>
   extends CollectiveTypeSchema<string, T> {
@@ -221,4 +222,25 @@ export class PatternSchema extends AssertiveSchema<string> {
     super();
     this.assertion = arity(assertMatchPattern, pattern);
   }
+}
+
+/** Schema of IPv4 format. This is `string` subtype.
+ *
+ * ```ts
+ * import {
+ *   assertSchema,
+ *   Ipv4FormatSchema,
+ * } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+ * import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+ *
+ * const schema = new Ipv4FormatSchema();
+ * assertSchema(schema, "0.0.0.0");
+ * assertSchema(schema, "127.0.0.1");
+ * assertThrows(() => assertSchema(schema, "256.255.255.255"));
+ * assertThrows(() => assertSchema(schema, "invalid IPv4"));
+ * ```
+ */
+export class Ipv4FormatSchema extends AssertiveSchema<string, Ipv4Format> {
+  protected override assertion: (value: string) => asserts value is Ipv4Format =
+    assertIpv4Format;
 }
