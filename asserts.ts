@@ -18,9 +18,11 @@ import {
   FullTime,
   getConstructor,
   getCount,
+  Ipv4Format,
   isDateFormat,
   isDateTimeFormat,
   isHostnameFormat,
+  isIpv4Format,
   isMaxLength,
   isMinLength,
   isSchema,
@@ -328,6 +330,15 @@ export function assertMatchPattern(
     throw new AssertionError({
       actual: value,
       expect: `match to ${regExp.source}`,
+    });
+  }
+}
+
+export function assertIpv4Format(value: string): asserts value is Ipv4Format {
+  if (!isIpv4Format(value)) {
+    throw new AssertionError({
+      actual: value,
+      expect: `IPv4 format`,
     });
   }
 }

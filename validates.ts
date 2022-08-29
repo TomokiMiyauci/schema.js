@@ -160,3 +160,11 @@ const ReHostname =
 export function isHostnameFormat(value: string): value is string {
   return ReHostname.test(value);
 }
+
+export type Ipv4Format = `${string}.${string}.${string}.${string}`;
+
+/** @see https://stackoverflow.com/questions/5284147/validating-ipv4-addresses-with-regexp */
+const ReIpv4 = /^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)\.?\b){4}$/;
+export function isIpv4Format(value: string): value is Ipv4Format {
+  return ReIpv4.test(value);
+}

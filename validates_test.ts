@@ -2,6 +2,7 @@ import {
   isDateFormat,
   isDateTimeFormat,
   isHostnameFormat,
+  isIpv4Format,
   isSchema,
   isTimeFormat,
   validateSchema,
@@ -127,5 +128,26 @@ describe("isHostnameFormat", () => {
     expect(isHostnameFormat("a".repeat(63))).toBeTruthy();
     expect(isHostnameFormat("a".repeat(63) + "." + "a".repeat(63)))
       .toBeTruthy();
+  });
+});
+
+describe("isIpv4Format", () => {
+  it("invalid", () => {
+    expect(isIpv4Format("")).toBeFalsy();
+    expect(isIpv4Format("0")).toBeFalsy();
+    expect(isIpv4Format("00.0.0.0")).toBeFalsy();
+    expect(isIpv4Format("30.168.1.255.1")).toBeFalsy();
+    expect(isIpv4Format("127.1")).toBeFalsy();
+    expect(isIpv4Format("192.168.1.256")).toBeFalsy();
+    expect(isIpv4Format("-1.2.3.4")).toBeFalsy();
+    expect(isIpv4Format("1.1.1.1.")).toBeFalsy();
+    expect(isIpv4Format("3...3")).toBeFalsy();
+    expect(isIpv4Format("1.1.1.01")).toBeFalsy();
+  });
+
+  it("valid", () => {
+    expect(isIpv4Format("127.0.0.1")).toBeTruthy();
+    expect(isIpv4Format("255.255.255.255")).toBeTruthy();
+    expect(isIpv4Format("0.0.0.0")).toBeTruthy();
   });
 });
