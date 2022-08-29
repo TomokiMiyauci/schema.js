@@ -7,6 +7,7 @@ import {
   assertProperty,
   assertSameConstructor,
   assertSchema,
+  assertTimeFormat,
   assertUrlFormat,
   assertUuidFormat,
 } from "./asserts.ts";
@@ -228,5 +229,21 @@ describe("assertDateFormat", () => {
 
   it("should return undefined when the value is date format", () => {
     expect(assertDateFormat("2000-01-01")).toBeUndefined();
+  });
+});
+
+describe("assertTimeFormat", () => {
+  it("should throw error when the value is invalid date format", () => {
+    expect(() => assertTimeFormat("")).toThrow();
+    expect(() => assertTimeFormat("00:00:00")).toThrow();
+    expect(() => assertTimeFormat("00:00:00X")).toThrow();
+    expect(() => assertTimeFormat("00:00:00+20:00")).toThrow();
+  });
+
+  it("should return undefined when the value is date format", () => {
+    expect(assertTimeFormat("00:00:00Z")).toBeUndefined();
+    expect(assertTimeFormat("00:00:00+00:00")).toBeUndefined();
+    expect(assertTimeFormat("00:00:00-00:00")).toBeUndefined();
+    expect(assertTimeFormat("23:59:59-19:59")).toBeUndefined();
   });
 });

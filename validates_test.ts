@@ -1,4 +1,9 @@
-import { isDateFormat, isSchema, validateSchema } from "./validates.ts";
+import {
+  isDateFormat,
+  isSchema,
+  isTimeFormat,
+  validateSchema,
+} from "./validates.ts";
 import { describe, expect, it } from "./dev_deps.ts";
 import { StringSchema } from "./mod.ts";
 import { SchemaError } from "./errors.ts";
@@ -70,5 +75,24 @@ describe("isDateFormat", () => {
     expect(isDateFormat("1000-08-31")).toBeTruthy();
     expect(isDateFormat("1000-10-31")).toBeTruthy();
     expect(isDateFormat("1000-12-31")).toBeTruthy();
+  });
+});
+
+describe("isTimeFormat", () => {
+  it("invalid", () => {
+    expect(isTimeFormat("")).toBeFalsy();
+    expect(isTimeFormat("30:00:00+00:00")).toBeFalsy();
+    expect(isTimeFormat("00:60:00+00:00")).toBeFalsy();
+    expect(isTimeFormat("24:00:00+00:00")).toBeFalsy();
+    expect(isTimeFormat("23:00:60+00:00")).toBeFalsy();
+    expect(isTimeFormat("00:00:00$00:00")).toBeFalsy();
+    expect(isTimeFormat("00:00:00+20:00")).toBeFalsy();
+    expect(isTimeFormat("00:00:00-20:00")).toBeFalsy();
+  });
+
+  it("valid", () => {
+    expect(isTimeFormat("00:00:00+00:00")).toBeTruthy();
+    expect(isTimeFormat("23:59:59+19:59")).toBeTruthy();
+    expect(isTimeFormat("23:59:59Z")).toBeTruthy();
   });
 });
