@@ -1,4 +1,5 @@
 import { Schema } from "../types.ts";
+import { toSchemaError } from "../utils.ts";
 
 export abstract class CollectiveTypeSchema<
   In = unknown,
@@ -27,4 +28,19 @@ export abstract class CollectiveTypeSchema<
 
     return subClass;
   }
+}
+
+export abstract class AssertiveSchema<
+  In = unknown,
+  Out extends In = In,
+> implements Schema<In, Out> {
+  protected abstract assertion: (value: In) => asserts value is Out;
+
+  assert = (value: In): asserts value is Out => {
+    try {
+      this.assertion(value);
+    } catch (e) {
+      throw toSchemaError(e);
+    }
+  };
 }
