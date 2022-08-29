@@ -8,6 +8,7 @@ import {
   inspect,
   isError,
   ReturnAssert,
+  validateUUID,
 } from "./deps.ts";
 import { Schema, SuperType, UnwrapSchema } from "./types.ts";
 import { toSchemaError } from "./utils.ts";
@@ -245,4 +246,13 @@ export function assertNot<T extends Assert>(
     actual: "Assertion is succeed",
     expect: "Assertion is failed",
   });
+}
+
+export function assertUuidFormat(value: string): asserts value is string {
+  if (!validateUUID(value)) {
+    throw new AssertionError({
+      actual: value,
+      expect: `UUID format`,
+    });
+  }
 }

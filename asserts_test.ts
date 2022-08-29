@@ -6,6 +6,7 @@ import {
   assertProperty,
   assertSameConstructor,
   assertSchema,
+  assertUuidFormat,
 } from "./asserts.ts";
 import {
   assertBoolean,
@@ -185,5 +186,18 @@ describe("assertNot", () => {
 
   it("should success when assertion is failed", () => {
     expect(assertNot(assertString, 0)).toBeUndefined();
+  });
+});
+
+describe("assertUuidFormat", () => {
+  it("should throw error when the value is invalid UUID format", () => {
+    expect(() => assertUuidFormat("")).toThrow();
+  });
+
+  it("should throw error when the value is invalid UUID format", () => {
+    expect(assertUuidFormat("00000000-0000-0000-0000-000000000000"))
+      .toBeUndefined();
+    expect(assertUuidFormat("6ec0bd7f-11c0-43da-975e-2a8ad9ebae0b"))
+      .toBeUndefined();
   });
 });

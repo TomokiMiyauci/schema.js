@@ -47,6 +47,7 @@ export {
   assertSymbol,
   assertUndefined,
 } from "https://deno.land/x/assertion@1.0.0-beta.1/mod.ts";
+export { validate as validateUUID } from "https://deno.land/std@0.153.0/uuid/mod.ts";
 
 export type valueOf<T> = T[keyof T];
 
