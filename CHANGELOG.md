@@ -1,3 +1,12 @@
+# [1.0.0-beta.13](https://github.com/schemaland/schema.js/compare/1.0.0-beta.12...1.0.0-beta.13) (2022-08-28)
+
+
+### Features
+
+* **asserts:** improve type infer to `assertAnd` function ([356b33b](https://github.com/schemaland/schema.js/commit/356b33b85287c777b403bd598f845ecf20e45e97))
+* **schema:** improve type infer for `AndSchema` ([ca82a5a](https://github.com/schemaland/schema.js/commit/ca82a5accbf13629b4ed502c48bbba34b45dcbe7))
+* **utils:** add `defineSchemaProperty` function that merge a schema as method ([cacf6a6](https://github.com/schemaland/schema.js/commit/cacf6a657f410d6b0263872dd5283aab552ca295))
+
 # [1.0.0-beta.12](https://github.com/schemaland/schema.js/compare/1.0.0-beta.11...1.0.0-beta.12) (2022-08-27)
 
 
