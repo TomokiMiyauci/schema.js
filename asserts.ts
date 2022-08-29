@@ -28,6 +28,7 @@ import {
   isMinLength,
   isSchema,
   isTimeFormat,
+  isUriFormat,
 } from "./validates.ts";
 
 /** Assert whether the value satisfies the schema.
@@ -349,6 +350,15 @@ export function assertIpv6Format(value: string): asserts value is string {
     throw new AssertionError({
       actual: value,
       expect: `IPv6 format`,
+    });
+  }
+}
+
+export function assertUriFormat(value: string): asserts value is string {
+  if (!isUriFormat(value)) {
+    throw new AssertionError({
+      actual: value,
+      expect: `URI format`,
     });
   }
 }

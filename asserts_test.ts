@@ -13,6 +13,7 @@ import {
   assertSameConstructor,
   assertSchema,
   assertTimeFormat,
+  assertUriFormat,
   assertUrlFormat,
   assertUuidFormat,
 } from "./asserts.ts";
@@ -304,5 +305,16 @@ describe("assertIpv6Format", () => {
 
   it("should return undefined when the value is Ipv6 format", () => {
     expect(assertIpv6Format("::")).toBeUndefined();
+  });
+});
+
+describe("assertUriFormat", () => {
+  it("should throw error when the value is invalid URI format", () => {
+    expect(() => assertUriFormat("")).toThrow();
+    expect(() => assertUriFormat("http")).toThrow();
+  });
+
+  it("should return undefined when the value is URI format", () => {
+    expect(assertUriFormat("https://deno.lannd")).toBeUndefined();
   });
 });

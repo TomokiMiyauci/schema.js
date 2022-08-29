@@ -169,9 +169,85 @@ export function isIpv4Format(value: string): value is Ipv4Format {
   return ReIpv4.test(value);
 }
 
-/** @see https://stackoverflow.com/questions/53497/regular-expression-that-matches-valid-ipv6-addresses */
-const ReIpv6 =
-  /^([\da-f]{1,4}:){7}[\da-f]{1,4}|([\da-f]{1,4}:){1,7}:|([\da-f]{1,4}:){1,6}:[\da-f]{1,4}|([a-f\d]{1,4}:){1,5}(:[a-f\d]{1,4}){1,2}|([a-f\d]{1,4}:){1,4}(:[a-f\d]{1,4}){1,3}|([a-f\d]{1,4}:){1,3}(:[a-f\d]{1,4}){1,4}|([a-f\d]{1,4}:){1,2}(:[\da-f]{1,4}){1,5}|[\da-f]{1,4}:((:[\da-f]{1,4}){1,6})|:((:[0-9a-f]{1,4}){1,7}|:)|fe80:(:[a-f\d]{0,4}){0,4}%[\da-z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}\d){0,1}\d)\.){3}(25[0-5]|(2[0-4]|1{0,1}\d){0,1}\d)|([\da-f]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}\d){0,1}\d)\.){3}(25[0-5]|(2[0-4]|1{0,1}\d){0,1}\d)$/i;
 export function isIpv6Format(value: string): value is string {
-  return ReIpv6.test(value);
+  return new RegExp(`^${IPV6ADDRESS}$`).test(value);
+}
+
+const ALPHA = `[a-z]`;
+const DIGIT = `[0-9]`;
+const HEXDIG = `[a-f0-9]`;
+
+// IPv4
+const DEC_OCTET_1 = DIGIT; // 0-9
+const DEC_OCTET_2 = `[1-9]${DIGIT}` as const; // 10-99
+const DEC_OCTET_3 = `1${DIGIT}{2}` as const; // 100-199
+const DEC_OCTET_4 = `2[0-4]${DIGIT}` as const; // 200-249
+const DEC_OCTET_5 = `25[0-5]`; // 250-255
+const DEC_OCTET =
+  `(${DEC_OCTET_1}|${DEC_OCTET_2}|${DEC_OCTET_3}|${DEC_OCTET_4}|${DEC_OCTET_5})` as const;
+const IPV4ADDRESS = `${DEC_OCTET}(\\.${DEC_OCTET}){3}` as const;
+
+// IPv6
+const H16 = `${HEXDIG}{1,4}` as const; // 16 bits of address represented in hexadecimal
+const LS32 = `(${H16}:${H16}|${IPV4ADDRESS})` as const; // least-significant 32 bits of address
+const IPV6ADDRESS_1 = `(${H16}:){6}${LS32}` as const;
+const IPV6ADDRESS_2 = `::(${H16}:){5}${LS32}` as const;
+const IPV6ADDRESS_3 = `(${H16})?::(${H16}:){4}${LS32}` as const;
+const IPV6ADDRESS_4 = `((${H16}:){0,1}${H16})?::(${H16}:){3}${LS32}` as const;
+const IPV6ADDRESS_5 = `((${H16}:){0,2}${H16})?::(${H16}:){2}${LS32}` as const;
+const IPV6ADDRESS_6 = `((${H16}:){0,3}${H16})?::${H16}:${LS32}` as const;
+const IPV6ADDRESS_7 = `((${H16}:){0,4}${H16})?::${LS32}` as const;
+const IPV6ADDRESS_8 = `((${H16}:){0,5}${H16})?::${H16}` as const;
+const IPV6ADDRESS_9 = `((${H16}:){0,6}${H16})?::` as const;
+const IPV6ADDRESS =
+  `(${IPV6ADDRESS_1}|${IPV6ADDRESS_2}|${IPV6ADDRESS_3}|${IPV6ADDRESS_4}|${IPV6ADDRESS_5}|${IPV6ADDRESS_6}|${IPV6ADDRESS_7}|${IPV6ADDRESS_8}|${IPV6ADDRESS_9})` as const;
+
+// Percent-Encoding: https://tools.ietf.org/html/rfc3986#section-2.1
+const PCT_ENCODED = `%${HEXDIG}${HEXDIG}`;
+
+// Reserved Characters: https://tools.ietf.org/html/rfc3986#section-2.2
+const SUB_DELIMS = `[!$&'()*+,;=]`;
+
+// Unreserved Characters: https://tools.ietf.org/html/rfc3986#section-2.3
+const UNRESERVED = `(${ALPHA}|${DIGIT}|[-._~])`;
+
+// Scheme: https://tools.ietf.org/html/rfc3986#section-3.1
+const SCHEME = `${ALPHA}(${ALPHA}|${DIGIT}|[+\\-.])*`;
+
+// User Information: https://tools.ietf.org/html/rfc3986#section-3.2.1
+const USERINFO = `(${UNRESERVED}|${PCT_ENCODED}|${SUB_DELIMS}|:)*`;
+
+// Host: https://tools.ietf.org/html/rfc3986#section-3.2.2
+const IPVFUTURE = `v${HEXDIG}+\\.(${UNRESERVED}|${SUB_DELIMS}|:)+`;
+const IP_LITERAL = `\\[(${IPV6ADDRESS}|${IPVFUTURE})]`;
+const REG_NAME = `(${UNRESERVED}|${PCT_ENCODED}|${SUB_DELIMS})*`;
+const HOST = `(${IP_LITERAL}|${IPV4ADDRESS}|${REG_NAME})`;
+
+// Port: https://tools.ietf.org/html/rfc3986#section-3.2.3
+const PORT = `\\d*`;
+
+// Authority: https://tools.ietf.org/html/rfc3986#section-3.2
+const AUTHORITY = `(${USERINFO}@)?${HOST}(:${PORT})?`;
+
+// Path: https://tools.ietf.org/html/rfc3986#section-3.3
+const PCHAR = `(${UNRESERVED}|${PCT_ENCODED}|${SUB_DELIMS}|[:@])`;
+const SEGMENT = `(${PCHAR})*`;
+const SEGMENT_NZ = `(${PCHAR})+`;
+const PATH_EMPTY = ``; // zero characters
+const PATH_ROOTLESS = `${SEGMENT_NZ}(/${SEGMENT})*`; // begins with a segment
+const PATH_ABSOLUTE = `/(${SEGMENT_NZ}(/${SEGMENT})*)?`; // begins with "/" but not "//"
+const PATH_ABEMPTY = `(/${SEGMENT})*`; // begins with "/" or is empty
+
+// Query: https://tools.ietf.org/html/rfc3986#section-3.4
+const QUERY = `(${PCHAR}|[/?])*`;
+
+// Fragment: https://tools.ietf.org/html/rfc3986#section-3.5
+const FRAGMENT = `(${PCHAR}|[/?])*`;
+
+// Syntax Components: https://tools.ietf.org/html/rfc3986#section-3
+const HIER_PART =
+  `(//${AUTHORITY}${PATH_ABEMPTY}|${PATH_ABSOLUTE}|${PATH_ROOTLESS}|${PATH_EMPTY})`;
+const URI = `${SCHEME}:${HIER_PART}(\\?${QUERY})?(#${FRAGMENT})?`;
+export function isUriFormat(value: string): value is string {
+  return new RegExp(`^${URI}$`).test(value);
 }

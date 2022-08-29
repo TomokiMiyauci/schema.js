@@ -6,6 +6,7 @@ import {
   isIpv6Format,
   isSchema,
   isTimeFormat,
+  isUriFormat,
   validateSchema,
 } from "./validates.ts";
 import { describe, expect, it } from "./dev_deps.ts";
@@ -173,5 +174,26 @@ describe("isIpv6Format", () => {
     expect(isIpv6Format("1::3:4:5:6:7:8")).toBeTruthy();
     expect(isIpv6Format("::2:3:4:5:6:7:8")).toBeTruthy();
     expect(isIpv6Format("2001:db8:3:4::192.0.2.33")).toBeTruthy();
+  });
+});
+
+describe("isUriFormat", () => {
+  it("invalid", () => {
+    expect(isUriFormat("")).toBeFalsy();
+    expect(isUriFormat(":")).toBeFalsy();
+    expect(isUriFormat("http")).toBeFalsy();
+    expect(isUriFormat("http://::")).toBeFalsy();
+    expect(isUriFormat("http://test.test##a")).toBeFalsy();
+  });
+
+  it("valid", () => {
+    expect(isUriFormat("http:a")).toBeTruthy();
+    expect(isUriFormat("http://0.0.0.0")).toBeTruthy();
+    expect(isUriFormat("http://test.test")).toBeTruthy();
+    expect(isUriFormat("http://test.test#a")).toBeTruthy();
+    expect(isUriFormat("http:/::")).toBeTruthy();
+    expect(isUriFormat("http:/a:b:c")).toBeTruthy();
+    expect(isUriFormat("http:/username@a")).toBeTruthy();
+    expect(isUriFormat("http:/username@:::8000")).toBeTruthy();
   });
 });
