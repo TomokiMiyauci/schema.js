@@ -3,6 +3,7 @@ import {
   assertDateFormat,
   assertDateTimeFormat,
   assertEquals,
+  assertHostnameFormat,
   assertNot,
   assertOr,
   assertProperty,
@@ -257,5 +258,16 @@ describe("assertDateTimeFormat", () => {
 
   it("should return undefined when the value is date-time format", () => {
     expect(assertDateTimeFormat("1000-01-01T00:00:00Z")).toBeUndefined();
+  });
+});
+
+describe("assertHostnameFormat", () => {
+  it("should throw error when the value is invalid hostname format", () => {
+    expect(() => assertHostnameFormat("")).toThrow();
+    expect(() => assertHostnameFormat("a.")).toThrow();
+  });
+
+  it("should return undefined when the value is hostname format", () => {
+    expect(assertHostnameFormat("a.a")).toBeUndefined();
   });
 });

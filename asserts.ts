@@ -20,6 +20,7 @@ import {
   getCount,
   isDateFormat,
   isDateTimeFormat,
+  isHostnameFormat,
   isMaxLength,
   isMinLength,
   isSchema,
@@ -285,7 +286,7 @@ export function assertDateFormat(value: string): asserts value is FullDate {
   if (!isDateFormat(value)) {
     throw new AssertionError({
       actual: value,
-      expect: "Date format",
+      expect: "date format",
     });
   }
 }
@@ -294,7 +295,7 @@ export function assertTimeFormat(value: string): asserts value is FullTime {
   if (!isTimeFormat(value)) {
     throw new AssertionError({
       actual: value,
-      expect: "Time format",
+      expect: "time format",
     });
   }
 }
@@ -303,7 +304,16 @@ export function assertDateTimeFormat(value: string): asserts value is DateTime {
   if (!isDateTimeFormat(value)) {
     throw new AssertionError({
       actual: value,
-      expect: "DateTime format",
+      expect: "date time format",
+    });
+  }
+}
+
+export function assertHostnameFormat(value: string): asserts value is string {
+  if (!isHostnameFormat(value)) {
+    throw new AssertionError({
+      actual: value,
+      expect: "hostname format",
     });
   }
 }

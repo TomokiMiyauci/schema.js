@@ -1,6 +1,7 @@
 import {
   isDateFormat,
   isDateTimeFormat,
+  isHostnameFormat,
   isSchema,
   isTimeFormat,
   validateSchema,
@@ -109,5 +110,22 @@ describe("isDateTimeFormat", () => {
     expect(isDateTimeFormat("1000-01-01T00:00:00Z")).toBeTruthy();
     expect(isDateTimeFormat("1000-01-01T00:00:00+00:00")).toBeTruthy();
     expect(isDateTimeFormat("9999-12-31T23:59:59+19:59")).toBeTruthy();
+  });
+});
+
+describe("isHostnameFormat", () => {
+  it("invalid", () => {
+    expect(isHostnameFormat("")).toBeFalsy();
+    expect(isHostnameFormat("a.")).toBeFalsy();
+    expect(isHostnameFormat("a".repeat(64))).toBeFalsy();
+    expect(isHostnameFormat("a".repeat(63) + "." + "a".repeat(64))).toBeFalsy();
+  });
+
+  it("valid", () => {
+    expect(isHostnameFormat("a")).toBeTruthy();
+    expect(isHostnameFormat("a.a")).toBeTruthy();
+    expect(isHostnameFormat("a".repeat(63))).toBeTruthy();
+    expect(isHostnameFormat("a".repeat(63) + "." + "a".repeat(63)))
+      .toBeTruthy();
   });
 });

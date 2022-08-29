@@ -153,3 +153,10 @@ export function isDateTimeFormat(value: string): value is DateTime {
   const ReDateTime = new RegExp(`${ReFullDate.source}T${ReFullTime.source}`);
   return exactMatch(ReDateTime).test(value);
 }
+
+/** @see https://stackoverflow.com/questions/106179/regular-expression-to-match-dns-hostname-or-ip-address */
+const ReHostname =
+  /^[a-z\d]([a-z\d\-]{0,61}[a-z\d])?(\.[a-z\d]([a-z\d\-]{0,61}[a-z\d])?)*$/i;
+export function isHostnameFormat(value: string): value is string {
+  return ReHostname.test(value);
+}
