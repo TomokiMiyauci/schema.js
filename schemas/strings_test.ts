@@ -7,6 +7,7 @@ import {
   Ipv6FormatSchema,
   PatternSchema,
   TimeFormatSchema,
+  UriFormatSchema,
   UrlFormatSchema,
   UuidFormatSchema,
 } from "./strings.ts";
@@ -136,5 +137,17 @@ describe("Ipv6FormatSchema", () => {
 
   it("should return undefined when the is IPv6 format", () => {
     expect(new Ipv6FormatSchema().assert("::")).toBeUndefined();
+  });
+});
+
+describe("UriFormatSchema", () => {
+  it("should throw error when the value is invalid URI format", () => {
+    expect(() => new UriFormatSchema().assert("")).toThrow();
+    expect(() => new UriFormatSchema().assert("http")).toThrow();
+  });
+
+  it("should return undefined when the is URI format", () => {
+    expect(new UriFormatSchema().assert("https://test.test/test#test"))
+      .toBeUndefined();
   });
 });

@@ -195,5 +195,10 @@ describe("isUriFormat", () => {
     expect(isUriFormat("http:/a:b:c")).toBeTruthy();
     expect(isUriFormat("http:/username@a")).toBeTruthy();
     expect(isUriFormat("http:/username@:::8000")).toBeTruthy();
+    expect(
+      isUriFormat(
+        "https://user:password@www.example.test:123/forum/questions/?tag=networking&order=newest#top",
+      ),
+    ).toBeTruthy();
   });
 });

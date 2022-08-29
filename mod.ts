@@ -30,6 +30,7 @@ export {
   MinLengthSchema,
   PatternSchema,
   TimeFormatSchema,
+  UriFormatSchema,
   UrlFormatSchema,
   UuidFormatSchema,
 } from "./schemas/strings.ts";

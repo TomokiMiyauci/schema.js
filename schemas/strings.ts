@@ -10,6 +10,7 @@ import {
   assertMaxLength,
   assertMinLength,
   assertTimeFormat,
+  assertUriFormat,
   assertUrlFormat,
   assertUuidFormat,
 } from "../asserts.ts";
@@ -264,4 +265,26 @@ export class Ipv4FormatSchema extends AssertiveSchema<string, Ipv4Format> {
 export class Ipv6FormatSchema extends AssertiveSchema<string> {
   protected override assertion: (value: string) => asserts value is string =
     assertIpv6Format;
+}
+
+/** Schema of URI format. This is `string` subtype.
+ *
+ * ```ts
+ * import {
+ *   assertSchema,
+ *   UriFormatSchema,
+ * } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+ * import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+ *
+ * const schema = new UriFormatSchema();
+ * assertSchema(
+ *   schema,
+ *   "https://user:password@www.example.test:123/path/to/?tag=networking&order=newest#top",
+ * );
+ * assertThrows(() => assertSchema(schema, "invalid URI"));
+ * ```
+ */
+export class UriFormatSchema extends AssertiveSchema<string> {
+  protected override assertion: (value: string) => asserts value is string =
+    assertUriFormat;
 }

@@ -321,6 +321,27 @@ assertSchema(schema, "http://localhost");
 assertThrows(() => assertSchema(schema, "invalid URL"));
 ```
 
+## URI format schema
+
+∈ `string`
+
+Schema of URI format. This is `string` subtype.
+
+```ts
+import {
+  assertSchema,
+  UriFormatSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+const schema = new UriFormatSchema();
+assertSchema(
+  schema,
+  "https://user:password@www.example.test:123/path/to/?tag=networking&order=newest#top",
+);
+assertThrows(() => assertSchema(schema, "invalid URI"));
+```
+
 ## Date format schema
 
 ∈ `string`
