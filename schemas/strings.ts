@@ -1,6 +1,10 @@
-import { CollectiveTypeSchema } from "./utils.ts";
+import { AssertiveSchema, CollectiveTypeSchema } from "./utils.ts";
 import { arity, assertEmailFormat, assertLengthIs } from "../deps.ts";
-import { assertMaxLength, assertMinLength } from "../asserts.ts";
+import {
+  assertMaxLength,
+  assertMinLength,
+  assertUuidFormat,
+} from "../asserts.ts";
 
 export class LengthSchema<T extends string>
   extends CollectiveTypeSchema<string, T> {
@@ -58,4 +62,23 @@ export class EmailFormatSchema extends CollectiveTypeSchema<string> {
     assertEmailFormat;
 
   protected override create = () => new EmailFormatSchema();
+}
+
+/** Schema of email format. This is `string` subtype.
+ *
+ * ```ts
+ * import {
+ *   assertSchema,
+ *   UuidFormatSchema,
+ * } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+ * import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+ *
+ * const schema = new UuidFormatSchema();
+ * assertSchema(schema, "00000000-0000-0000-0000-000000000000");
+ * assertThrows(() => assertSchema(schema, "not valid UUID"));
+ * ```
+ */
+export class UuidFormatSchema extends AssertiveSchema<string> {
+  protected override assertion: (value: string) => asserts value is string =
+    assertUuidFormat;
 }
