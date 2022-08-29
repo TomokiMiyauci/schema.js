@@ -4,6 +4,7 @@ import {
   assertDateFormat,
   assertDateTimeFormat,
   assertHostnameFormat,
+  assertMatchPattern,
   assertMaxLength,
   assertMinLength,
   assertTimeFormat,
@@ -195,4 +196,29 @@ export class HostnameFormatSchema extends AssertiveSchema<string> {
   protected override assertion: (
     value: string,
   ) => asserts value is string = assertHostnameFormat;
+}
+
+/** Schema of regex pattern. This is `string` subtype.
+ *
+ * ```ts
+ * import {
+ *   assertSchema,
+ *   PatternSchema,
+ * } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+ * import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+ *
+ * const schema = new PatternSchema(/^(\\([0-9]{3}\\))?[0-9]{3}-[0-9]{4}$/);
+ * assertSchema(schema, "555-1212");
+ * assertSchema(schema, "(888)555-1212");
+ * assertThrows(() => assertSchema(schema, "(888)555-1212 ext. 532"));
+ * assertThrows(() => assertSchema(schema, "invalid phone number"));
+ * ```
+ */
+export class PatternSchema extends AssertiveSchema<string> {
+  protected override assertion: (value: string) => asserts value is string;
+
+  constructor(pattern: RegExp | string) {
+    super();
+    this.assertion = arity(assertMatchPattern, pattern);
+  }
 }

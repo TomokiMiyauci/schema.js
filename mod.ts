@@ -26,6 +26,7 @@ export {
   LengthSchema,
   MaxLengthSchema,
   MinLengthSchema,
+  PatternSchema,
   TimeFormatSchema,
   UrlFormatSchema,
   UuidFormatSchema,

@@ -3,6 +3,7 @@ import {
   DateTimeFormatSchema,
   EmailFormatSchema,
   HostnameFormatSchema,
+  PatternSchema,
   TimeFormatSchema,
   UrlFormatSchema,
   UuidFormatSchema,
@@ -89,6 +90,27 @@ describe("HostnameFormatSchema", () => {
 
   it("should return undefined when the value is hostname format", () => {
     expect(new HostnameFormatSchema().assert("a.a"))
+      .toBeUndefined();
+  });
+});
+
+describe("PatternSchema", () => {
+  it("should throw error when the value does not match pattern", () => {
+    expect(() => new PatternSchema(/^a/).assert("b"))
+      .toThrow();
+    expect(() =>
+      new PatternSchema(/^(\\([0-9]{3}\\))?[0-9]{3}-[0-9]{4}$/).assert(
+        "(888)555-1212 ext. 532",
+      )
+    ).toThrow();
+  });
+
+  it("should return undefined when the value match pattern", () => {
+    expect(
+      new PatternSchema(/^(\\([0-9]{3}\\))?[0-9]{3}-[0-9]{4}$/).assert(
+        "555-1212",
+      ),
+    )
       .toBeUndefined();
   });
 });

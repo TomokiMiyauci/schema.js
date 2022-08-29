@@ -317,3 +317,17 @@ export function assertHostnameFormat(value: string): asserts value is string {
     });
   }
 }
+
+export function assertMatchPattern(
+  pattern: string | RegExp,
+  value: string,
+): asserts value is string {
+  const regExp = new RegExp(pattern);
+
+  if (!regExp.test(value)) {
+    throw new AssertionError({
+      actual: value,
+      expect: `match to ${regExp.source}`,
+    });
+  }
+}

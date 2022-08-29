@@ -4,6 +4,7 @@ import {
   assertDateTimeFormat,
   assertEquals,
   assertHostnameFormat,
+  assertMatchPattern,
   assertNot,
   assertOr,
   assertProperty,
@@ -269,5 +270,15 @@ describe("assertHostnameFormat", () => {
 
   it("should return undefined when the value is hostname format", () => {
     expect(assertHostnameFormat("a.a")).toBeUndefined();
+  });
+});
+
+describe("assertMatchPattern", () => {
+  it("should throw error when the value is invalid hostname format", () => {
+    expect(() => assertMatchPattern("a", "")).toThrow();
+  });
+
+  it("should return undefined when the value is hostname format", () => {
+    expect(assertMatchPattern(/^a/, "abc")).toBeUndefined();
   });
 });

@@ -389,6 +389,26 @@ assertThrows(() => assertSchema(schema, "0000-00-00:00:00:00Z"));
 assertThrows(() => assertSchema(schema, "invalid date time"));
 ```
 
+## Pattern schema
+
+∈ `string`
+
+Schema of regex pattern. This is `string` subtype.
+
+```ts
+import {
+  assertSchema,
+  PatternSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+const schema = new PatternSchema(/^(\\([0-9]{3}\\))?[0-9]{3}-[0-9]{4}$/);
+assertSchema(schema, "555-1212");
+assertSchema(schema, "(888)555-1212");
+assertThrows(() => assertSchema(schema, "(888)555-1212 ext. 532"));
+assertThrows(() => assertSchema(schema, "invalid phone number"));
+```
+
 ## Partial schema
 
 Schema of optional properties.
