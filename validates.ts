@@ -122,17 +122,34 @@ type PartialType = `${TimeHour}:${TimeMinute}:${TimeSecond}`;
 
 export type FullDate = `${DateFullyear}-${DateMonth}-${DateMday}`;
 export type FullTime = `${PartialType}${TimeOffset}`;
+export type DateTime = `${FullDate}T${FullTime}`;
 
-export function isDateFormat(value: string): value is FullDate {
-  const ReFullDate =
-    /^(?:[1-9]\d{3}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1\d|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[1-9]\d(?:0[48]|[2468][048]|[13579][26])|(?:[2468][048]|[13579][26])00)-02-29)$/;
-
-  return ReFullDate.test(value);
+function prefixMatch(regExp: RegExp): RegExp {
+  const source = regExp.source;
+  return source.startsWith("^") ? regExp : new RegExp(`^${source}`);
 }
 
-export function isTimeFormat(value: string): value is FullTime {
-  const ReFullTime =
-    /^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:Z|[+-][01]\d:[0-5]\d)$/;
+function suffixMatch(regExp: RegExp): RegExp {
+  const source = regExp.source;
+  return source.endsWith("$") ? regExp : new RegExp(`${source}$`);
+}
 
-  return ReFullTime.test(value);
+function exactMatch(regExp: RegExp): RegExp {
+  return suffixMatch(prefixMatch(regExp));
+}
+
+const ReFullDate =
+  /(?:[1-9]\d{3}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1\d|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[1-9]\d(?:0[48]|[2468][048]|[13579][26])|(?:[2468][048]|[13579][26])00)-02-29)/;
+export function isDateFormat(value: string): value is FullDate {
+  return exactMatch(ReFullDate).test(value);
+}
+
+const ReFullTime = /(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d(?:Z|[+-][01]\d:[0-5]\d)/;
+export function isTimeFormat(value: string): value is FullTime {
+  return exactMatch(ReFullTime).test(value);
+}
+
+export function isDateTimeFormat(value: string): value is DateTime {
+  const ReDateTime = new RegExp(`${ReFullDate.source}T${ReFullTime.source}`);
+  return exactMatch(ReDateTime).test(value);
 }

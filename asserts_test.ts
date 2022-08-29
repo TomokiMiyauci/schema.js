@@ -1,6 +1,7 @@
 import {
   assertAnd,
   assertDateFormat,
+  assertDateTimeFormat,
   assertEquals,
   assertNot,
   assertOr,
@@ -245,5 +246,16 @@ describe("assertTimeFormat", () => {
     expect(assertTimeFormat("00:00:00+00:00")).toBeUndefined();
     expect(assertTimeFormat("00:00:00-00:00")).toBeUndefined();
     expect(assertTimeFormat("23:59:59-19:59")).toBeUndefined();
+  });
+});
+
+describe("assertDateTimeFormat", () => {
+  it("should throw error when the value is invalid date-time format", () => {
+    expect(() => assertDateTimeFormat("")).toThrow();
+    expect(() => assertDateTimeFormat("1000-01-01T00:00:00+20:00")).toThrow();
+  });
+
+  it("should return undefined when the value is date-time format", () => {
+    expect(assertDateTimeFormat("1000-01-01T00:00:00Z")).toBeUndefined();
   });
 });

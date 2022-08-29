@@ -13,11 +13,13 @@ import {
 import { Schema, SuperType, UnwrapSchema } from "./types.ts";
 import { toSchemaError } from "./utils.ts";
 import {
+  DateTime,
   FullDate,
   FullTime,
   getConstructor,
   getCount,
   isDateFormat,
+  isDateTimeFormat,
   isMaxLength,
   isMinLength,
   isSchema,
@@ -293,6 +295,15 @@ export function assertTimeFormat(value: string): asserts value is FullTime {
     throw new AssertionError({
       actual: value,
       expect: "Time format",
+    });
+  }
+}
+
+export function assertDateTimeFormat(value: string): asserts value is DateTime {
+  if (!isDateTimeFormat(value)) {
+    throw new AssertionError({
+      actual: value,
+      expect: "DateTime format",
     });
   }
 }

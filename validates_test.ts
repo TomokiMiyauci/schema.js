@@ -1,5 +1,6 @@
 import {
   isDateFormat,
+  isDateTimeFormat,
   isSchema,
   isTimeFormat,
   validateSchema,
@@ -94,5 +95,19 @@ describe("isTimeFormat", () => {
     expect(isTimeFormat("00:00:00+00:00")).toBeTruthy();
     expect(isTimeFormat("23:59:59+19:59")).toBeTruthy();
     expect(isTimeFormat("23:59:59Z")).toBeTruthy();
+  });
+});
+
+describe("isDateTimeFormat", () => {
+  it("invalid", () => {
+    expect(isDateTimeFormat("")).toBeFalsy();
+    expect(isDateTimeFormat("0000-00-00T00:00:00Z")).toBeFalsy();
+    expect(isDateTimeFormat("1000-01-01T00:00:00+20:00")).toBeFalsy();
+  });
+
+  it("valid", () => {
+    expect(isDateTimeFormat("1000-01-01T00:00:00Z")).toBeTruthy();
+    expect(isDateTimeFormat("1000-01-01T00:00:00+00:00")).toBeTruthy();
+    expect(isDateTimeFormat("9999-12-31T23:59:59+19:59")).toBeTruthy();
   });
 });
