@@ -6,6 +6,7 @@ import {
   assertProperty,
   assertSameConstructor,
   assertSchema,
+  assertUrlFormat,
   assertUuidFormat,
 } from "./asserts.ts";
 import {
@@ -194,10 +195,26 @@ describe("assertUuidFormat", () => {
     expect(() => assertUuidFormat("")).toThrow();
   });
 
-  it("should throw error when the value is invalid UUID format", () => {
+  it("should throw error when the value is valid UUID format", () => {
     expect(assertUuidFormat("00000000-0000-0000-0000-000000000000"))
       .toBeUndefined();
     expect(assertUuidFormat("6ec0bd7f-11c0-43da-975e-2a8ad9ebae0b"))
       .toBeUndefined();
+  });
+});
+
+describe("assertUrlFormat", () => {
+  it("should throw error when the value is invalid URL format", () => {
+    expect(() => assertUrlFormat("")).toThrow();
+    expect(() => assertUrlFormat("https")).toThrow();
+    expect(() => assertUrlFormat("https:")).toThrow();
+    expect(() => assertUrlFormat("https://")).toThrow();
+  });
+
+  it("should return undefined when the value is valid URL format", () => {
+    expect(assertUrlFormat("https://a")).toBeUndefined();
+    expect(assertUrlFormat("file:")).toBeUndefined();
+    expect(assertUrlFormat(" file:")).toBeUndefined();
+    expect(assertUrlFormat("  file:       ")).toBeUndefined();
   });
 });

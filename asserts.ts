@@ -256,3 +256,21 @@ export function assertUuidFormat(value: string): asserts value is string {
     });
   }
 }
+
+export function assertUrlFormat(value: string): asserts value is string {
+  try {
+    new URL(value);
+  } catch (e) {
+    const cause = isError(e) ? e : undefined;
+    throw new AssertionError(
+      {
+        actual: value,
+        expect: "URL format",
+      },
+      undefined,
+      {
+        cause,
+      },
+    );
+  }
+}
