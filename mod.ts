@@ -24,6 +24,7 @@ export {
   EmailFormatSchema,
   HostnameFormatSchema,
   Ipv4FormatSchema,
+  Ipv6FormatSchema,
   LengthSchema,
   MaxLengthSchema,
   MinLengthSchema,

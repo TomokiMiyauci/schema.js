@@ -5,6 +5,7 @@ import {
   assertDateTimeFormat,
   assertHostnameFormat,
   assertIpv4Format,
+  assertIpv6Format,
   assertMatchPattern,
   assertMaxLength,
   assertMinLength,
@@ -243,4 +244,24 @@ export class PatternSchema extends AssertiveSchema<string> {
 export class Ipv4FormatSchema extends AssertiveSchema<string, Ipv4Format> {
   protected override assertion: (value: string) => asserts value is Ipv4Format =
     assertIpv4Format;
+}
+
+/** Schema of IPv6 format. This is `string` subtype.
+ *
+ * ```ts
+ * import {
+ *   assertSchema,
+ *   Ipv6FormatSchema,
+ * } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+ * import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+ *
+ * const schema = new Ipv6FormatSchema();
+ * assertSchema(schema, "::");
+ * assertThrows(() => assertSchema(schema, ":"));
+ * assertThrows(() => assertSchema(schema, "invalid IPv6"));
+ * ```
+ */
+export class Ipv6FormatSchema extends AssertiveSchema<string> {
+  protected override assertion: (value: string) => asserts value is string =
+    assertIpv6Format;
 }

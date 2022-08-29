@@ -409,6 +409,25 @@ assertThrows(() => assertSchema(schema, "256.255.255.255"));
 assertThrows(() => assertSchema(schema, "invalid IPv4"));
 ```
 
+## Ipv6 format schema
+
+∈ `string`
+
+Schema of IPv6 format. This is `string` subtype.
+
+```ts
+import {
+  assertSchema,
+  Ipv6FormatSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+const schema = new Ipv6FormatSchema();
+assertSchema(schema, "::");
+assertThrows(() => assertSchema(schema, ":"));
+assertThrows(() => assertSchema(schema, "invalid IPv6"));
+```
+
 ## Pattern schema
 
 ∈ `string`

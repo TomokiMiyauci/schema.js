@@ -4,6 +4,7 @@ import {
   EmailFormatSchema,
   HostnameFormatSchema,
   Ipv4FormatSchema,
+  Ipv6FormatSchema,
   PatternSchema,
   TimeFormatSchema,
   UrlFormatSchema,
@@ -124,5 +125,16 @@ describe("Ipv4FormatSchema", () => {
 
   it("should return undefined when the value match pattern", () => {
     expect(new Ipv4FormatSchema().assert("0.0.0.0")).toBeUndefined();
+  });
+});
+
+describe("Ipv6FormatSchema", () => {
+  it("should throw error when the value is invalid IPv6 format", () => {
+    expect(() => new Ipv6FormatSchema().assert("")).toThrow();
+    expect(() => new Ipv6FormatSchema().assert(":")).toThrow();
+  });
+
+  it("should return undefined when the is IPv6 format", () => {
+    expect(new Ipv6FormatSchema().assert("::")).toBeUndefined();
   });
 });
