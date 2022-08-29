@@ -75,7 +75,7 @@ export type UnwrapSchema<
  * type Schema = InferSchema<typeof schema>;
  * ```
  */
-export type InferSchema<S extends Schema> = ReturnAssert<S["assert"]>;
+export type InferSchema<S extends Schema<any>> = ReturnAssert<S["assert"]>;
 
 export type SchemaParameter<S extends Schema> = Parameters<S["assert"]>[0];
 
