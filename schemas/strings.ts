@@ -1,11 +1,13 @@
 import { AssertiveSchema, CollectiveTypeSchema } from "./utils.ts";
 import { arity, assertEmailFormat, assertLengthIs } from "../deps.ts";
 import {
+  assertDateFormat,
   assertMaxLength,
   assertMinLength,
   assertUrlFormat,
   assertUuidFormat,
 } from "../asserts.ts";
+import { DateFormat } from "../validates.ts";
 
 export class LengthSchema<T extends string>
   extends CollectiveTypeSchema<string, T> {
@@ -101,4 +103,26 @@ export class UuidFormatSchema extends AssertiveSchema<string> {
 export class UrlFormatSchema extends AssertiveSchema<string> {
   protected override assertion: (value: string) => asserts value is string =
     assertUrlFormat;
+}
+
+/** Schema of Date format. This is `string` subtype.
+ * Compliant with {@link https://www.rfc-editor.org/rfc/rfc3339#section-5.6 RFC 3339, section-5.6, full-date}
+ *
+ * ```ts
+ * import {
+ *   assertSchema,
+ *   DateFormatSchema,
+ * } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+ * import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+ *
+ * const schema = new DateFormatSchema();
+ * assertSchema(schema, "1000-01-01");
+ * assertThrows(() => assertSchema(schema, "0000-00-00"));
+ * assertThrows(() => assertSchema(schema, "invalid Date"));
+ * ```
+ */
+export class DateFormatSchema extends AssertiveSchema<string, DateFormat> {
+  protected override assertion: (
+    value: string,
+  ) => asserts value is DateFormat = assertDateFormat;
 }

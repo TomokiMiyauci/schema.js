@@ -263,7 +263,7 @@ const emailFormatAndLessThan20 = new EmailFormatSchema().and(
 assertSchema(emailFormatAndLessThan20, "contact@test.test");
 ```
 
-## UUID schema
+## UUID format schema
 
 ∈ `string`
 
@@ -281,7 +281,7 @@ assertSchema(schema, "00000000-0000-0000-0000-000000000000");
 assertThrows(() => assertSchema(schema, "invalid UUID"));
 ```
 
-## URL schema
+## URL format schema
 
 ∈ `string`
 
@@ -297,6 +297,28 @@ import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts"
 const schema = new UrlFormatSchema();
 assertSchema(schema, "http://localhost");
 assertThrows(() => assertSchema(schema, "invalid URL"));
+```
+
+## Date format schema
+
+∈ `string`
+
+Schema of Date format. This is `string` subtype.
+
+Compliant with
+[RFC 3339, section-5.6, full-date](https://www.rfc-editor.org/rfc/rfc3339#section-5.6)
+
+```ts
+import {
+  assertSchema,
+  DateFormatSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+const schema = new DateFormatSchema();
+assertSchema(schema, "1000-01-01");
+assertThrows(() => assertSchema(schema, "0000-00-00"));
+assertThrows(() => assertSchema(schema, "invalid Date"));
 ```
 
 ## Partial schema

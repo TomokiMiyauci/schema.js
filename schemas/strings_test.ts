@@ -1,4 +1,5 @@
 import {
+  DateFormatSchema,
   EmailFormatSchema,
   UrlFormatSchema,
   UuidFormatSchema,
@@ -37,5 +38,16 @@ describe("UrlFormatSchema", () => {
     expect(
       new UrlFormatSchema().assert("http://a"),
     ).toBeUndefined();
+  });
+});
+
+describe("DateFormatSchema", () => {
+  it("should throw error when the value is invalid date format", () => {
+    expect(() => new DateFormatSchema().assert("0000-00-00")).toThrow();
+    expect(() => new DateFormatSchema().assert("")).toThrow();
+  });
+
+  it("should return undefined when the value is date format", () => {
+    expect(new DateFormatSchema().assert("2000-01-01")).toBeUndefined();
   });
 });
