@@ -281,6 +281,28 @@ assertSchema(schema, "00000000-0000-0000-0000-000000000000");
 assertThrows(() => assertSchema(schema, "invalid UUID"));
 ```
 
+## Hostname format schema
+
+∈ `string`
+
+Schema of hostname format. This is `string` subtype.
+
+Compliant with
+[RFC 1123, 2.1 Host Names and Numbers](https://www.rfc-editor.org/rfc/rfc1123#page-13)
+
+```ts
+import {
+  assertSchema,
+  HostnameFormatSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+const schema = new HostnameFormatSchema();
+assertSchema(schema, "a");
+assertThrows(() => assertSchema(schema, "a".repeat(64)));
+assertThrows(() => assertSchema(schema, "invalid hostname"));
+```
+
 ## URL format schema
 
 ∈ `string`

@@ -3,6 +3,7 @@ import { arity, assertEmailFormat, assertLengthIs } from "../deps.ts";
 import {
   assertDateFormat,
   assertDateTimeFormat,
+  assertHostnameFormat,
   assertMaxLength,
   assertMinLength,
   assertTimeFormat,
@@ -171,4 +172,27 @@ export class DateTimeFormatSchema extends AssertiveSchema<string, DateTime> {
   protected override assertion: (
     value: string,
   ) => asserts value is DateTime = assertDateTimeFormat;
+}
+
+/** Schema of hostname format. This is `string` subtype.
+ *
+ * Compliant with {@link https://www.rfc-editor.org/rfc/rfc1123#page-13 RFC 1123, 2.1 Host Names and Numbers}.
+ *
+ * ```ts
+ * import {
+ *   assertSchema,
+ *   HostnameFormatSchema,
+ * } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+ * import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+ *
+ * const schema = new HostnameFormatSchema();
+ * assertSchema(schema, "a");
+ * assertThrows(() => assertSchema(schema, "a".repeat(64)));
+ * assertThrows(() => assertSchema(schema, "invalid hostname"));
+ * ```
+ */
+export class HostnameFormatSchema extends AssertiveSchema<string> {
+  protected override assertion: (
+    value: string,
+  ) => asserts value is string = assertHostnameFormat;
 }

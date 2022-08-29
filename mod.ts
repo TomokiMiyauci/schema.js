@@ -22,6 +22,7 @@ export {
   DateFormatSchema,
   DateTimeFormatSchema,
   EmailFormatSchema,
+  HostnameFormatSchema,
   LengthSchema,
   MaxLengthSchema,
   MinLengthSchema,

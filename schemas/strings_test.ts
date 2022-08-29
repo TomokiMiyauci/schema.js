@@ -2,6 +2,7 @@ import {
   DateFormatSchema,
   DateTimeFormatSchema,
   EmailFormatSchema,
+  HostnameFormatSchema,
   TimeFormatSchema,
   UrlFormatSchema,
   UuidFormatSchema,
@@ -75,6 +76,19 @@ describe("DateTimeFormatSchema", () => {
 
   it("should return undefined when the value is time format", () => {
     expect(new DateTimeFormatSchema().assert("1000-01-01T00:00:00+00:00"))
+      .toBeUndefined();
+  });
+});
+
+describe("HostnameFormatSchema", () => {
+  it("should throw error when the value is invalid hostname format", () => {
+    expect(() => new HostnameFormatSchema().assert("")).toThrow();
+    expect(() => new HostnameFormatSchema().assert("a."))
+      .toThrow();
+  });
+
+  it("should return undefined when the value is hostname format", () => {
+    expect(new HostnameFormatSchema().assert("a.a"))
       .toBeUndefined();
   });
 });
