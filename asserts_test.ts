@@ -1,5 +1,6 @@
 import {
   assertAnd,
+  assertDateFormat,
   assertEquals,
   assertNot,
   assertOr,
@@ -216,5 +217,16 @@ describe("assertUrlFormat", () => {
     expect(assertUrlFormat("file:")).toBeUndefined();
     expect(assertUrlFormat(" file:")).toBeUndefined();
     expect(assertUrlFormat("  file:       ")).toBeUndefined();
+  });
+});
+
+describe("assertDateFormat", () => {
+  it("should throw error when the value is invalid date format", () => {
+    expect(() => assertDateFormat("")).toThrow();
+    expect(() => assertDateFormat("0000-00-00")).toThrow();
+  });
+
+  it("should return undefined when the value is date format", () => {
+    expect(assertDateFormat("2000-01-01")).toBeUndefined();
   });
 });

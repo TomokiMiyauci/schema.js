@@ -13,8 +13,10 @@ import {
 import { Schema, SuperType, UnwrapSchema } from "./types.ts";
 import { toSchemaError } from "./utils.ts";
 import {
+  DateFormat,
   getConstructor,
   getCount,
+  isDateFormat,
   isMaxLength,
   isMinLength,
   isSchema,
@@ -272,5 +274,14 @@ export function assertUrlFormat(value: string): asserts value is string {
         cause,
       },
     );
+  }
+}
+
+export function assertDateFormat(value: string): asserts value is DateFormat {
+  if (!isDateFormat(value)) {
+    throw new AssertionError({
+      actual: value,
+      expect: "Date format",
+    });
   }
 }

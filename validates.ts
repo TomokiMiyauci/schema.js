@@ -107,3 +107,12 @@ export function getCount(value: Iterable<unknown>): number {
 export function getConstructor(value: unknown): Function {
   return new Object(value).constructor;
 }
+
+export type DateFormat = `${string}-${string}-${string}`;
+
+export function isDateFormat(value: string): value is DateFormat {
+  const ReFullDate =
+    /^(?:[1-9]\d{3}-(?:(?:0[1-9]|1[0-2])-(?:0[1-9]|1\d|2[0-8])|(?:0[13-9]|1[0-2])-(?:29|30)|(?:0[13578]|1[02])-31)|(?:[1-9]\d(?:0[48]|[2468][048]|[13579][26])|(?:[2468][048]|[13579][26])00)-02-29)$/;
+
+  return ReFullDate.test(value);
+}

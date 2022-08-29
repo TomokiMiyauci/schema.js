@@ -1,4 +1,4 @@
-import { isSchema, validateSchema } from "./validates.ts";
+import { isDateFormat, isSchema, validateSchema } from "./validates.ts";
 import { describe, expect, it } from "./dev_deps.ts";
 import { StringSchema } from "./mod.ts";
 import { SchemaError } from "./errors.ts";
@@ -37,5 +37,38 @@ describe("validateSchema", () => {
       pass: false,
       errors: [new SchemaError()],
     });
+  });
+});
+
+describe("isDateFormat", () => {
+  it("invalid", () => {
+    expect(isDateFormat("")).toBeFalsy();
+    expect(isDateFormat("0000-00-00")).toBeFalsy();
+    expect(isDateFormat("9999-99-99")).toBeFalsy();
+    expect(isDateFormat("9999-20-01")).toBeFalsy();
+    expect(isDateFormat("9999-20-00")).toBeFalsy();
+    expect(isDateFormat("9999-12-00")).toBeFalsy();
+    expect(isDateFormat("9999-12-32")).toBeFalsy();
+    expect(isDateFormat("9999-02-29")).toBeFalsy();
+    expect(isDateFormat("1000-11-31")).toBeFalsy();
+    expect(isDateFormat("1000-09-31")).toBeFalsy();
+    expect(isDateFormat("1000-06-31")).toBeFalsy();
+    expect(isDateFormat("1000-04-31")).toBeFalsy();
+    expect(isDateFormat("1000-02-31")).toBeFalsy();
+  });
+
+  it("valid", () => {
+    expect(isDateFormat("2000-01-01")).toBeTruthy();
+    expect(isDateFormat("2000-12-31")).toBeTruthy();
+    expect(isDateFormat("2000-11-30")).toBeTruthy();
+    expect(isDateFormat("9999-01-01")).toBeTruthy();
+    expect(isDateFormat("9999-02-28")).toBeTruthy();
+    expect(isDateFormat("2012-01-31")).toBeTruthy();
+    expect(isDateFormat("1000-03-31")).toBeTruthy();
+    expect(isDateFormat("1000-05-31")).toBeTruthy();
+    expect(isDateFormat("1000-07-31")).toBeTruthy();
+    expect(isDateFormat("1000-08-31")).toBeTruthy();
+    expect(isDateFormat("1000-10-31")).toBeTruthy();
+    expect(isDateFormat("1000-12-31")).toBeTruthy();
   });
 });
