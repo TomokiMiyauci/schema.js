@@ -1,3 +1,18 @@
+# [1.0.0-beta.15](https://github.com/schemaland/schema.js/compare/1.0.0-beta.14...1.0.0-beta.15) (2022-08-30)
+
+
+### Features
+
+* **asserts:** add assert for IPv4 format ([0d67c51](https://github.com/schemaland/schema.js/commit/0d67c514c0286dd9651b8ed808f97fbab47630eb))
+* **asserts:** add assert for IPv6 format ([5bd0f16](https://github.com/schemaland/schema.js/commit/5bd0f166cdaca1486e6995ce49a993ded0ce1234))
+* **asserts:** add assert for URI format ([b751b3d](https://github.com/schemaland/schema.js/commit/b751b3dd6ae7137799cb8ae9363c51227a2a8fc6))
+* **schemas:** add IPv4 format schema ([de18c44](https://github.com/schemaland/schema.js/commit/de18c447803596b485422257c7c386076cdfea80))
+* **schemas:** add pattern match schema ([5a22268](https://github.com/schemaland/schema.js/commit/5a222683140fee0ef9b19d697e980bf59b4ca8c7))
+* **schemas:** add schema of IPv6 format ([e8cd19d](https://github.com/schemaland/schema.js/commit/e8cd19d53df3ed8242eaa3755fec2fdddc96c198))
+* **schemas:** add unknown schema ([99aa118](https://github.com/schemaland/schema.js/commit/99aa118f7d6ac7fe2b9ea0977297e83f33e78b41))
+* **schemas:** add unknown schema ([e08b979](https://github.com/schemaland/schema.js/commit/e08b9792f39ad55979875cc0aebf9ff9d9739e49))
+* **schemas:** add URI format schema ([85f4bcf](https://github.com/schemaland/schema.js/commit/85f4bcfc80999ff954fb6269ab3f8e8be4e0fa63))
+
 # [1.0.0-beta.14](https://github.com/schemaland/schema.js/compare/1.0.0-beta.13...1.0.0-beta.14) (2022-08-29)
 
 
