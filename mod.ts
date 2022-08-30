@@ -14,7 +14,11 @@ export {
   ObjectSchema,
   TupleSchema,
 } from "./schemas/objects.ts";
-export { PartialSchema, RecordSchema } from "./schemas/built_in.ts";
+export {
+  PartialSchema,
+  RecordSchema,
+  UnknownSchema,
+} from "./schemas/built_in.ts";
 export { AndSchema, NotSchema, OrSchema } from "./schemas/operators.ts";
 export { SchemaError, type SchemaErrorOptions } from "./errors.ts";
 export { assertSchema } from "./asserts.ts";

@@ -510,6 +510,22 @@ const schema = new RecordSchema(new StringSchema(), new NumberSchema());
 > This is because JavaScript always casts the object key from a `number` to a
 > `string`.
 
+## Unknown schema
+
+Schema of `unknown`. This is the Top type.
+
+```ts
+import {
+  assertSchema,
+  RecordSchema,
+  StringSchema,
+  UnknownSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+
+const schema = new RecordSchema(new StringSchema(), new UnknownSchema());
+// schema for `Record<string, unknown>`
+```
+
 ## Union subtype schema
 
 The union subtype schema is a schema that can be used for multiple types.

@@ -1,4 +1,4 @@
-import { PartialSchema, RecordSchema } from "./built_in.ts";
+import { PartialSchema, RecordSchema, UnknownSchema } from "./built_in.ts";
 import { ObjectSchema } from "./objects.ts";
 import { NumberSchema, StringSchema } from "./scalers.ts";
 import { describe, expect, it } from "../dev_deps.ts";
@@ -145,5 +145,14 @@ describe("RecordSchema", () => {
         c: "test",
       }),
     ).toBeUndefined();
+  });
+});
+
+describe("UnknownSchema", () => {
+  it("should return whenever", () => {
+    expect(new UnknownSchema().assert("")).toBeUndefined();
+    expect(new UnknownSchema().assert(0)).toBeUndefined();
+    expect(new UnknownSchema().assert(true)).toBeUndefined();
+    expect(new UnknownSchema().assert({})).toBeUndefined();
   });
 });

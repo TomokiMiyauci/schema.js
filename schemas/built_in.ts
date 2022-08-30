@@ -1,4 +1,4 @@
-import { CollectiveTypeSchema } from "./utils.ts";
+import { AssertiveSchema, CollectiveTypeSchema } from "./utils.ts";
 import { toSchema } from "../utils.ts";
 import { Schema, UnwrapSchema } from "../types.ts";
 import { assertPartialProperty } from "../asserts.ts";
@@ -80,4 +80,23 @@ export class RecordSchema<
   };
 
   protected override create = () => new RecordSchema(this.key, this.value);
+}
+
+/** Schema of `unknown`. This is the Top type.
+ *
+ * ```ts
+ * import {
+ *   assertSchema,
+ *   RecordSchema,
+ *   StringSchema,
+ *   UnknownSchema,
+ * } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+ *
+ * const schema = new RecordSchema(new StringSchema(), new UnknownSchema());
+ * // schema for `Record<string, unknown>`
+ * ```
+ */
+export class UnknownSchema extends AssertiveSchema {
+  protected override assertion: (value: unknown) => asserts value is unknown =
+    () => {};
 }
