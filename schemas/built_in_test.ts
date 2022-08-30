@@ -1,4 +1,9 @@
-import { PartialSchema, RecordSchema, UnknownSchema } from "./built_in.ts";
+import {
+  NeverSchema,
+  PartialSchema,
+  RecordSchema,
+  UnknownSchema,
+} from "./built_in.ts";
 import { ObjectSchema } from "./objects.ts";
 import { NumberSchema, StringSchema } from "./scalers.ts";
 import { describe, expect, it } from "../dev_deps.ts";
@@ -154,5 +159,13 @@ describe("UnknownSchema", () => {
     expect(new UnknownSchema().assert(0)).toBeUndefined();
     expect(new UnknownSchema().assert(true)).toBeUndefined();
     expect(new UnknownSchema().assert({})).toBeUndefined();
+  });
+});
+
+describe("NeverSchema", () => {
+  it("should throw error always", () => {
+    expect(() => new NeverSchema().assert("")).toThrow();
+    expect(() => new NeverSchema().assert(1)).toThrow();
+    expect(() => new NeverSchema().assert({})).toThrow();
   });
 });

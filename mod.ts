@@ -15,6 +15,7 @@ export {
   TupleSchema,
 } from "./schemas/objects.ts";
 export {
+  NeverSchema,
   PartialSchema,
   RecordSchema,
   UnknownSchema,

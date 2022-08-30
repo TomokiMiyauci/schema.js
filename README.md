@@ -526,6 +526,22 @@ const schema = new RecordSchema(new StringSchema(), new UnknownSchema());
 // schema for `Record<string, unknown>`
 ```
 
+## Never schema
+
+Schema of `never`. This it Bottom type.
+
+```ts
+import {
+  assertSchema,
+  NeverSchema,
+  RecordSchema,
+  StringSchema,
+} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+
+const schema = new RecordSchema(new StringSchema(), new NeverSchema());
+// schema for `Record<string, never>`
+```
+
 ## Union subtype schema
 
 The union subtype schema is a schema that can be used for multiple types.

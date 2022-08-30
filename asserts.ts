@@ -362,3 +362,10 @@ export function assertUriFormat(value: string): asserts value is string {
     });
   }
 }
+
+export function assertNever(value: unknown): asserts value is never {
+  throw new AssertionError({
+    actual: value,
+    expect: "never",
+  });
+}

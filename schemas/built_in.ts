@@ -1,7 +1,7 @@
 import { AssertiveSchema, CollectiveTypeSchema } from "./utils.ts";
 import { toSchema } from "../utils.ts";
 import { Schema, UnwrapSchema } from "../types.ts";
-import { assertPartialProperty } from "../asserts.ts";
+import { assertNever, assertPartialProperty } from "../asserts.ts";
 import { isSchema } from "../validates.ts";
 import { assertExistsPropertyOf } from "../deps.ts";
 
@@ -99,4 +99,23 @@ export class RecordSchema<
 export class UnknownSchema extends AssertiveSchema {
   protected override assertion: (value: unknown) => asserts value is unknown =
     () => {};
+}
+
+/** Schema of `never`. This it Bottom type.
+ *
+ * ```ts
+ * import {
+ *   assertSchema,
+ *   NeverSchema,
+ *   RecordSchema,
+ *   StringSchema,
+ * } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+ *
+ * const schema = new RecordSchema(new StringSchema(), new NeverSchema());
+ * // schema for `Record<string, never>`
+ * ```
+ */
+export class NeverSchema extends AssertiveSchema<unknown, never> {
+  protected override assertion: (value: unknown) => asserts value is never =
+    assertNever;
 }

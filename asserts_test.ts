@@ -7,6 +7,7 @@ import {
   assertIpv4Format,
   assertIpv6Format,
   assertMatchPattern,
+  assertNever,
   assertNot,
   assertOr,
   assertProperty,
@@ -316,5 +317,13 @@ describe("assertUriFormat", () => {
 
   it("should return undefined when the value is URI format", () => {
     expect(assertUriFormat("https://deno.lannd")).toBeUndefined();
+  });
+});
+
+describe("assertNever", () => {
+  it("should throw error always", () => {
+    expect(() => assertNever("")).toThrow();
+    expect(() => assertNever({})).toThrow();
+    expect(() => assertNever(0)).toThrow();
   });
 });
