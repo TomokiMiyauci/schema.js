@@ -3,7 +3,7 @@ import { toSchema } from "../utils.ts";
 import { Schema, UnwrapSchema } from "../types.ts";
 import { assertNever, assertPartialProperty } from "../asserts.ts";
 import { isSchema } from "../validates.ts";
-import { assertExistsPropertyOf } from "../deps.ts";
+import { assertExistsPropertyOf, isObject } from "../deps.ts";
 
 /** Schema of optional properties.
  *
@@ -24,7 +24,7 @@ import { assertExistsPropertyOf } from "../deps.ts";
  * ```
  */
 export class PartialSchema<T>
-  extends CollectiveTypeSchema<unknown, Partial<UnwrapSchema<T>>> {
+  extends CollectiveTypeSchema<object, Partial<UnwrapSchema<T>>> {
   constructor(private record: T) {
     super();
   }
@@ -32,7 +32,7 @@ export class PartialSchema<T>
   protected override create = () => new PartialSchema(this.record);
 
   protected override assertion: (
-    value: unknown,
+    value: object,
   ) => asserts value is Partial<UnwrapSchema<T>> = (value) =>
     assertPartialProperty(this.record, value);
 }
@@ -61,10 +61,11 @@ export class RecordSchema<
     super();
   }
   protected override assertion: (
-    value: Record<PropertyKey, unknown>,
+    value: unknown,
   ) => asserts value is Record<UnwrapSchema<K>, UnwrapSchema<V>> = (
     value,
   ) => {
+    if (!isObject(value)) return;
     if (!isSchema(this.key)) {
       assertExistsPropertyOf(this.key, value);
     }

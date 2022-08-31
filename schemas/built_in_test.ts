@@ -10,7 +10,7 @@ import { describe, expect, it } from "../dev_deps.ts";
 
 describe("PartialSchema", () => {
   it("should throw error when the value does not match prop value", () => {
-    expect(() => new PartialSchema({ at: "test" }).assert("")).toThrow();
+    expect(() => new PartialSchema({ at: "test" }).assert({ at: 0 })).toThrow();
   });
 
   it("should throw error when the prop value is not schema and they are not equal", () => {
@@ -18,7 +18,6 @@ describe("PartialSchema", () => {
   });
 
   it("should pass when the value does not have prop", () => {
-    expect(new PartialSchema({ a: "" }).assert(null)).toBeUndefined();
     expect(new PartialSchema({ a: "", b: "" }).assert({}))
       .toBeUndefined();
     expect(new PartialSchema({ a: "", b: "" }).assert({ c: "" }))
@@ -35,14 +34,6 @@ describe("PartialSchema", () => {
         d: undefined,
       }),
     ).toBeUndefined();
-  });
-
-  it("should pass when the base value is null", () => {
-    expect(new PartialSchema(null).assert(null)).toBeUndefined();
-  });
-
-  it("should pass when the base value is undefined", () => {
-    expect(new PartialSchema(undefined).assert(null)).toBeUndefined();
   });
 
   it("should pass when the prop value is schema", () => {
