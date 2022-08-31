@@ -4,30 +4,30 @@ import {
   assertExistsPropertyOf,
   AssertionError,
   assertUndefined,
-  has,
+  DateFormat,
+  DateTimeFormat,
+  hasOwn,
   inspect,
   isError,
+  isHostnameFormat,
+  isRfc3339DateFormat,
+  isRfc3339DateTimeFormat,
+  isRfc3339TimeFormat,
   ReturnAssert,
+  TimeFormat,
   validateUUID,
 } from "./deps.ts";
 import { Schema, SuperType, UnwrapSchema } from "./types.ts";
 import { toSchemaError } from "./utils.ts";
 import {
-  DateTime,
-  FullDate,
-  FullTime,
   getConstructor,
   getCount,
   Ipv4Format,
-  isDateFormat,
-  isDateTimeFormat,
-  isHostnameFormat,
   isIpv4Format,
   isIpv6Format,
   isMaxLength,
   isMinLength,
   isSchema,
-  isTimeFormat,
   isUriFormat,
 } from "./validates.ts";
 
@@ -191,11 +191,10 @@ export function assertEquals<T = unknown, U extends T = T>(
 
 export function assertPartialProperty<T>(
   base: T,
-  value: unknown,
+  value: object,
 ): asserts value is Partial<UnwrapSchema<T>> {
   for (const key in base) {
-    if (!has(key, value)) continue;
-
+    if (!hasOwn(key, value)) continue;
     const maybeSchema = base[key];
     const v = value[key];
 
@@ -286,8 +285,8 @@ export function assertUrlFormat(value: string): asserts value is string {
   }
 }
 
-export function assertDateFormat(value: string): asserts value is FullDate {
-  if (!isDateFormat(value)) {
+export function assertDateFormat(value: string): asserts value is DateFormat {
+  if (!isRfc3339DateFormat(value)) {
     throw new AssertionError({
       actual: value,
       expect: "date format",
@@ -295,8 +294,8 @@ export function assertDateFormat(value: string): asserts value is FullDate {
   }
 }
 
-export function assertTimeFormat(value: string): asserts value is FullTime {
-  if (!isTimeFormat(value)) {
+export function assertTimeFormat(value: string): asserts value is TimeFormat {
+  if (!isRfc3339TimeFormat(value)) {
     throw new AssertionError({
       actual: value,
       expect: "time format",
@@ -304,8 +303,10 @@ export function assertTimeFormat(value: string): asserts value is FullTime {
   }
 }
 
-export function assertDateTimeFormat(value: string): asserts value is DateTime {
-  if (!isDateTimeFormat(value)) {
+export function assertDateTimeFormat(
+  value: string,
+): asserts value is DateTimeFormat {
+  if (!isRfc3339DateTimeFormat(value)) {
     throw new AssertionError({
       actual: value,
       expect: "date time format",

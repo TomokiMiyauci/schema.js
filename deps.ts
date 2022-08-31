@@ -1,29 +1,35 @@
 // TODO:(miyauci) All modules here should be external modules.
 
 export {
+  type DateFormat,
+  type DateTimeFormat,
+  hasOwn,
   isBigint,
   isBoolean,
   isDate,
-  isEmpty,
   isError,
   isFalse,
   isFalsy,
   isFunction,
+  isHostnameFormat,
   isNegativeNumber,
   isNonNegativeInteger,
   isNull,
   isNumber,
   isObject,
-  isPlainObject,
+  isRfc3339DateFormat,
+  isRfc3339DateTimeFormat,
+  isRfc3339TimeFormat,
   isString,
   isSymbol,
   isTruthy,
   isUndefined,
-} from "https://deno.land/x/isx@1.0.0-beta.20/mod.ts";
+  type TimeFormat,
+} from "https://deno.land/x/isx@1.0.0-beta.21/mod.ts";
 import {
   isBigint,
   isString,
-} from "https://deno.land/x/isx@1.0.0-beta.20/mod.ts";
+} from "https://deno.land/x/isx@1.0.0-beta.21/mod.ts";
 export {
   assertArray,
   assertBigint,
@@ -109,11 +115,4 @@ export function inspect(value: unknown): string {
   }
 
   return String(value);
-}
-
-export function has<T extends PropertyKey, U extends unknown>(
-  key: PropertyKey,
-  value: U,
-): value is U & { [k in T]: unknown } {
-  return key in Object(value);
 }

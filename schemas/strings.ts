@@ -1,5 +1,12 @@
 import { AssertiveSchema, CollectiveTypeSchema } from "./utils.ts";
-import { arity, assertEmailFormat, assertLengthIs } from "../deps.ts";
+import {
+  arity,
+  assertEmailFormat,
+  assertLengthIs,
+  DateFormat,
+  DateTimeFormat,
+  TimeFormat,
+} from "../deps.ts";
 import {
   assertDateFormat,
   assertDateTimeFormat,
@@ -14,7 +21,7 @@ import {
   assertUrlFormat,
   assertUuidFormat,
 } from "../asserts.ts";
-import { DateTime, FullDate, FullTime, Ipv4Format } from "../validates.ts";
+import { Ipv4Format } from "../validates.ts";
 
 export class LengthSchema<T extends string>
   extends CollectiveTypeSchema<string, T> {
@@ -128,10 +135,10 @@ export class UrlFormatSchema extends AssertiveSchema<string> {
  * assertThrows(() => assertSchema(schema, "invalid date"));
  * ```
  */
-export class DateFormatSchema extends AssertiveSchema<string, FullDate> {
+export class DateFormatSchema extends AssertiveSchema<string, DateFormat> {
   protected override assertion: (
     value: string,
-  ) => asserts value is FullDate = assertDateFormat;
+  ) => asserts value is DateFormat = assertDateFormat;
 }
 
 /** Schema of time format. This is `string` subtype.
@@ -150,10 +157,10 @@ export class DateFormatSchema extends AssertiveSchema<string, FullDate> {
  * assertThrows(() => assertSchema(schema, "invalid time"));
  * ```
  */
-export class TimeFormatSchema extends AssertiveSchema<string, FullTime> {
+export class TimeFormatSchema extends AssertiveSchema<string, TimeFormat> {
   protected override assertion: (
     value: string,
-  ) => asserts value is FullTime = assertTimeFormat;
+  ) => asserts value is TimeFormat = assertTimeFormat;
 }
 
 /** Schema of date time format. This is `string` subtype.
@@ -172,10 +179,11 @@ export class TimeFormatSchema extends AssertiveSchema<string, FullTime> {
  * assertThrows(() => assertSchema(schema, "invalid date time"));
  * ```
  */
-export class DateTimeFormatSchema extends AssertiveSchema<string, DateTime> {
+export class DateTimeFormatSchema
+  extends AssertiveSchema<string, DateTimeFormat> {
   protected override assertion: (
     value: string,
-  ) => asserts value is DateTime = assertDateTimeFormat;
+  ) => asserts value is DateTimeFormat = assertDateTimeFormat;
 }
 
 /** Schema of hostname format. This is `string` subtype.
