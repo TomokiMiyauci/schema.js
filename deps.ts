@@ -3,6 +3,7 @@ export {
   hasOwn,
   isBigint,
   isBoolean,
+  isFunction,
   isNull,
   isNullable,
   isNumber,
@@ -25,3 +26,7 @@ export function isNativeObject(
 export interface JSONObject {
   [k: string]: JSONObject | string | null | number | boolean | JSONObject[];
 }
+
+export type UnionToIntersection<U> = (
+  U extends unknown ? (_: U) => void : never
+) extends (_: infer I) => void ? I : never;

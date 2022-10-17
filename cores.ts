@@ -1,16 +1,17 @@
-import { Provable, Prover } from "./types.ts";
+import { Provable, Schema } from "./types.ts";
 import {
   hasOwn,
   isBigint,
   isBoolean,
+  isFunction,
   isNumber,
   isObject,
   isString,
 } from "./deps.ts";
 import { is } from "./checks.ts";
-import { constructorName, show } from "./utils.ts";
+import { constructorName, Prover, show } from "./utils.ts";
 
-export function number(): Prover<number> {
+export function number(): Schema<number> {
   return new Prover(function* (value) {
     if (!isNumber(value)) {
       yield Error(`Invalid data type.
@@ -20,7 +21,7 @@ Actual: ${show(typeof value)}`);
   });
 }
 
-export function string(): Prover<string> {
+export function string(): Schema<string> {
   return new Prover(function* (value) {
     if (!isString(value)) {
       yield Error(`Invalid data type.
@@ -30,7 +31,7 @@ export function string(): Prover<string> {
   });
 }
 
-export function boolean(): Prover<boolean> {
+export function boolean(): Schema<boolean> {
   return new Prover(function* (value) {
     if (!isBoolean(value)) {
       yield Error("Invalid data");
@@ -38,7 +39,7 @@ export function boolean(): Prover<boolean> {
   });
 }
 
-export function bigint(): Prover<bigint> {
+export function bigint(): Schema<bigint> {
   return new Prover(function* (value) {
     if (!isBigint(value)) {
       yield Error("Invalid data");
@@ -46,13 +47,21 @@ export function bigint(): Prover<bigint> {
   });
 }
 
-export interface ObjectSchema {
-  readonly [k: string]: Prover<unknown>;
+export function func(): Schema<Function> {
+  return new Prover(function* (value) {
+    if (!isFunction(value)) {
+      yield Error("Invalid data");
+    }
+  });
 }
 
-export function object<S extends ObjectSchema>(schema: S): Prover<S>;
-export function object(): Prover<object>;
-export function object(schema?: ObjectSchema): Prover<object> {
+export interface ObjectSchema {
+  readonly [k: string]: Provable<unknown>;
+}
+
+export function object<S extends ObjectSchema>(schema: S): Schema<S>;
+export function object(): Schema<object>;
+export function object(schema?: ObjectSchema): Schema<object> {
   return new Prover(function* (value) {
     if (!isObject(value)) {
       return yield Error(
@@ -71,9 +80,9 @@ export function object(schema?: ObjectSchema): Prover<object> {
   });
 }
 
-export function list<S extends Prover<unknown>>(
-  schemas: readonly S[],
-): Prover<S[]> {
+export function list<P extends Provable<unknown>>(
+  schemas: readonly P[],
+): Schema<P[]> {
   return new Prover(function* (value) {
     if (!Array.isArray(value)) {
       return yield Error(`Invalid constructor.
@@ -93,7 +102,7 @@ export function list<S extends Prover<unknown>>(
 
 export function union<P extends Provable<unknown>>(
   schemas: readonly P[],
-): Provable<P> {
+): Schema<P> {
   return new Prover(function* (value) {
     const valid = schemas.some((schema) => is(schema, value));
 

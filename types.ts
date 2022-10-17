@@ -1,25 +1,8 @@
-declare const type: unique symbol;
+export const type = Symbol("type");
+export type type = typeof type;
 
-export class Prover<Type extends ParentType, ParentType = unknown>
-  implements Provable<Type, ParentType> {
-  constructor(public proof: (value: ParentType) => Iterable<Error>) {}
-
-  $ = (subProver: Prover<Type, Type>): Prover<Type, ParentType> => {
-    const _proof = this.proof;
-    function* proof(value: ParentType): Iterable<Error> {
-      const result = [..._proof(value)];
-
-      if (result.length) {
-        return yield* result;
-      }
-
-      yield* subProver.proof(value as Type);
-    }
-
-    return new Prover<Type, ParentType>(proof);
-  };
-
-  declare [type]: Type;
+export interface Extendable {
+  use<V>(value: V): this & V;
 }
 
 export interface Provable<Type extends ParentType, ParentType = unknown> {
@@ -28,7 +11,10 @@ export interface Provable<Type extends ParentType, ParentType = unknown> {
   readonly [type]: Type;
 }
 
-export type Infer<T> = T extends Prover<infer U, infer U> ? Infer<U>
+export interface Schema<Type extends ParentType, ParentType = unknown>
+  extends Extendable, Provable<Type, ParentType> {}
+
+export type Infer<T> = T extends Provable<infer U, infer U> ? Infer<U>
   : { [k in keyof T]: Infer<T[k]> };
 
 export type InferSchema<T extends Provable<unknown>> = Infer<T[typeof type]>;

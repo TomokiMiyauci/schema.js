@@ -1,7 +1,7 @@
-import { Prover } from "./types.ts";
-import { show } from "./utils.ts";
+import { Prover, show } from "./utils.ts";
+import { Schema } from "./types.ts";
 
-export function maximum(num: number): Prover<number, number> {
+export function maximum(num: number): Schema<number, number> {
   return new Prover(function* (value) {
     if (num < value) {
       yield Error(`Exceed maximum number.
@@ -11,7 +11,7 @@ export function maximum(num: number): Prover<number, number> {
   });
 }
 
-export function minimum(num: number): Prover<number, number> {
+export function minimum(num: number): Schema<number, number> {
   return new Prover(function* (value) {
     if (num > value) {
       yield Error(`Exceed maximum number.
@@ -23,7 +23,7 @@ export function minimum(num: number): Prover<number, number> {
 
 export function maxSize(
   num: number,
-): Prover<string, string> {
+): Schema<string, string> {
   return new Prover(function* (value) {
     const size = [...value].length;
     if (num < size) {
@@ -36,7 +36,7 @@ export function maxSize(
 
 export function minSize(
   num: number,
-): Prover<string, string> {
+): Schema<string, string> {
   return new Prover(function* (value) {
     const size = [...value].length;
     if (num > size) {
