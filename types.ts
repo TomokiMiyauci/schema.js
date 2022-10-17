@@ -1,89 +1,42 @@
-import { ReturnAssert, valueOf } from "./deps.ts";
+declare const type: unique symbol;
 
-export interface ScalerTypeMap {
-  string: string;
-  number: number;
-  bigint: bigint;
-  null: null;
-  undefined: undefined;
-  boolean: boolean;
-  symbol: symbol;
+export class Prover<Type extends ParentType, ParentType = unknown>
+  implements Provable<Type, ParentType> {
+  constructor(public proof: (value: ParentType) => Iterable<Error>) {}
+
+  $ = (subProver: Prover<Type, Type>): Prover<Type, ParentType> => {
+    const _proof = this.proof;
+    function* proof(value: ParentType): Iterable<Error> {
+      const result = [..._proof(value)];
+
+      if (result.length) {
+        return yield* result;
+      }
+
+      yield* subProver.proof(value as Type);
+    }
+
+    return new Prover<Type, ParentType>(proof);
+  };
+
+  declare [type]: Type;
 }
 
-export type Primitive = valueOf<ScalerTypeMap>;
+export interface Provable<Type extends ParentType, ParentType = unknown> {
+  readonly proof: (value: ParentType) => Iterable<Error>;
 
-export interface ObjectTypeMap {
-  object: object;
-  function: Function;
+  readonly [type]: Type;
 }
 
-export interface SuperTypeMap extends ScalerTypeMap, ObjectTypeMap {}
+export type Infer<T> = T extends Prover<infer U, infer U> ? Infer<U>
+  : { [k in keyof T]: Infer<T[k]> };
 
-export type SuperType = valueOf<SuperTypeMap>;
+export type InferSchema<T extends Provable<unknown>> = Infer<T[typeof type]>;
 
-export type TypeStr = keyof SuperTypeMap;
+export type Arg<F extends (...args: any) => any, N extends number> = Parameters<
+  F
+>[N];
 
-/** Schema specification. */
-
-export interface Schema<In = unknown, Out extends In = In> {
-  /** Assert the {@link In input} is {@link Out output}. */
-  assert: (value: In) => asserts value is Out;
-}
-
-/** Utility for unwrap schema.
- *
- * ```ts
- * import { UnwrapSchema, StringSchema, ObjectSchema } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
- * const stringSchema = new StringSchema();
- * type a = UnwrapSchema<typeof stringSchema>; // string
- * const objectSchema = new Object({
- *  hello: stringSchema
- * })
- * type b = UnwrapSchema<typeof objectSchema>; // { hello: string }
- * ```
- */
-export type UnwrapSchema<
-  S,
-> = S extends Schema<any> ? UnwrapSchema<ReturnAssert<S["assert"]>> : {
-  [k in keyof S]: S[k] extends Schema<any>
-    ? UnwrapSchema<ReturnAssert<S[k]["assert"]>>
-    : S[k];
-};
-
-/** Type inference of TypeScript data types from the schema.
- *
- * ```ts
- * import {
- *   ArraySchema,
- *   InferSchema,
- *   NumberSchema,
- *   ObjectSchema,
- *   StringSchema,
- *   TupleSchema,
- * } from "https://deno.land/x/schema_js@$VERSION/mod.ts";
- *
- * const schema = new ObjectSchema({
- *   a: new StringSchema(),
- *   b: new ArraySchema().and(
- *     new TupleSchema(new StringSchema(), new NumberSchema()),
- *   ),
- *   c: new ObjectSchema({
- *     d: new NumberSchema(),
- *   }),
- * });
- *
- * type Schema = InferSchema<typeof schema>;
- * ```
- */
-export type InferSchema<S extends Schema<any>> = ReturnAssert<S["assert"]>;
-
-export type SchemaParameter<S extends Schema> = Parameters<S["assert"]>[0];
-
-/** Schema context. */
-export interface SchemaContext {
-  /** Definition of equality.
-   *
-   * @default {@link Object.is}
-   */
-  equality: (a: unknown, b: unknown) => boolean;
-}
+export type Is<T extends Function> = T extends (value: any) => value is infer X
+  ? X
+  : never;
