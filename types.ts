@@ -6,7 +6,7 @@ export interface Extendable {
 }
 
 export interface Provable<Type extends ParentType, ParentType = unknown> {
-  readonly proof: (value: ParentType) => Iterable<Error>;
+  readonly proof: (value: ParentType) => Iterable<Failure>;
 
   readonly [type]: Type;
 }
@@ -26,3 +26,11 @@ export type Arg<F extends (...args: any) => any, N extends number> = Parameters<
 export type Is<T extends Function> = T extends (value: any) => value is infer X
   ? X
   : never;
+
+export interface Failure extends FailureOptions {
+  readonly message: string;
+}
+
+export interface FailureOptions {
+  readonly causedBy?: keyof ProxyHandler<{}>;
+}

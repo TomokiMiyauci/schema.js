@@ -9,12 +9,12 @@ import {
   isString,
 } from "./deps.ts";
 import { is } from "./checks.ts";
-import { constructorName, Prover, show } from "./utils.ts";
+import { constructorName, fail, Prover, show } from "./utils.ts";
 
 export function number(): Schema<number> {
   return new Prover(function* (value) {
     if (!isNumber(value)) {
-      yield Error(`Invalid data type.
+      yield fail(`Invalid data type.
 Expected: ${show("number")}
 Actual: ${show(typeof value)}`);
     }
@@ -24,7 +24,7 @@ Actual: ${show(typeof value)}`);
 export function string(): Schema<string> {
   return new Prover(function* (value) {
     if (!isString(value)) {
-      yield Error(`Invalid data type.
+      yield fail(`Invalid data type.
   Expected: string
   Actual: ${typeof value}`);
     }
@@ -34,7 +34,7 @@ export function string(): Schema<string> {
 export function boolean(): Schema<boolean> {
   return new Prover(function* (value) {
     if (!isBoolean(value)) {
-      yield Error("Invalid data");
+      yield fail("Invalid data");
     }
   });
 }
@@ -42,7 +42,7 @@ export function boolean(): Schema<boolean> {
 export function bigint(): Schema<bigint> {
   return new Prover(function* (value) {
     if (!isBigint(value)) {
-      yield Error("Invalid data");
+      yield fail("Invalid data");
     }
   });
 }
@@ -50,7 +50,7 @@ export function bigint(): Schema<bigint> {
 export function func(): Schema<Function> {
   return new Prover(function* (value) {
     if (!isFunction(value)) {
-      yield Error("Invalid data");
+      yield fail("Invalid data");
     }
   });
 }
@@ -64,14 +64,16 @@ export function object(): Schema<object>;
 export function object(schema?: ObjectSchema): Schema<object> {
   return new Prover(function* (value) {
     if (!isObject(value)) {
-      return yield Error(
+      return yield fail(
         `Invalid data type. Expected: object, Actual: ${show(typeof value)}`,
       );
     }
 
     for (const key in schema) {
       if (!hasOwn(key, value)) {
-        yield Error(`Property is not exist. ${show(key)}`);
+        yield fail(`Property is not exist. ${show(key)}`, {
+          causedBy: "has",
+        });
         continue;
       }
 
@@ -85,7 +87,7 @@ export function list<P extends Provable<unknown>>(
 ): Schema<P[]> {
   return new Prover(function* (value) {
     if (!Array.isArray(value)) {
-      return yield Error(`Invalid constructor.
+      return yield fail(`Invalid constructor.
       Expected: Array
       Actual: ${constructorName(value)}`);
     }
@@ -95,7 +97,7 @@ export function list<P extends Provable<unknown>>(
     );
 
     if (!isSatisfy) {
-      yield Error("Element must satisfy schema");
+      yield fail("Element must satisfy schema");
     }
   });
 }
@@ -107,7 +109,19 @@ export function union<P extends Provable<unknown>>(
     const valid = schemas.some((schema) => is(schema, value));
 
     if (!valid) {
-      yield Error(`Satisfy one or more prove.`);
+      yield fail(`Satisfy one or more prove.`);
+    }
+  });
+}
+
+export function partial<T extends P, P>(
+  schema: Provable<T, P>,
+): Provable<Partial<T>> {
+  return new Prover(function* (value) {
+    for (const failure of schema.proof(value as P)) {
+      if (failure.causedBy !== "has") {
+        yield failure;
+      }
     }
   });
 }

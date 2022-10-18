@@ -1,4 +1,4 @@
-import { Provable } from "./types.ts";
+import { Failure, Provable } from "./types.ts";
 
 export const $ = {
   $<Type extends ParentType, ParentType, T>(
@@ -7,7 +7,7 @@ export const $ = {
   ): T {
     const _proof = this.proof;
 
-    function* proof(value: ParentType): Iterable<Error> {
+    function* proof(value: ParentType): Iterable<Failure> {
       const result = [..._proof(value)];
 
       if (result.length) {

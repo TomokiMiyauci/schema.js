@@ -1,4 +1,4 @@
-import { Arg, Infer, Provable } from "./types.ts";
+import { Arg, Failure, Infer, Provable } from "./types.ts";
 
 export function validate<
   Type extends T,
@@ -7,7 +7,10 @@ export function validate<
 >(
   schema: Provable<Type, T>,
   value: Arg<Schema["proof"], 0>,
-): [data: Infer<Type>, errors: undefined] | [data: undefined, errors: Error[]] {
+): [data: Infer<Type>, errors: undefined] | [
+  data: undefined,
+  errors: Failure[],
+] {
   const errors = [...schema.proof(value)];
   if (errors.length) return [, errors];
 
@@ -39,9 +42,8 @@ export function assert<
   const result = validate(schema, value);
 
   if (result[1]) {
-    throw new AggregateError(
-      result[1],
-      "One or more assertion error has occur.",
-    );
+    const e = new Error(result[1].map(({ message }) => message).join());
+    e.stack = undefined;
+    throw e;
   }
 }
