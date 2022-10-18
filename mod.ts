@@ -7,6 +7,7 @@ export {
   number,
   object,
   partial,
+  record,
   string,
 } from "./cores.ts";
 export { assert, is, validate } from "./checks.ts";

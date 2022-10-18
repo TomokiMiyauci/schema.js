@@ -125,3 +125,15 @@ export function partial<T extends P, P>(
     }
   });
 }
+
+export function record<K extends string, V>(
+  key: Provable<K, {}>,
+  value: Provable<V>,
+): Provable<Record<K, V>, {}> {
+  return new Prover<Record<K, V>, {}>(function* (input) {
+    for (const k in input) {
+      yield* key.proof(k);
+      yield* value.proof(input[k as keyof {}]);
+    }
+  });
+}
