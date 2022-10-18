@@ -4,6 +4,7 @@ export {
   bigint,
   boolean,
   func,
+  nonNullable,
   number,
   object,
   or,

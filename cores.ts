@@ -4,6 +4,7 @@ import {
   isBigint,
   isBoolean,
   isFunction,
+  isNonNullable,
   isNumber,
   isObject,
   isString,
@@ -137,6 +138,14 @@ export function record<K extends string, V>(
     for (const k in input) {
       yield* key.proof(k, context);
       yield* value.proof(input[k as keyof {}], context);
+    }
+  });
+}
+
+export function nonNullable(): Provable<{}> {
+  return new Prover(function* (value) {
+    if (!isNonNullable(value)) {
+      yield fail(`Invalid data type. Expected: Non nullable, Actual: ${value}`);
     }
   });
 }
