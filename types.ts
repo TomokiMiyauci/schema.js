@@ -5,8 +5,15 @@ export interface Extendable {
   use<V>(value: V): this & V;
 }
 
+export interface ProofContext {
+  readonly paths: string[];
+}
+
 export interface Provable<Type extends ParentType, ParentType = unknown> {
-  readonly proof: (value: ParentType) => Iterable<Failure>;
+  readonly proof: (
+    value: ParentType,
+    context: ProofContext,
+  ) => Iterable<Failure>;
 
   readonly [type]: Type;
 }
@@ -27,10 +34,10 @@ export type Is<T extends Function> = T extends (value: any) => value is infer X
   ? X
   : never;
 
-export interface Failure extends FailureOptions {
+export interface Failure {
   readonly message: string;
-}
 
-export interface FailureOptions {
   readonly causedBy?: keyof ProxyHandler<{}>;
+
+  readonly paths: string[];
 }

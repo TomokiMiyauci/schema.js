@@ -11,7 +11,8 @@ export function validate<
   data: undefined,
   errors: Failure[],
 ] {
-  const errors = [...schema.proof(value)];
+  const errors = [...schema.proof(value, { paths: [] })];
+
   if (errors.length) return [, errors];
 
   return [value as never, undefined];
@@ -42,8 +43,14 @@ export function assert<
   const result = validate(schema, value);
 
   if (result[1]) {
-    const e = new Error(result[1].map(({ message }) => message).join());
+    const e = new Error(result[1].map(toString).join());
     e.stack = undefined;
     throw e;
   }
+}
+
+function toString({ message, paths }: Failure): string {
+  const pathInfo = paths.length ? ["$", ...paths].join(".") + " - " : "";
+
+  return pathInfo + message;
 }

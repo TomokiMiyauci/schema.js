@@ -62,7 +62,7 @@ export interface ObjectSchema {
 export function object<S extends ObjectSchema>(schema: S): Schema<S>;
 export function object(): Schema<object>;
 export function object(schema?: ObjectSchema): Schema<object> {
-  return new Prover(function* (value) {
+  return new Prover(function* (value, context) {
     if (!isObject(value)) {
       return yield fail(
         `Invalid data type. Expected: object, Actual: ${show(typeof value)}`,
@@ -70,14 +70,17 @@ export function object(schema?: ObjectSchema): Schema<object> {
     }
 
     for (const key in schema) {
+      const paths = context.paths.concat(key);
+
       if (!hasOwn(key, value)) {
         yield fail(`Property is not exist. ${show(key)}`, {
+          paths,
           causedBy: "has",
         });
         continue;
       }
 
-      yield* schema[key].proof(value[key]);
+      yield* schema[key].proof(value[key], { paths });
     }
   });
 }
@@ -117,8 +120,8 @@ export function union<P extends Provable<unknown>>(
 export function partial<T extends P, P>(
   schema: Provable<T, P>,
 ): Provable<Partial<T>> {
-  return new Prover(function* (value) {
-    for (const failure of schema.proof(value as P)) {
+  return new Prover(function* (value, context) {
+    for (const failure of schema.proof(value as P, context)) {
       if (failure.causedBy !== "has") {
         yield failure;
       }
@@ -130,10 +133,10 @@ export function record<K extends string, V>(
   key: Provable<K, {}>,
   value: Provable<V>,
 ): Provable<Record<K, V>, {}> {
-  return new Prover<Record<K, V>, {}>(function* (input) {
+  return new Prover<Record<K, V>, {}>(function* (input, context) {
     for (const k in input) {
-      yield* key.proof(k);
-      yield* value.proof(input[k as keyof {}]);
+      yield* key.proof(k, context);
+      yield* value.proof(input[k as keyof {}], context);
     }
   });
 }
