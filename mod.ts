@@ -6,6 +6,7 @@ export {
   func,
   number,
   object,
+  or,
   partial,
   record,
   string,

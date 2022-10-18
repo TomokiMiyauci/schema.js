@@ -105,8 +105,8 @@ export function list<P extends Provable<unknown>>(
   });
 }
 
-export function union<P extends Provable<unknown>>(
-  schemas: readonly P[],
+export function or<P extends Provable<unknown>>(
+  ...schemas: readonly P[]
 ): Schema<P> {
   return new Prover(function* (value) {
     const valid = schemas.some((schema) => is(schema, value));
