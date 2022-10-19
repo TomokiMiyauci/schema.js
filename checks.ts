@@ -1,4 +1,5 @@
 import { Arg, Failure, Infer, Provable } from "./types.ts";
+import { SchemaError } from "./error.ts";
 
 export function validate<
   Type extends T,
@@ -31,6 +32,11 @@ export function is<
   return !result[1];
 }
 
+/** Assert value with provable schema.
+ * @param schema Provable schema.
+ * @param value Any value.
+ * @throws {SchemaError} When assert fail.
+ */
 export function assert<
   Type extends T,
   T,
@@ -43,10 +49,19 @@ export function assert<
   const result = validate(schema, value);
 
   if (result[1]) {
-    const e = new Error(result[1].map(toString).join());
-    e.stack = undefined;
+    const e = new SchemaError(result[1].map(customFailure));
+    Error.captureStackTrace(e, assert);
+
     throw e;
   }
+}
+
+function customFailure({ message, paths, ...rest }: Failure): Failure {
+  return {
+    message: toString({ message, paths }),
+    paths,
+    ...rest,
+  };
 }
 
 function toString({ message, paths }: Failure): string {

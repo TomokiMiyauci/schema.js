@@ -1,4 +1,4 @@
-export { SchemaError, type SchemaErrorOptions } from "./errors.ts";
+export { SchemaError } from "./error.ts";
 export { type InferSchema } from "./types.ts";
 export {
   bigint,
