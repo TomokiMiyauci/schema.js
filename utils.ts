@@ -1,5 +1,12 @@
 import { isNonNullable, isString, PartialBy } from "./deps.ts";
-import { Extendable, Failure, ProofContext, Provable, type } from "./types.ts";
+import {
+  Extendable,
+  Failure,
+  ProofContext,
+  Provable,
+  Schema,
+  type,
+} from "./types.ts";
 
 export function show(value: unknown): string {
   return isString(value) ? `"${value}"` : String(value);
@@ -12,13 +19,14 @@ export function constructorName(value: unknown): string {
 }
 
 export class Prover<Type extends ParentType, ParentType = unknown>
-  implements Provable<Type, ParentType>, Extendable {
+  implements Schema, Provable<Type, ParentType>, Extendable {
   proof: (
     value: ParentType,
     context: ProofContext,
   ) => Iterable<Failure>;
 
   constructor(
+    public name: string,
     proof: (
       value: ParentType,
       context: ProofContext,

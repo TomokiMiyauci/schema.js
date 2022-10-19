@@ -1,48 +1,46 @@
-import { Prover, show } from "./utils.ts";
-import { Schema } from "./types.ts";
+import { fail, Prover } from "./utils.ts";
+import { ProvableSchema } from "./types.ts";
 
-export function maximum(num: number): Schema<number, number> {
-  return new Prover(function* (value) {
+export function maximum(num: number): ProvableSchema<number, number> {
+  return new Prover(maximum.name, function* (value) {
     if (num < value) {
-      yield Error(`Exceed maximum number.
-      Expected: ${show(num)}
-      Actual: ${show(value)}`);
+      yield fail(
+        `expected less than or equal to ${num}, but actual ${value}`,
+      );
     }
   });
 }
 
-export function minimum(num: number): Schema<number, number> {
-  return new Prover(function* (value) {
+export function minimum(num: number): ProvableSchema<number, number> {
+  return new Prover(minimum.name, function* (value) {
     if (num > value) {
-      yield Error(`Exceed maximum number.
-      Expected: ${num}
-      Actual: ${show(value)}`);
+      yield fail(
+        `expected greater than or equal to ${num}, but actual ${value}`,
+      );
     }
   });
 }
 
-export function maxSize(
-  num: number,
-): Schema<string, string> {
-  return new Prover(function* (value) {
+export function maxSize(num: number): ProvableSchema<string, string> {
+  return new Prover(maxSize.name, function* (value) {
     const size = [...value].length;
     if (num < size) {
-      yield Error(`Exceed maximum size.
-      Expected: ${show(num)}
-      Actual: ${show(size)}`);
+      yield fail(
+        `expected less than or equal to ${num} item, but actual ${value} item`,
+      );
     }
   });
 }
 
 export function minSize(
   num: number,
-): Schema<string, string> {
-  return new Prover(function* (value) {
+): ProvableSchema<string, string> {
+  return new Prover(minSize.name, function* (value) {
     const size = [...value].length;
     if (num > size) {
-      yield Error(`Exceed minimum size.
-      Expected: ${show(num)}
-      Actual: ${show(size)}`);
+      yield fail(
+        `expected greater than or equal to ${num} item, but actual ${value} item`,
+      );
     }
   });
 }

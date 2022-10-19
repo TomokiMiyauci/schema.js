@@ -1,11 +1,12 @@
-import { Failure, ProofContext, Provable } from "./types.ts";
+import { Failure, ProofContext, Provable, Schema } from "./types.ts";
 
 export const $ = {
   $<Type extends ParentType, ParentType, T>(
-    this: T & Provable<Type, ParentType>,
-    subProver: Provable<Type, Type>,
+    this: T & Schema & Provable<Type, ParentType>,
+    subProver: Schema & Provable<Type, Type>,
   ): T {
     const _proof = this.proof;
+    const name = this.name + " & " + subProver.name;
 
     function* proof(
       value: ParentType,
@@ -20,6 +21,6 @@ export const $ = {
       yield* subProver.proof(value as Type, context);
     }
 
-    return Object.assign(this, { proof });
+    return Object.assign(this, { proof, name });
   },
 };

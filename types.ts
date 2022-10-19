@@ -18,8 +18,12 @@ export interface Provable<Type extends ParentType, ParentType = unknown> {
   readonly [type]: Type;
 }
 
-export interface Schema<Type extends ParentType, ParentType = unknown>
-  extends Extendable, Provable<Type, ParentType> {}
+export interface Schema {
+  readonly name: string;
+}
+
+export interface ProvableSchema<Type extends ParentType, ParentType = unknown>
+  extends Schema, Extendable, Provable<Type, ParentType> {}
 
 export type Infer<T> = T extends Provable<infer U, infer U> ? Infer<U>
   : { [k in keyof T]: Infer<T[k]> };

@@ -1,4 +1,4 @@
-import { Provable, Schema } from "./types.ts";
+import { Provable, ProvableSchema, Schema } from "./types.ts";
 import {
   hasOwn,
   isBigint,
@@ -12,54 +12,56 @@ import {
 import { is } from "./checks.ts";
 import { constructorName, fail, Prover } from "./utils.ts";
 
-export function number(): Schema<number> {
-  return new Prover(function* (value) {
+export function number(): ProvableSchema<number> {
+  return new Prover(number.name, function* (value) {
     if (!isNumber(value)) {
       yield fail(`expected number, but actual ${typeof value}`);
     }
   });
 }
 
-export function string(): Schema<string> {
-  return new Prover(function* (value) {
+export function string(): ProvableSchema<string> {
+  return new Prover(string.name, function* (value) {
     if (!isString(value)) {
       yield fail(`expected string, but actual ${typeof value}`);
     }
   });
 }
 
-export function boolean(): Schema<boolean> {
-  return new Prover(function* (value) {
+export function boolean(): ProvableSchema<boolean> {
+  return new Prover(boolean.name, function* (value) {
     if (!isBoolean(value)) {
       yield fail(`expected boolean, but actual ${typeof value}`);
     }
   });
 }
 
-export function bigint(): Schema<bigint> {
-  return new Prover(function* (value) {
+export function bigint(): ProvableSchema<bigint> {
+  return new Prover(bigint.name, function* (value) {
     if (!isBigint(value)) {
       yield fail(`expected bigint, but actual ${typeof value}`);
     }
   });
 }
 
-export function func(): Schema<Function> {
-  return new Prover(function* (value) {
+export function func(): ProvableSchema<Function> {
+  return new Prover(func.name, function* (value) {
     if (!isFunction(value)) {
       yield fail(`expected function, but actual ${typeof value}`);
     }
   });
 }
 
-export interface ObjectSchema {
+export interface ObjectProvableSchema {
   readonly [k: string]: Provable<unknown>;
 }
 
-export function object<S extends ObjectSchema>(schema: S): Schema<S>;
-export function object(): Schema<object>;
-export function object(schema?: ObjectSchema): Schema<object> {
-  return new Prover(function* (value, context) {
+export function object<S extends ObjectProvableSchema>(
+  schema: S,
+): ProvableSchema<S>;
+export function object(): ProvableSchema<object>;
+export function object(schema?: ObjectProvableSchema): ProvableSchema<object> {
+  return new Prover(object.name, function* (value, context) {
     if (!isObject(value)) {
       return yield fail(`expected object, but actual ${typeof value}`);
     }
@@ -80,42 +82,49 @@ export function object(schema?: ObjectSchema): Schema<object> {
   });
 }
 
-export function list<P extends Provable<unknown>>(
+export function list<P extends Schema & Provable<unknown>>(
   schemas: readonly P[],
-): Schema<P[]> {
-  return new Prover(function* (value) {
+): ProvableSchema<P[]> {
+  return new Prover(list.name, function* (value, context) {
     if (!Array.isArray(value)) {
       return yield fail(
-        `expected object, but actual ${constructorName(value)}`,
+        `expected Array, but actual ${constructorName(value)}`,
       );
     }
 
-    const isSatisfy = value.every((v) =>
-      schemas.some((schema) => is(schema, v))
-    );
+    for (const key in value) {
+      const isSatisfy = schemas.some((schema) => is(schema, value[key]));
 
-    if (!isSatisfy) {
-      yield fail("Element must satisfy schema");
+      if (!isSatisfy) {
+        const names = schemas.map(({ name }) => name).join(", ");
+        const paths = context.paths.concat(key);
+
+        yield fail(`none of the schemas are satisfied [${names}]`, {
+          paths,
+        });
+      }
     }
   });
 }
 
-export function or<P extends Provable<unknown>>(
-  ...schemas: readonly P[]
-): Schema<P> {
-  return new Prover(function* (value) {
+export function or<P extends readonly (Schema & Provable<unknown>)[]>(
+  ...schemas: P
+): ProvableSchema<P[number]> {
+  return new Prover(or.name, function* (value) {
     const valid = schemas.some((schema) => is(schema, value));
 
     if (!valid) {
-      yield fail(`Satisfy one or more prove.`);
+      const names = schemas.map(({ name }) => name).join(", ");
+
+      yield fail(`none of the schemas are satisfied [${names}]`);
     }
   });
 }
 
 export function partial<T extends P, P>(
   schema: Provable<T, P>,
-): Provable<Partial<T>> {
-  return new Prover(function* (value, context) {
+): ProvableSchema<Partial<T>> {
+  return new Prover(partial.name, function* (value, context) {
     for (const failure of schema.proof(value as P, context)) {
       if (failure.causedBy !== "has") {
         yield failure;
@@ -127,8 +136,8 @@ export function partial<T extends P, P>(
 export function record<K extends string, V>(
   key: Provable<K, {}>,
   value: Provable<V>,
-): Provable<Record<K, V>, {}> {
-  return new Prover<Record<K, V>, {}>(function* (input, context) {
+): ProvableSchema<Record<K, V>, {}> {
+  return new Prover<Record<K, V>, {}>(record.name, function* (input, context) {
     for (const k in input) {
       yield* key.proof(k, context);
       yield* value.proof(input[k as keyof {}], context);
@@ -136,8 +145,8 @@ export function record<K extends string, V>(
   });
 }
 
-export function nonNullable(): Provable<{}> {
-  return new Prover(function* (value) {
+export function nonNullable(): ProvableSchema<{}> {
+  return new Prover(nonNullable.name, function* (value) {
     if (!isNonNullable(value)) {
       yield fail(`expected non nullable, but actual ${value}`);
     }
