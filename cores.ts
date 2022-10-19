@@ -10,14 +10,12 @@ import {
   isString,
 } from "./deps.ts";
 import { is } from "./checks.ts";
-import { constructorName, fail, Prover, show } from "./utils.ts";
+import { constructorName, fail, Prover } from "./utils.ts";
 
 export function number(): Schema<number> {
   return new Prover(function* (value) {
     if (!isNumber(value)) {
-      yield fail(`Invalid data type.
-Expected: ${show("number")}
-Actual: ${show(typeof value)}`);
+      yield fail(`expected number, but actual ${typeof value}`);
     }
   });
 }
@@ -25,9 +23,7 @@ Actual: ${show(typeof value)}`);
 export function string(): Schema<string> {
   return new Prover(function* (value) {
     if (!isString(value)) {
-      yield fail(`Invalid data type.
-  Expected: string
-  Actual: ${typeof value}`);
+      yield fail(`expected string, but actual ${typeof value}`);
     }
   });
 }
@@ -35,7 +31,7 @@ export function string(): Schema<string> {
 export function boolean(): Schema<boolean> {
   return new Prover(function* (value) {
     if (!isBoolean(value)) {
-      yield fail("Invalid data");
+      yield fail(`expected boolean, but actual ${typeof value}`);
     }
   });
 }
@@ -43,7 +39,7 @@ export function boolean(): Schema<boolean> {
 export function bigint(): Schema<bigint> {
   return new Prover(function* (value) {
     if (!isBigint(value)) {
-      yield fail("Invalid data");
+      yield fail(`expected bigint, but actual ${typeof value}`);
     }
   });
 }
@@ -51,7 +47,7 @@ export function bigint(): Schema<bigint> {
 export function func(): Schema<Function> {
   return new Prover(function* (value) {
     if (!isFunction(value)) {
-      yield fail("Invalid data");
+      yield fail(`expected function, but actual ${typeof value}`);
     }
   });
 }
@@ -65,16 +61,14 @@ export function object(): Schema<object>;
 export function object(schema?: ObjectSchema): Schema<object> {
   return new Prover(function* (value, context) {
     if (!isObject(value)) {
-      return yield fail(
-        `Invalid data type. Expected: object, Actual: ${show(typeof value)}`,
-      );
+      return yield fail(`expected object, but actual ${typeof value}`);
     }
 
     for (const key in schema) {
       const paths = context.paths.concat(key);
 
       if (!hasOwn(key, value)) {
-        yield fail(`Property is not exist. ${show(key)}`, {
+        yield fail(`property does not exist`, {
           paths,
           causedBy: "has",
         });
@@ -91,9 +85,9 @@ export function list<P extends Provable<unknown>>(
 ): Schema<P[]> {
   return new Prover(function* (value) {
     if (!Array.isArray(value)) {
-      return yield fail(`Invalid constructor.
-      Expected: Array
-      Actual: ${constructorName(value)}`);
+      return yield fail(
+        `expected object, but actual ${constructorName(value)}`,
+      );
     }
 
     const isSatisfy = value.every((v) =>
@@ -145,7 +139,7 @@ export function record<K extends string, V>(
 export function nonNullable(): Provable<{}> {
   return new Prover(function* (value) {
     if (!isNonNullable(value)) {
-      yield fail(`Invalid data type. Expected: Non nullable, Actual: ${value}`);
+      yield fail(`expected non nullable, but actual ${value}`);
     }
   });
 }

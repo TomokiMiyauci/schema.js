@@ -7,7 +7,7 @@ export class SchemaError extends Error {
     this.failures = Array.from(failures);
 
     const failMessage = this.failures.map(({ message }) => message).join("\n");
-    this.message = "One or more errors were detected." + "\n" + failMessage;
+    this.message = "one or more errors were detected" + "\n" + failMessage;
   }
 
   override name = "SchemaError";
