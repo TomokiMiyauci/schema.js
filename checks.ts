@@ -1,4 +1,4 @@
-import { Arg, Failure, Infer, Provable } from "./types.ts";
+import { Arg, CheckOptions, Failure, Infer, Provable } from "./types.ts";
 import { SchemaError } from "./error.ts";
 
 export function validate<
@@ -8,11 +8,15 @@ export function validate<
 >(
   schema: Provable<Type, T>,
   value: Arg<Schema["proof"], 0>,
+  options?: CheckOptions,
 ): [data: Infer<Type>, errors: undefined] | [
   data: undefined,
   errors: Failure[],
 ] {
-  const errors = [...schema.proof(value, { paths: [] })];
+  const errors = resolveIterable(
+    schema.proof(value, { paths: [] }),
+    options?.failFast,
+  );
 
   if (errors.length) return [, errors];
 
@@ -26,8 +30,9 @@ export function is<
 >(
   schema: Provable<Type, T>,
   value: Arg<Schema["proof"], 0>,
+  options: CheckOptions,
 ): value is Infer<Type> extends Arg<Schema["proof"], 0> ? Infer<Type> : never {
-  const result = validate(schema, value);
+  const result = validate(schema, value, options);
 
   return !result[1];
 }
@@ -44,9 +49,10 @@ export function assert<
 >(
   schema: Provable<Type, T>,
   value: Arg<Schema["proof"], 0>,
+  options?: CheckOptions,
 ): asserts value is Infer<Type> extends Arg<Schema["proof"], 0> ? Infer<Type>
   : never {
-  const result = validate(schema, value);
+  const result = validate(schema, value, options);
 
   if (result[1]) {
     const e = new SchemaError(result[1].map(customFailure));
@@ -54,6 +60,15 @@ export function assert<
 
     throw e;
   }
+}
+
+function resolveIterable<T>(iterable: Iterable<T>, failFast?: boolean): T[] {
+  if (failFast) {
+    const { done, value } = iterable[Symbol.iterator]().next();
+
+    return done ? [] : [value];
+  }
+  return [...iterable];
 }
 
 function customFailure({ message, paths, ...rest }: Failure): Failure {

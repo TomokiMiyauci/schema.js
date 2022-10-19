@@ -45,3 +45,9 @@ export interface Failure {
 
   readonly paths: string[];
 }
+
+/** Schema check options. */
+export interface CheckOptions {
+  /** Stop after first failure. */
+  readonly failFast?: boolean;
+}
