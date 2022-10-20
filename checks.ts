@@ -30,7 +30,7 @@ export function is<
 >(
   schema: Provable<Type, T>,
   value: Arg<Schema["proof"], 0>,
-  options: CheckOptions,
+  options?: CheckOptions,
 ): value is Infer<Type> extends Arg<Schema["proof"], 0> ? Infer<Type> : never {
   const result = validate(schema, value, options);
 
