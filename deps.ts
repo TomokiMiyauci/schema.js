@@ -36,3 +36,11 @@ export type PartialBy<T, U extends keyof T> =
   & {
     [k in U]?: T[k];
   };
+
+export type Arg<F extends (...args: any) => any, N extends number> = Parameters<
+  F
+>[N];
+
+export type Is<T extends Function> = T extends (value: any) => value is infer X
+  ? X
+  : never;

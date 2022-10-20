@@ -1,13 +1,13 @@
-import { Failure } from "./types.ts";
+import { Issue } from "./types.ts";
 
 export class SchemaError extends Error {
-  failures: Failure[];
-  constructor(failures: Iterable<Failure>) {
+  readonly issues: Issue[];
+  constructor(issues: Iterable<Issue>) {
     super();
-    this.failures = Array.from(failures);
+    this.issues = Array.from(issues);
 
-    const failMessage = this.failures.map(({ message }) => message).join("\n");
-    this.message = "one or more errors were detected" + "\n" + failMessage;
+    const issueMessage = this.issues.map(({ message }) => message).join("\n");
+    this.message = "one or more issues were detected" + "\n" + issueMessage;
   }
 
   override name = "SchemaError";

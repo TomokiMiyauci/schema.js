@@ -1,46 +1,49 @@
-import { fail, Prover } from "./utils.ts";
-import { ProvableSchema } from "./types.ts";
+import { Check } from "./utils.ts";
+import { CheckableStruct } from "./types.ts";
 
-export function maximum(num: number): ProvableSchema<number, number> {
-  return new Prover(maximum.name, function* (value) {
-    if (num < value) {
-      yield fail(
-        `expected less than or equal to ${num}, but actual ${value}`,
-      );
+export function maximum(num: number): CheckableStruct<number, number> {
+  return new Check(maximum.name, function* (input) {
+    if (num < input) {
+      yield {
+        message: `expected less than or equal to ${num}, but actual ${input}`,
+      };
     }
   });
 }
 
-export function minimum(num: number): ProvableSchema<number, number> {
-  return new Prover(minimum.name, function* (value) {
-    if (num > value) {
-      yield fail(
-        `expected greater than or equal to ${num}, but actual ${value}`,
-      );
+export function minimum(num: number): CheckableStruct<number, number> {
+  return new Check(minimum.name, function* (input) {
+    if (num > input) {
+      yield {
+        message:
+          `expected greater than or equal to ${num}, but actual ${input}`,
+      };
     }
   });
 }
 
-export function maxSize(num: number): ProvableSchema<string, string> {
-  return new Prover(maxSize.name, function* (value) {
-    const size = [...value].length;
+export function maxSize(num: number): CheckableStruct<string, string> {
+  return new Check(maxSize.name, function* (input) {
+    const size = [...input].length;
     if (num < size) {
-      yield fail(
-        `expected less than or equal to ${num} item, but actual ${value} item`,
-      );
+      yield {
+        message:
+          `expected less than or equal to ${num} item, but actual ${input} item`,
+      };
     }
   });
 }
 
 export function minSize(
   num: number,
-): ProvableSchema<string, string> {
-  return new Prover(minSize.name, function* (value) {
-    const size = [...value].length;
+): CheckableStruct<string, string> {
+  return new Check(minSize.name, function* (input) {
+    const size = [...input].length;
     if (num > size) {
-      yield fail(
-        `expected greater than or equal to ${num} item, but actual ${value} item`,
-      );
+      yield {
+        message:
+          `expected greater than or equal to ${num} item, but actual ${input} item`,
+      };
     }
   });
 }

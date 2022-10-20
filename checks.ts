@@ -1,61 +1,62 @@
-import { Arg, CheckOptions, Failure, Infer, Provable } from "./types.ts";
+import { Checkable, CheckOptions, Infer, Issue } from "./types.ts";
 import { SchemaError } from "./error.ts";
+import { Arg } from "./deps.ts";
 
 export function validate<
-  Type extends T,
-  T,
-  Schema extends Provable<Type, T> = Provable<Type, T>,
+  Out extends In,
+  In,
+  C extends Checkable<Out, In>,
 >(
-  schema: Provable<Type, T>,
-  value: Arg<Schema["proof"], 0>,
+  struct: Checkable<Out, In>,
+  input: Arg<C["check"], 0>,
   options?: CheckOptions,
-): [data: Infer<Type>, errors: undefined] | [
+): [data: Infer<Out>, issues: undefined] | [
   data: undefined,
-  errors: Failure[],
+  issues: Issue[],
 ] {
-  const errors = resolveIterable(
-    schema.proof(value, { paths: [] }),
+  const issues = resolveIterable(
+    struct.check(input, { paths: [] }),
     options?.failFast,
   );
 
-  if (errors.length) return [, errors];
+  if (issues.length) return [, issues];
 
-  return [value as never, undefined];
+  return [input as never, undefined];
 }
 
 export function is<
-  Type extends T,
-  T,
-  Schema extends Provable<Type, T> = Provable<Type, T>,
+  Out extends In,
+  In,
+  C extends Checkable<Out, In>,
 >(
-  schema: Provable<Type, T>,
-  value: Arg<Schema["proof"], 0>,
+  schema: Checkable<Out, In>,
+  input: Arg<C["check"], 0>,
   options?: CheckOptions,
-): value is Infer<Type> extends Arg<Schema["proof"], 0> ? Infer<Type> : never {
-  const result = validate(schema, value, options);
+): input is Infer<Out> extends Arg<C["check"], 0> ? Infer<Out> : never {
+  const result = validate(schema, input, options);
 
   return !result[1];
 }
 
-/** Assert value with provable schema.
- * @param schema Provable schema.
- * @param value Any value.
+/** Assert value with checkable.
+ * @param checkable
+ * @param input Input value.
  * @throws {SchemaError} When assert fail.
  */
 export function assert<
-  Type extends T,
-  T,
-  Schema extends Provable<Type, T> = Provable<Type, T>,
+  Out extends In,
+  In,
+  C extends Checkable<Out, In>,
 >(
-  schema: Provable<Type, T>,
-  value: Arg<Schema["proof"], 0>,
+  checkable: Checkable<Out, In>,
+  input: Arg<C["check"], 0>,
   options?: CheckOptions,
-): asserts value is Infer<Type> extends Arg<Schema["proof"], 0> ? Infer<Type>
+): asserts input is Infer<Out> extends Arg<C["check"], 0> ? Infer<Out>
   : never {
-  const result = validate(schema, value, options);
+  const result = validate(checkable, input, options);
 
   if (result[1]) {
-    const e = new SchemaError(result[1].map(customFailure));
+    const e = new SchemaError(result[1].map(customIssue));
     Error.captureStackTrace(e, assert);
 
     throw e;
@@ -71,7 +72,7 @@ function resolveIterable<T>(iterable: Iterable<T>, failFast?: boolean): T[] {
   return [...iterable];
 }
 
-function customFailure({ message, paths, ...rest }: Failure): Failure {
+function customIssue({ message, paths, ...rest }: Issue): Issue {
   return {
     message: toString({ message, paths }),
     paths,
@@ -79,7 +80,7 @@ function customFailure({ message, paths, ...rest }: Failure): Failure {
   };
 }
 
-function toString({ message, paths }: Failure): string {
+function toString({ message, paths }: Issue): string {
   const pathInfo = paths.length ? ["$", ...paths].join(".") + " - " : "";
 
   return pathInfo + message;

@@ -1,60 +1,41 @@
-import { isNonNullable, isString, PartialBy } from "./deps.ts";
+import { isNonNullable } from "./deps.ts";
 import {
+  Checkable,
+  CheckContext,
   Extendable,
-  Failure,
-  ProofContext,
-  Provable,
-  Schema,
+  Issue,
+  Struct,
   type,
 } from "./types.ts";
 
-export function show(value: unknown): string {
-  return isString(value) ? `"${value}"` : String(value);
-}
-
+/** Get constructor name.
+ * When the value can not construct, return `"null"` or `"undefined"`.
+ */
 export function constructorName(value: unknown): string {
   if (isNonNullable(value)) return value.constructor.name;
 
   return String(value);
 }
 
-export class Prover<Type extends ParentType, ParentType = unknown>
-  implements Schema, Provable<Type, ParentType>, Extendable {
-  proof: (
-    value: ParentType,
-    context: ProofContext,
-  ) => Iterable<Failure>;
+export class Check<Out extends In, In = unknown>
+  implements Struct, Checkable<Out, In>, Extendable {
+  public check: (input: In, context: CheckContext) => Iterable<Issue>;
 
   constructor(
     public name: string,
-    proof: (
-      value: ParentType,
-      context: ProofContext,
-    ) => Iterable<PartialBy<Failure, "paths">>,
+    check: (
+      input: In,
+      context: CheckContext,
+    ) => Iterable<Partial<Issue> & Pick<Issue, "message">>,
   ) {
-    this.proof = function* (value, context) {
-      for (const fail of proof(value, context)) {
+    this.check = function* (value, context) {
+      for (const fail of check(value, context)) {
         yield { ...context, ...fail };
       }
     };
   }
 
-  use = <T>(value: T): this & T => Object.assign(this, value);
+  extend = <T>(value: T): this & T => Object.assign(this, value);
 
-  declare [type]: Type;
-}
-
-export interface FailureContexts {
-  readonly causedBy?: keyof ProxyHandler<{}>;
-  readonly paths?: string[];
-}
-
-export function fail(
-  message: string,
-  contexts?: FailureContexts,
-): PartialBy<Failure, "paths"> {
-  return {
-    ...contexts,
-    message,
-  };
+  declare [type]: Out;
 }
