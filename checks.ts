@@ -1,4 +1,4 @@
-import { Checkable, CheckOptions, Infer, Issue } from "./types.ts";
+import { Checkable, CheckOptions, Infer, StructIssue } from "./types.ts";
 import { SchemaError } from "./error.ts";
 import { Arg } from "./deps.ts";
 
@@ -12,7 +12,7 @@ export function validate<
   options?: CheckOptions,
 ): [data: Infer<Out>, issues: undefined] | [
   data: undefined,
-  issues: Issue[],
+  issues: StructIssue[],
 ] {
   const issues = resolveIterable(
     struct.check(input, { paths: [] }),
@@ -72,7 +72,7 @@ function resolveIterable<T>(iterable: Iterable<T>, failFast?: boolean): T[] {
   return [...iterable];
 }
 
-function customIssue({ message, paths, ...rest }: Issue): Issue {
+function customIssue({ message, paths, ...rest }: StructIssue): StructIssue {
   return {
     message: toString({ message, paths }),
     paths,
@@ -80,7 +80,9 @@ function customIssue({ message, paths, ...rest }: Issue): Issue {
   };
 }
 
-function toString({ message, paths }: Issue): string {
+function toString(
+  { message, paths }: Pick<StructIssue, "message" | "paths">,
+): string {
   const pathInfo = paths.length ? ["$", ...paths].join(".") + " - " : "";
 
   return pathInfo + message;

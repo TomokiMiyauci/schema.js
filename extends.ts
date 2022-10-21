@@ -1,4 +1,4 @@
-import { Checkable, CheckContext, Issue, Struct } from "./types.ts";
+import { Checkable, InputContext, Struct, StructIssue } from "./types.ts";
 
 export const $ = {
   $<Out extends In, In, T>(
@@ -8,7 +8,7 @@ export const $ = {
     const _check = this.check;
     const name = this.name + " & " + subProver.name;
 
-    function* check(input: In, context: CheckContext): Iterable<Issue> {
+    function* check(input: In, context: InputContext): Iterable<StructIssue> {
       const result = [..._check(input, context)];
 
       if (result.length) {

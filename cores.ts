@@ -1,4 +1,4 @@
-import { Checkable, CheckableStruct } from "./types.ts";
+import { Checkable, CheckableStruct, DataType, StructIssue } from "./types.ts";
 import {
   hasOwn,
   isBigint,
@@ -8,16 +8,16 @@ import {
   isNumber,
   isObject,
   isString,
+  PartialBy,
 } from "./deps.ts";
 import { is } from "./checks.ts";
 import { Check, constructorName } from "./utils.ts";
+import { IssueKind } from "./enums.ts";
 
 export function number(): CheckableStruct<number> {
   return new Check(number.name, function* (input) {
     if (!isNumber(input)) {
-      yield {
-        message: `expected number, actual ${typeof input}`,
-      };
+      yield typeIssue("number", input);
     }
   });
 }
@@ -25,9 +25,7 @@ export function number(): CheckableStruct<number> {
 export function string(): CheckableStruct<string> {
   return new Check(string.name, function* (input) {
     if (!isString(input)) {
-      yield {
-        message: `expected string, actual ${typeof input}`,
-      };
+      yield typeIssue("string", input);
     }
   });
 }
@@ -35,9 +33,7 @@ export function string(): CheckableStruct<string> {
 export function boolean(): CheckableStruct<boolean> {
   return new Check(boolean.name, function* (input) {
     if (!isBoolean(input)) {
-      yield {
-        message: `expected boolean, actual ${typeof input}`,
-      };
+      yield typeIssue("boolean", input);
     }
   });
 }
@@ -45,9 +41,7 @@ export function boolean(): CheckableStruct<boolean> {
 export function bigint(): CheckableStruct<bigint> {
   return new Check(bigint.name, function* (input) {
     if (!isBigint(input)) {
-      yield {
-        message: `expected bigint, actual ${typeof input}`,
-      };
+      yield typeIssue("bigint", input);
     }
   });
 }
@@ -55,9 +49,7 @@ export function bigint(): CheckableStruct<bigint> {
 export function func(): CheckableStruct<Function> {
   return new Check(func.name, function* (input) {
     if (!isFunction(input)) {
-      yield {
-        message: `expected function, actual ${typeof input}`,
-      };
+      yield typeIssue("function", input);
     }
   });
 }
@@ -75,9 +67,7 @@ export function object(
 ): CheckableStruct<object> {
   return new Check(object.name, function* (input, context) {
     if (!isObject(input)) {
-      return yield {
-        message: `expected object, actual ${typeof input}`,
-      };
+      return yield typeIssue("object", input);
     }
 
     for (const key in struct) {
@@ -151,4 +141,17 @@ export function nonNullable(): CheckableStruct<{}> {
       yield { message: `expected non nullable, but actual ${value}` };
     }
   });
+}
+
+function typeIssue(
+  expected: DataType,
+  actual: unknown,
+): PartialBy<StructIssue, "paths"> {
+  const act = typeof actual;
+  return {
+    kind: IssueKind.type,
+    actual: act,
+    expected,
+    message: `expected ${expected}, actual ${act}`,
+  };
 }

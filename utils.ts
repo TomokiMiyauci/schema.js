@@ -1,11 +1,14 @@
 import { isNonNullable } from "./deps.ts";
 import {
   Checkable,
-  CheckContext,
   Extendable,
+  InputContext,
   Issue,
+  ReferenceIssue,
   Struct,
+  StructIssue,
   type,
+  TypeIssue,
 } from "./types.ts";
 
 /** Get constructor name.
@@ -19,18 +22,18 @@ export function constructorName(value: unknown): string {
 
 export class Check<Out extends In, In = unknown>
   implements Struct, Checkable<Out, In>, Extendable {
-  public check: (input: In, context: CheckContext) => Iterable<Issue>;
+  public check: (input: In, context: InputContext) => Iterable<StructIssue>;
 
   constructor(
     public name: string,
     check: (
       input: In,
-      context: CheckContext,
-    ) => Iterable<Partial<Issue> & Pick<Issue, "message">>,
+      context: InputContext,
+    ) => Iterable<Partial<InputContext> & (Issue | ReferenceIssue | TypeIssue)>,
   ) {
     this.check = function* (value, context) {
-      for (const fail of check(value, context)) {
-        yield { ...context, ...fail };
+      for (const issue of check(value, context)) {
+        yield { ...context, ...issue };
       }
     };
   }
