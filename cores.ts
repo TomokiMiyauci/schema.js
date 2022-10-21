@@ -74,7 +74,11 @@ export function object(
       const paths = context.paths.concat(key);
 
       if (!hasOwn(key, input)) {
-        yield { message: `property does not exist`, paths };
+        yield {
+          message: `property does not exist`,
+          paths,
+          kind: IssueKind.reference,
+        };
         continue;
       }
 
@@ -90,6 +94,7 @@ export function list<S extends CheckableStruct<unknown>>(
     if (!Array.isArray(value)) {
       return yield {
         message: `expected Array, actual ${constructorName(value)}`,
+        kind: IssueKind.unknown,
       };
     }
 
@@ -103,6 +108,7 @@ export function list<S extends CheckableStruct<unknown>>(
         yield {
           message: `none of the schemas are satisfied [${names}]`,
           paths,
+          kind: IssueKind.unknown,
         };
       }
     }
@@ -118,7 +124,10 @@ export function or<S extends readonly CheckableStruct<unknown>[]>(
     if (!valid) {
       const names = structs.map(({ name }) => name).join(", ");
 
-      yield { message: `none of the schemas are satisfied [${names}]` };
+      yield {
+        message: `none of the schemas are satisfied [${names}]`,
+        kind: IssueKind.unknown,
+      };
     }
   });
 }
@@ -138,7 +147,22 @@ export function record<K extends string, V>(
 export function nonNullable(): CheckableStruct<{}> {
   return new Check(nonNullable.name, function* (value) {
     if (!isNonNullable(value)) {
-      yield { message: `expected non nullable, but actual ${value}` };
+      yield {
+        message: `expected non nullable, but actual ${value}`,
+        kind: IssueKind.unknown,
+      };
+    }
+  });
+}
+
+export function partial<Out extends In, In>(
+  struct: CheckableStruct<Out, In>,
+): CheckableStruct<Partial<Out>> {
+  return new Check(partial.name, function* (input, context) {
+    for (const issue of struct.check(input as In, context)) {
+      if (issue.kind !== IssueKind.reference) {
+        yield issue;
+      }
     }
   });
 }

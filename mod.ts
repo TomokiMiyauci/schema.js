@@ -8,6 +8,7 @@ export {
   number,
   object,
   or,
+  partial,
   record,
   string,
 } from "./cores.ts";

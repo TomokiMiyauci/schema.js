@@ -20,6 +20,8 @@ export interface Checkable<Out extends In, In = unknown> {
 export interface Issue {
   /** Issue message. */
   readonly message: string;
+
+  kind: IssueKind;
 }
 
 export type StructIssue =
