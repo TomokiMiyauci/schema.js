@@ -1,5 +1,5 @@
 export { SchemaError } from "./error.ts";
-export { type CheckOptions, type Infer } from "./types.ts";
+export { type CheckOptions, type Infer, type Showable } from "./types.ts";
 export {
   bigint,
   boolean,

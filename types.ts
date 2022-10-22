@@ -30,11 +30,12 @@ export interface InputContext {
   readonly paths: readonly string[];
 }
 
-/** Dada struct API. */
-export interface Struct<Out> extends Checkable<Out> {
-  /** Struct name. */
-  readonly name: string;
+export interface Showable {
+  readonly [Symbol.toStringTag]: string;
 }
+
+/** Dada struct API. */
+export interface Struct<Out> extends Showable, Checkable<Out> {}
 
 export type Infer<T> = T extends Checkable<infer U> ? Infer<U>
   : { [k in keyof T]: Infer<T[k]> };
@@ -46,5 +47,5 @@ export interface CheckOptions {
 }
 
 export interface ObjectSchema {
-  readonly [k: string]: Checkable<unknown>;
+  readonly [k: string]: Struct<unknown>;
 }

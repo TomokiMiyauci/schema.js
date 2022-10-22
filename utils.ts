@@ -13,18 +13,25 @@ export function constructorName(value: unknown): string {
 export class Construct<Out> implements Struct<Out> {
   public check: (input: unknown, context: InputContext) => Iterable<Issue>;
 
+  #name: string;
+
   constructor(
-    public name: string,
+    name: string,
     check: (
       input: unknown,
       context: InputContext,
     ) => Iterable<PartialBy<Issue, "paths">>,
   ) {
+    this.#name = name;
     this.check = function* (value, context) {
       for (const issue of check(value, context)) {
         yield { ...context, ...issue };
       }
     };
+  }
+
+  public get [Symbol.toStringTag](): string {
+    return this.#name;
   }
 
   declare [type]: Out;
