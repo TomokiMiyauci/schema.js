@@ -10,15 +10,16 @@ export function constructorName(value: unknown): string {
   return String(value);
 }
 
-export class Construct<Out> implements Struct<Out> {
-  public check: (input: unknown, context: InputContext) => Iterable<Issue>;
+export class Construct<Out extends In, In = unknown>
+  implements Struct<Out, In> {
+  public check: (input: In, context: InputContext) => Iterable<Issue>;
 
   #name: string;
 
   constructor(
     name: string,
     check: (
-      input: unknown,
+      input: In,
       context: InputContext,
     ) => Iterable<PartialBy<Issue, "paths">>,
   ) {
