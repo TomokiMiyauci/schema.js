@@ -6,24 +6,41 @@ import {
   Struct,
   type,
 } from "./types.ts";
-import { Construct, formatActExp } from "./utils.ts";
+import { formatActExp } from "./utils.ts";
 import { iter, prop } from "./deps.ts";
 
-/** Create union struct. */
-export function or<S extends readonly Struct<unknown>[]>(
-  ...structs: S
-): Struct<S[number]> {
-  const name = structs.map(prop(Symbol.toStringTag)).join(" | ");
+export function or<Out extends In, In>(
+  struct: Struct<Out, In>,
+) {
+  class UnionStruct<_ extends In = Out> implements Struct<_, In> {
+    constructor(public structs: Struct<any, any>[]) {}
 
-  return new Construct(`(${name})`, function* (input, context) {
-    for (const struct of structs) {
-      const issues = [...struct.check(input, context)];
+    *check(input: In, context: InputContext): Iterable<Issue> {
+      for (const struct of this.structs) {
+        const issues = [...struct.check(input, context)];
 
-      if (!issues.length) return;
+        if (!issues.length) return;
+      }
+
+      yield {
+        message: formatActExp(this[Symbol.toStringTag], input),
+        ...context,
+      };
     }
 
-    yield { message: formatActExp(name, input) };
-  });
+    get [Symbol.toStringTag](): string {
+      const name = this.structs.map(prop(Symbol.toStringTag)).join(" | ");
+      return `(${name})`;
+    }
+
+    declare [type]: _;
+
+    or = <T extends In>(struct: Struct<T, In>): UnionStruct<T | _> => {
+      return new UnionStruct([...this.structs, struct]);
+    };
+  }
+
+  return new UnionStruct([struct]);
 }
 
 /** Create intersection struct. */
