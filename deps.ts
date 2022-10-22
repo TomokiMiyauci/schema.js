@@ -20,6 +20,11 @@ export function isNonNullable(value: unknown): value is {} {
   return !isNullable(value);
 }
 
+/** Create iterator from iterable object. */
+export function iter<T>(iterable: Iterable<T>): Iterator<T> {
+  return iterable[Symbol.iterator]();
+}
+
 export function isNativeObject(
   value: unknown,
 ): value is Record<PropertyKey, unknown> {

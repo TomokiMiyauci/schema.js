@@ -1,6 +1,6 @@
 import { Struct } from "./types.ts";
 import { Construct, formatActExp } from "./utils.ts";
-import { prop, UnionToIntersection } from "./deps.ts";
+import { iter, prop, UnionToIntersection } from "./deps.ts";
 
 /** Create union struct. */
 export function or<S extends readonly Struct<unknown>[]>(
@@ -27,8 +27,8 @@ export function and<S extends readonly Struct<unknown>[]>(
 
   return new Construct(`(${name})`, function* (input, context) {
     for (const struct of structs) {
-      const iter = struct.check(input, context)[Symbol.iterator]();
-      const { done, value } = iter.next();
+      const iterator = iter(struct.check(input, context));
+      const { done, value } = iterator.next();
 
       if (!done) {
         yield value;

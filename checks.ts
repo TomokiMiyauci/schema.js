@@ -1,5 +1,6 @@
 import { Checkable, CheckOptions, Infer, Issue } from "./types.ts";
 import { SchemaError } from "./error.ts";
+import { iter } from "./deps.ts";
 
 export function validate<S>(
   struct: Checkable<S>,
@@ -51,7 +52,7 @@ export function assert<S>(
 
 function resolveIterable<T>(iterable: Iterable<T>, failFast?: boolean): T[] {
   if (failFast) {
-    const { done, value } = iterable[Symbol.iterator]().next();
+    const { done, value } = iter(iterable).next();
 
     return done ? [] : [value];
   }
