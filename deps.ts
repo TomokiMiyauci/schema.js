@@ -14,6 +14,7 @@ export {
   isUndefined,
 } from "https://deno.land/x/isx@1.0.0-beta.22/mod.ts";
 export { type json } from "https://deno.land/x/pure_json@1.0.0-beta.1/mod.ts";
+export { prop } from "https://deno.land/x/prelude_js@1.0.0-beta.3/mod.ts";
 
 export function isNonNullable(value: unknown): value is {} {
   return !isNullable(value);

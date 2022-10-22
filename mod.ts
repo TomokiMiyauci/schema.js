@@ -14,4 +14,4 @@ export {
 } from "./cores.ts";
 export { assert, is, validate } from "./checks.ts";
 export { $ } from "./extends.ts";
-export { or } from "./operators.ts";
+export { and, or } from "./operators.ts";
