@@ -1,15 +1,5 @@
-import { isNonNullable } from "./deps.ts";
-import {
-  Checkable,
-  Extendable,
-  InputContext,
-  Issue,
-  ReferenceIssue,
-  Struct,
-  StructIssue,
-  type,
-  TypeIssue,
-} from "./types.ts";
+import { isNonNullable, PartialBy } from "./deps.ts";
+import { InputContext, Issue, Struct, type } from "./types.ts";
 
 /** Get constructor name.
  * When the value can not construct, return `"null"` or `"undefined"`.
@@ -20,16 +10,15 @@ export function constructorName(value: unknown): string {
   return String(value);
 }
 
-export class Check<Out extends In, In = unknown>
-  implements Struct, Checkable<Out, In>, Extendable {
-  public check: (input: In, context: InputContext) => Iterable<StructIssue>;
+export class Construct<Out> implements Struct<Out> {
+  public check: (input: unknown, context: InputContext) => Iterable<Issue>;
 
   constructor(
     public name: string,
     check: (
-      input: In,
+      input: unknown,
       context: InputContext,
-    ) => Iterable<Partial<InputContext> & (Issue | ReferenceIssue | TypeIssue)>,
+    ) => Iterable<PartialBy<Issue, "paths">>,
   ) {
     this.check = function* (value, context) {
       for (const issue of check(value, context)) {
@@ -38,7 +27,9 @@ export class Check<Out extends In, In = unknown>
     };
   }
 
-  extend = <T>(value: T): this & T => Object.assign(this, value);
-
   declare [type]: Out;
+}
+
+export function formatActExp(expected: unknown, actual: unknown): string {
+  return `expected ${expected}, actual ${actual}`;
 }

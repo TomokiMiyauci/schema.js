@@ -1,142 +1,166 @@
-import { Checkable, CheckableStruct, DataType, StructIssue } from "./types.ts";
+import { Definable, ObjectSchema, Struct } from "./types.ts";
 import {
   hasOwn,
   isBigint,
   isBoolean,
   isFunction,
-  isNonNullable,
   isNumber,
   isObject,
   isString,
-  PartialBy,
+  isSymbol,
+  isUndefined,
+  Writeable,
 } from "./deps.ts";
-import { is } from "./checks.ts";
-import { Check, constructorName } from "./utils.ts";
-import { IssueKind } from "./enums.ts";
+import { Construct, constructorName, formatActExp } from "./utils.ts";
+import { or } from "./operators.ts";
 
-export function number(): CheckableStruct<number> {
-  return new Check(number.name, function* (input) {
-    if (!isNumber(input)) {
-      yield typeIssue("number", input);
-    }
-  });
-}
-
-export function string(): CheckableStruct<string> {
-  return new Check(string.name, function* (input) {
+/** Create `string` data type struct. */
+export function string(): Struct<string> {
+  return new Construct("string", function* (input) {
     if (!isString(input)) {
-      yield typeIssue("string", input);
+      yield { message: formatActExp("string", typeof input) };
     }
   });
 }
 
-export function boolean(): CheckableStruct<boolean> {
-  return new Check(boolean.name, function* (input) {
-    if (!isBoolean(input)) {
-      yield typeIssue("boolean", input);
+/** Create `number` data type struct. */
+export function number(): Struct<number> {
+  return new Construct("number", function* (input) {
+    if (!isNumber(input)) {
+      yield { message: formatActExp("number", typeof input) };
     }
   });
 }
 
-export function bigint(): CheckableStruct<bigint> {
-  return new Check(bigint.name, function* (input) {
+/** Create `bigint` data type struct. */
+export function bigint(): Struct<bigint> {
+  return new Construct("bigint", function* (input) {
     if (!isBigint(input)) {
-      yield typeIssue("bigint", input);
+      yield { message: formatActExp("bigint", typeof input) };
     }
   });
 }
 
-export function func(): CheckableStruct<Function> {
-  return new Check(func.name, function* (input) {
+/** Create `boolean` data type struct. */
+export function boolean(): Struct<boolean> {
+  return new Construct("boolean", function* (input) {
+    if (!isBoolean(input)) {
+      yield { message: formatActExp("boolean", typeof input) };
+    }
+  });
+}
+
+/** Create `function` data type struct. */
+export function func(): Struct<Function> {
+  return new Construct("func", function* (input) {
     if (!isFunction(input)) {
-      yield typeIssue("function", input);
+      yield { message: formatActExp("function", typeof input) };
     }
   });
 }
 
-export interface ObjectCheckableStruct {
-  readonly [k: string]: Checkable<unknown>;
+/** Create `symbol` data type struct. */
+export function symbol(): Struct<symbol> {
+  return new Construct("symbol", function* (input) {
+    if (!isSymbol(input)) {
+      yield { message: formatActExp("symbol", typeof input) };
+    }
+  });
 }
 
-export function object<S extends ObjectCheckableStruct>(
-  struct: S,
-): CheckableStruct<S>;
-export function object(): CheckableStruct<object>;
-export function object(
-  struct?: ObjectCheckableStruct,
-): CheckableStruct<object> {
-  return new Check(object.name, function* (input, context) {
+export function literal<
+  T extends string | number | bigint | null | undefined | symbol | boolean,
+>(
+  value: T,
+): Struct<T> {
+  return new Construct("literal", function* (input) {
+    if (!Object.is(input, value)) {
+      yield { message: formatActExp(value, input) };
+    }
+  });
+}
+
+/** Create `object` data type struct.
+ * `null` is not object.
+ */
+export function object<S extends ObjectSchema>(
+  schema: S,
+): Struct<S> & Definable<S> {
+  const knowns = Object.keys(schema);
+
+  const check = new Construct<S>("object", function* (input, context) {
     if (!isObject(input)) {
-      return yield typeIssue("object", input);
+      return yield {
+        message: formatActExp("object", input === null ? "null" : typeof input),
+      };
     }
 
-    for (const key in struct) {
+    for (const key in schema) {
       const paths = context.paths.concat(key);
 
       if (!hasOwn(key, input)) {
-        yield {
-          message: `property does not exist`,
-          paths,
-          kind: IssueKind.reference,
-        };
+        yield { message: "property does not exist", paths };
         continue;
       }
 
-      yield* struct[key].check(input[key], { paths });
-    }
-  });
-}
+      yield* schema[key].check(input[key], { paths });
 
-export function list<S extends CheckableStruct<unknown>>(
-  structs: readonly S[],
-): CheckableStruct<S[]> {
-  return new Check(list.name, function* (value, context) {
-    if (!Array.isArray(value)) {
-      return yield {
-        message: `expected Array, actual ${constructorName(value)}`,
-        kind: IssueKind.unknown,
-      };
-    }
+      for (const key in input) {
+        if (knowns.includes(key)) continue;
 
-    for (const key in value) {
-      const isSatisfy = structs.some((schema) => is(schema, value[key]));
-
-      if (!isSatisfy) {
-        const names = structs.map(({ name }) => name).join(", ");
         const paths = context.paths.concat(key);
 
-        yield {
-          message: `none of the schemas are satisfied [${names}]`,
-          paths,
-          kind: IssueKind.unknown,
-        };
+        yield { message: formatActExp("never", input[key]), paths };
       }
     }
   });
+
+  return Object.assign(check, { definition: schema });
 }
 
-export function or<S extends readonly CheckableStruct<unknown>[]>(
-  ...structs: S
-): CheckableStruct<S[number]> {
-  return new Check(or.name, function* (input) {
-    const valid = structs.some((struct) => is(struct, input));
+export function list<S>(
+  struct: Struct<S>,
+): Struct<S[]> {
+  return new Construct("list", function* (input, context) {
+    if (!Array.isArray(input)) {
+      return yield { message: formatActExp("Array", constructorName(input)) };
+    }
 
-    if (!valid) {
-      const names = structs.map(({ name }) => name).join(", ");
+    for (const key in input) {
+      const paths = context.paths.concat(key);
+      yield* struct.check(input[key], { paths });
+    }
+  });
+}
 
-      yield {
-        message: `none of the schemas are satisfied [${names}]`,
-        kind: IssueKind.unknown,
-      };
+export function tuple<F, R extends readonly Struct<unknown>[]>(
+  structs: [Struct<F>, ...R],
+): Struct<[F, ...R]> {
+  return new Construct("tuple", function* (input, context) {
+    if (!Array.isArray(input)) {
+      return yield { message: formatActExp("Array", constructorName(input)) };
+    }
+
+    const length = Math.max(structs.length, input.length);
+
+    for (let i = 0; i < length; i++) {
+      const paths = context.paths.concat(i.toString());
+
+      if (i in structs) {
+        yield* structs[i].check(input[i], { paths });
+      } else {
+        yield { message: formatActExp("never", input[i]), paths };
+      }
     }
   });
 }
 
 export function record<K extends string, V>(
-  key: CheckableStruct<K, {}>,
-  value: CheckableStruct<V>,
-): CheckableStruct<Record<K, V>, {}> {
-  return new Check<Record<K, V>, {}>(record.name, function* (input, context) {
+  key: Struct<K>,
+  value: Struct<V>,
+): Struct<Record<K, V>> {
+  return new Construct<Record<K, V>>("record", function* (input, context) {
+    if (typeof input !== "object") return;
     for (const k in input) {
       yield* key.check(k, context);
       yield* value.check(input[k as keyof {}], context);
@@ -144,38 +168,63 @@ export function record<K extends string, V>(
   });
 }
 
-export function nonNullable(): CheckableStruct<{}> {
-  return new Check(nonNullable.name, function* (value) {
-    if (!isNonNullable(value)) {
-      yield {
-        message: `expected non nullable, but actual ${value}`,
-        kind: IssueKind.unknown,
-      };
-    }
-  });
-}
+export function partial<S extends ObjectSchema>(
+  struct: Struct<S> & Definable<S>,
+): Struct<Partial<S>> & Definable<Partial<S>> {
+  const definition: Partial<S> = {};
 
-export function partial<Out extends In, In>(
-  struct: CheckableStruct<Out, In>,
-): CheckableStruct<Partial<Out>> {
-  return new Check(partial.name, function* (input, context) {
-    for (const issue of struct.check(input as In, context)) {
-      if (issue.kind !== IssueKind.reference) {
-        yield issue;
+  for (const key in struct.definition) {
+    (definition as Writeable<ObjectSchema>)[key] = or(
+      literal(undefined),
+      struct.definition[key],
+    );
+  }
+
+  const check = new Construct<Partial<S>>(
+    "partial",
+    function* (input, context) {
+      if (!isObject(input)) {
+        return yield {
+          message: `expected object, actual ${typeof input}`,
+          ...context,
+        };
       }
-    }
-  });
+
+      for (const key in struct.definition) {
+        if (!hasOwn(key, input) || isUndefined(input[key])) continue;
+
+        const paths = context.paths.concat(key);
+
+        yield* struct.definition[key].check(input[key], { paths });
+      }
+    },
+  );
+
+  return Object.assign(check, { definition });
 }
 
-function typeIssue(
-  expected: DataType,
-  actual: unknown,
-): PartialBy<StructIssue, "paths"> {
-  const act = typeof actual;
-  return {
-    kind: IssueKind.type,
-    actual: act,
-    expected,
-    message: `expected ${expected}, actual ${act}`,
-  };
+export function pick<U extends ObjectSchema, K extends keyof U>(
+  struct: Struct<U> & Definable<U>,
+  ...keys: K[]
+): Struct<Pick<U, K>> {
+  const schema = keys.reduce((acc, key) => {
+    acc[key] = struct.definition[key];
+
+    return acc;
+  }, {} as Pick<U, K>);
+
+  return object<Pick<U, K>>(schema);
+}
+
+export function omit<S extends ObjectSchema, K extends keyof S>(
+  struct: Struct<S> & Definable<S>,
+  ...keys: K[]
+): Struct<Omit<S, K>> {
+  const { definition } = struct;
+
+  for (const key of keys) {
+    delete definition[key];
+  }
+
+  return object(definition);
 }

@@ -1,8 +1,8 @@
-import { StructIssue } from "./types.ts";
+import { Issue } from "./types.ts";
 
 export class SchemaError extends Error {
-  readonly issues: StructIssue[];
-  constructor(issues: Iterable<StructIssue>) {
+  readonly issues: Issue[];
+  constructor(issues: Iterable<Issue>) {
     super();
     this.issues = Array.from(issues);
 

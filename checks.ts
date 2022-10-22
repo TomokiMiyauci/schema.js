@@ -1,18 +1,13 @@
-import { Checkable, CheckOptions, Infer, StructIssue } from "./types.ts";
+import { Checkable, CheckOptions, Infer, Issue } from "./types.ts";
 import { SchemaError } from "./error.ts";
-import { Arg } from "./deps.ts";
 
-export function validate<
-  Out extends In,
-  In,
-  C extends Checkable<Out, In>,
->(
-  struct: Checkable<Out, In>,
-  input: Arg<C["check"], 0>,
+export function validate<S>(
+  struct: Checkable<S>,
+  input: unknown,
   options?: CheckOptions,
-): [data: Infer<Out>, issues: undefined] | [
+): [data: Infer<S>, issues: undefined] | [
   data: undefined,
-  issues: StructIssue[],
+  issues: Issue[],
 ] {
   const issues = resolveIterable(
     struct.check(input, { paths: [] }),
@@ -24,16 +19,12 @@ export function validate<
   return [input as never, undefined];
 }
 
-export function is<
-  Out extends In,
-  In,
-  C extends Checkable<Out, In>,
->(
-  schema: Checkable<Out, In>,
-  input: Arg<C["check"], 0>,
+export function is<S>(
+  struct: Checkable<S>,
+  input: unknown,
   options?: CheckOptions,
-): input is Infer<Out> extends Arg<C["check"], 0> ? Infer<Out> : never {
-  const result = validate(schema, input, options);
+): input is Infer<S> {
+  const result = validate(struct, input, options);
 
   return !result[1];
 }
@@ -43,16 +34,11 @@ export function is<
  * @param input Input value.
  * @throws {SchemaError} When assert fail.
  */
-export function assert<
-  Out extends In,
-  In,
-  C extends Checkable<Out, In>,
->(
-  checkable: Checkable<Out, In>,
-  input: Arg<C["check"], 0>,
+export function assert<S>(
+  checkable: Checkable<S>,
+  input: unknown,
   options?: CheckOptions,
-): asserts input is Infer<Out> extends Arg<C["check"], 0> ? Infer<Out>
-  : never {
+): asserts input is Infer<S> {
   const result = validate(checkable, input, options);
 
   if (result[1]) {
@@ -72,7 +58,7 @@ function resolveIterable<T>(iterable: Iterable<T>, failFast?: boolean): T[] {
   return [...iterable];
 }
 
-function customIssue({ message, paths, ...rest }: StructIssue): StructIssue {
+function customIssue({ message, paths, ...rest }: Issue): Issue {
   return {
     message: toString({ message, paths }),
     paths,
@@ -81,7 +67,7 @@ function customIssue({ message, paths, ...rest }: StructIssue): StructIssue {
 }
 
 function toString(
-  { message, paths }: Pick<StructIssue, "message" | "paths">,
+  { message, paths }: Issue,
 ): string {
   const pathInfo = paths.length ? ["$", ...paths].join(".") + " - " : "";
 

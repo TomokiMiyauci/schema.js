@@ -1,5 +1,3 @@
-import { IssueKind } from "./enums.ts";
-
 export const type = Symbol("type");
 export type type = typeof type;
 
@@ -9,47 +7,37 @@ export interface Extendable {
 }
 
 /** Checkable API. */
-export interface Checkable<Out extends In, In = unknown> {
+export interface Checkable<Out> {
   /** Checks input and returns an iterated issue if there is a problem. */
-  readonly check: (input: In, context: InputContext) => Iterable<StructIssue>;
+  readonly check: (input: unknown, context: InputContext) => Iterable<Issue>;
 
   /** Guaranteed input types. */
   readonly [type]: Out;
 }
 
-export interface Issue {
-  /** Issue message. */
-  readonly message: string;
-
-  kind: IssueKind;
+export interface Definable<D> {
+  readonly definition: D;
 }
 
-export type StructIssue =
-  & InputContext
-  & (
-    | Issue
-    | TypeIssue
-    | ReferenceIssue
-  );
+export interface Issue extends InputContext {
+  /** Issue message. */
+  readonly message: string;
+}
 
 /** Context for input data. */
 export interface InputContext {
   /** Path to the value. */
-  readonly paths: string[];
+  readonly paths: readonly string[];
 }
 
 /** Dada struct API. */
-export interface Struct {
+export interface Struct<Out> extends Checkable<Out> {
+  /** Struct name. */
   readonly name: string;
 }
 
-export interface CheckableStruct<Out extends In, In = unknown>
-  extends Struct, Extendable, Checkable<Out, In> {}
-
-export type Infer<T> = T extends Checkable<infer U, infer U> ? Infer<U>
+export type Infer<T> = T extends Checkable<infer U> ? Infer<U>
   : { [k in keyof T]: Infer<T[k]> };
-
-export type InferType<T extends Checkable<unknown>> = Infer<T[type]>;
 
 /** Struct check options. */
 export interface CheckOptions {
@@ -57,27 +45,6 @@ export interface CheckOptions {
   readonly failFast?: boolean;
 }
 
-export interface TypeIssue extends Issue {
-  readonly kind: IssueKind.type;
-
-  /** Actual data type. */
-  actual: DataType;
-
-  /** Expected data type. */
-  expected: DataType;
+export interface ObjectSchema {
+  readonly [k: string]: Checkable<unknown>;
 }
-
-export interface ReferenceIssue extends Issue {
-  readonly kind: IssueKind.reference;
-}
-
-/** JavaScript core data type. */
-export type DataType =
-  | "string"
-  | "number"
-  | "boolean"
-  | "object"
-  | "bigint"
-  | "function"
-  | "undefined"
-  | "symbol";

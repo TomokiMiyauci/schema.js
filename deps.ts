@@ -9,7 +9,9 @@ export {
   isNumber,
   isObject,
   isString,
+  isSymbol,
   isTruthy,
+  isUndefined,
 } from "https://deno.land/x/isx@1.0.0-beta.22/mod.ts";
 export { type json } from "https://deno.land/x/pure_json@1.0.0-beta.1/mod.ts";
 
@@ -44,3 +46,7 @@ export type Arg<F extends (...args: any) => any, N extends number> = Parameters<
 export type Is<T extends Function> = T extends (value: any) => value is infer X
   ? X
   : never;
+
+export type Writeable<T> = {
+  -readonly [k in keyof T]: T[k];
+};
