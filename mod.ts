@@ -12,6 +12,6 @@ export {
   string,
   tuple,
 } from "./cores.ts";
+export { maximum } from "./subsets.ts";
 export { assert, is, validate } from "./checks.ts";
-export { $ } from "./extends.ts";
 export { and, or } from "./operators.ts";

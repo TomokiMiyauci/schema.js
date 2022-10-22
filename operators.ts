@@ -1,6 +1,13 @@
-import { Struct } from "./types.ts";
+import {
+  Checkable,
+  InputContext,
+  Intersection,
+  Issue,
+  Struct,
+  type,
+} from "./types.ts";
 import { Construct, formatActExp } from "./utils.ts";
-import { iter, prop, UnionToIntersection } from "./deps.ts";
+import { iter, prop } from "./deps.ts";
 
 /** Create union struct. */
 export function or<S extends readonly Struct<unknown>[]>(
@@ -20,20 +27,36 @@ export function or<S extends readonly Struct<unknown>[]>(
 }
 
 /** Create intersection struct. */
-export function and<S extends readonly Struct<unknown>[]>(
-  ...structs: S
-): Struct<UnionToIntersection<S[number]>> {
-  const name = structs.map(prop(Symbol.toStringTag)).join(" & ");
+export function and<Out extends In, In>(
+  struct: Struct<Out, In>,
+): Struct<Out, In> & Intersection<Out, Out> {
+  class IntersectionStruct
+    implements Checkable<Out, In>, Intersection<Out, Out> {
+    constructor(private structs: Struct<any, any>[]) {}
 
-  return new Construct(`(${name})`, function* (input, context) {
-    for (const struct of structs) {
-      const iterator = iter(struct.check(input, context));
-      const { done, value } = iterator.next();
+    and<T extends Out>(struct: Struct<T, Out>): this {
+      return new IntersectionStruct([...this.structs, struct]) as this;
+    }
 
-      if (!done) {
-        yield value;
-        break;
+    *check(input: In, context: InputContext): Iterable<Issue> {
+      for (const struct of this.structs) {
+        const iterator = iter(struct.check(input, context));
+        const { done, value } = iterator.next();
+
+        if (!done) {
+          yield value;
+          break;
+        }
       }
     }
-  });
+
+    get [Symbol.toStringTag](): string {
+      const name = this.structs.map(prop(Symbol.toStringTag)).join(" & ");
+      return `(${name})`;
+    }
+
+    declare [type]: Out;
+  }
+
+  return new IntersectionStruct([struct]);
 }

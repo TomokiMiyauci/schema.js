@@ -50,3 +50,7 @@ export interface CheckOptions {
 export interface ObjectSchema {
   readonly [k: string]: Struct<unknown>;
 }
+
+export interface Intersection<Out extends In, In> {
+  and(struct: Struct<Out, Out>): this;
+}
