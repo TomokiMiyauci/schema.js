@@ -1,10 +1,10 @@
 <div align="center">
 
-# schema.js
+# typestruct
 
 <img alt="logo icon" src="./_medias/logo.png" width="180px" height="180px">
 
-Universal, tiny schema for JavaScript data types.
+Composable and checkable JavaScript(and TypeScript) data structure.
 
 [![deno land](http://img.shields.io/badge/available%20on-deno.land/x-lightgrey.svg?logo=deno)](https://deno.land/x/schema_js)
 [![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/schema_js/mod.ts)
@@ -12,751 +12,176 @@ Universal, tiny schema for JavaScript data types.
 
 </div>
 
-## Design
-
-For this project, we will define the schema based on JavaScript data types.
-
-JavaScript can be classified into two data types called primitives and objects.
-
-If we further classify them according to whether they are Unit type or
-Collective types, they can be classified into 8 data types.
-
-Unit type is a type that has only a single value. Collection type is set of Unit
-type.
-
-|           | Unit type   | Collective type                                   |
-| --------- | ----------- | ------------------------------------------------- |
-| Primitive | `undefined` | `string`, `number`, `bigint`, `boolean`, `symbol` |
-| Object    | `null`      | `object`                                          |
-
-A subtype of `object`, `Function` is a special type that JavaScript treats as
-first class.
-
-So for this project, we define `Function` as a supertype in addition to the 8
-types above.
-
-## Core schema
-
-Create JavaScript primitive data schema.
+## Basic usage
 
 ```ts
-import {
-  BigintSchema,
-  BooleanSchema,
-  NumberSchema,
-  StringSchema,
-  SymbolSchema,
-  UndefinedSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+import { assert, number, object, string } from "https://deno.land/x/struct";
 
-const stringSchema = new StringSchema();
-const numberSchema = new NumberSchema();
-const bigintSchema = new BigintSchema();
-const booleanSchema = new BooleanSchema();
-const undefinedSchema = new UndefinedSchema();
-const symbolSchema = new SymbolSchema();
-```
-
-Create JavaScript objective data schema.
-
-```ts
-import {
-  FunctionSchema,
-  NullSchema,
-  ObjectSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-
-const objectSchema = new ObjectSchema();
-const functionSchema = new FunctionSchema();
-const nullSchema = new NullSchema();
-```
-
-## Assert with schema
-
-Assert whether the value satisfies the schema.
-
-```ts
-import {
-  assertSchema,
-  BooleanSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-
-const value: unknown = true;
-assertSchema(new BooleanSchema(), value);
-// value is `boolean`
-```
-
-## Validate with schema
-
-If you do not want to throw an error, you can use the `validateSchema` function.
-
-```ts
-import {
-  ObjectSchema,
-  StringSchema,
-  validateSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-
-const schema = new ObjectSchema({
-  name: new StringSchema(),
-  type: "dog",
+const Product = object({
+  id: string(),
+  name: string(),
+  price: number(),
+  category: object({
+    id: string(),
+    name: string(),
+  }),
 });
 
-const result = validateSchema(schema, {});
-if (result.pass) {
-  result.data; // { name: string, type: "dog" }
-} else {
-  result.errors; // SchemaError[]
+declare const data: unknown;
+assert(Product, data);
+```
+
+The `data` is infer as follows:
+
+```ts
+interface data {
+  id: string;
+  name: string;
+  price: number;
+  category: {
+    id: string;
+    name: string;
+  };
 }
 ```
 
-## Additional subtype assertion (narrowing)
+`assert` throws an error if the data does not match the struct and reports
+issues.
 
-For the Collective type, you can add assertions of subtypes.
+Other functions such as `is` and the `validate` function can also be used.
 
-The Collective type has the `and` method. It accept subtype schema and returns a
-new Collective type. The new Collective type will be type narrowed by the
-subtype schema.
+## Check functions
 
-Example of creating a tuple (`[0, "hi"]`) schema from an object schema:
+Check function is a runner that takes a Struct (strictly `Cheakable`) and input
+and checks it.
+
+The following check functions differ in the way they express their results.
+
+### is
+
+Whether the input satisfies struct or not. With type guard, inputs are type
+inferred.
+
+This is best used if you are only interested in whether or not the struct is
+satisfied.
+
+```ts
+import { is, string } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "[https://](https://deno.land/std@$VERSION/testing/asserts/mod.ts)";
+
+assertEquals(is(string(), "any input"), true);
+assertEquals(is(string(), {}), false);
+```
+
+### assert
+
+Assert whether the input satisfies the struct.With assert signature, inputs are
+type inferred.
+
+If Struct is not satisfied, a `StructError` will be thrown.
+
+If you want to stop execution, it is best to use this.
 
 ```ts
 import {
-  ArraySchema,
-  assertSchema,
-  NumberSchema,
-  ObjectSchema,
-  SchemaError,
-  StringSchema,
-  TupleSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+  assert,
+  maxSize,
+  minSize,
+  StructError,
+} from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertThrows } from "[https://](https://deno.land/std@$VERSION/testing/asserts/mod.ts)";
 
-const value: unknown = undefined;
-
-const tupleSchema = new ObjectSchema().and(new ArraySchema()).and(
-  new TupleSchema(
-    new NumberSchema(),
-    new StringSchema(),
-  ),
-);
-assertSchema(tupleSchema, value);
-// value is `[number, string]`
+assertThrows(() => assert(maxSize(5), "typestruct"), StructError);
 ```
 
-## Logical operation schema
+## Struct deep dive
 
-Provides the logical operations of the schema. Several schemas can be multiplied
-together to create a new schema.
+The essence of struct is to guarantee types and values. And you probably do
+validation for the same reason.
 
-### Logical OR
+Struct is an interface with `In` and `Out` generics.
 
-The logical OR schema (logical disjunction) for a set of schemas is true if and
-only if one or more of its schemas is true.
+```ts
+interface Struct<In, Out extends In = any> {}
+```
 
-Type inference works correctly.
+`In` represents the accepted data types. It can be any type, including the top
+types `unknown` and `string`.
+
+`Out` represents the guaranteed data type. It indicates the type of the result
+of narrowing the data.
+
+### Type Guarantee
+
+Now let's look at the `string` factory.
+
+```ts
+import { Struct } from "https://deno.land/x/typestruct/mod.ts";
+const String = string(); // Struct<unknown, string>
+```
+
+Another example is `Struct<{}, { length: number }>`, which accepts Non-nullable
+data types and guarantees that the data has the `length` property.
+
+Depending on the data type of `In`, there are **constraints** on the inputs that
+can be passed to the check function.
+
+### Value Guarantee
+
+If there is no type narrowing, nothing needs to be specified for `Out`. This
+implies that it is a value-checking struct.
+
+```ts
+import { maxSize } from "https://deno.land/x/typestruct/mod.ts";
+const MaxSize = maxSize(5); // Struct<Iterable<unknown>>
+```
+
+This indicates that the `Iterable<unknown>` type is accepted and no type
+narrowing.
+
+### Composable struct
+
+Struct should be singly liable. Struct should have a single responsibility
+because things that do one thing can be composited together.
+
+Struct and Composition
+
+Struct should be singly liable. Structs that do one thing can be efficiently
+synthesized with each other.
+
+We provide `and` and `or` as structs that compose.
+
+For example, suppose you want to guarantee that the input is a string, and that
+it has between 10 and 100 characters.
+
+Combine the `and` and `string`, `maxSize` and `minSize` modules to create a new
+struct.
 
 ```ts
 import {
-  assertSchema,
-  NullSchema,
-  NumberSchema,
-  OrSchema,
-  StringSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
+  and,
+  maxSize,
+  minSize,
+  string,
+} from "https://deno.land/x/typestruct/mod.ts";
 
-const schema = new OrSchema(
-  new StringSchema(),
-  new NumberSchema(),
-  new NullSchema(),
-);
-const value: unknown = undefined;
-assertSchema(schema, value);
-// value is `string` | `number` | null
+const MinSize10 = minSize(10);
+const MaxSize100 = maxSize(100);
+const String = string();
+const String10To100 = and(String).and(MinSize10).and(MaxSize100);
 ```
 
-### Logical AND
+Here's what's happening with `and`.
 
-The logical AND schema (logical conjunction) for a set of schemas will be true
-if and only if all the schemas are true. Otherwise it will be false.
+String is `Struct<unknown, string>`. When `and` accepts String, it narrows down
+the next acceptable type; `string`, the `Out` of String. That is,
+`Struct<string, string>`.
 
-Type inference works correctly.
+MinSize10 is `Struct<Iterable<unknown>>`. `Iterable<unknown>` is accepted
+because it is compatible with `string`. Since `Out` is omitted (`any`), no
+narrowing is done. The same goes for MaxSize100.
 
-```ts
-import {
-  AndSchema,
-  assertSchema,
-  ObjectSchema,
-  PartialSchema,
-  StringSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-
-const schema = new AndSchema(
-  new ObjectSchema({
-    type: new StringSchema(),
-  }),
-  new PartialSchema({
-    payload: new ObjectSchema(),
-  }),
-);
-assertSchema(schema, {});
-```
-
-### Logical NOT
-
-The logical NOT schema (logical complement, negation) takes valid schema to
-invalid and vice versa.
-
-Type inference works correctly.
-
-```ts
-import {
-  assertSchema,
-  BooleanSchema,
-  NotSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-
-const value: unknown = undefined;
-assertSchema(new NotSchema(new BooleanSchema()), value);
-// value is `string` | `number` | ...
-assertSchema(new NotSchema(true), value);
-// value is `false` | `string` | `number` | ...
-```
-
-## String subtype schema
-
-Provides schema for string subtypes.
-
-```ts
-import {
-  assertSchema,
-  LengthSchema,
-  MaxLengthSchema,
-  MinLengthSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-
-const maxLengthSchema = new MaxLengthSchema(255);
-const minLengthSchema = new MinLengthSchema(10);
-const lengthSchema = new LengthSchema(20);
-
-const value: string = "This is string subtype type.";
-assertSchema(maxLengthSchema, value);
-assertSchema(minLengthSchema, value);
-assertSchema(lengthSchema, value); // throw SchemaError
-```
-
-## Email schema
-
-∈ `string`
-
-Schema of `string` subtype of email format.
-
-```ts
-import {
-  assertSchema,
-  EmailFormatSchema,
-  MaxLengthSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-
-const emailFormatAndLessThan20 = new EmailFormatSchema().and(
-  new MaxLengthSchema(20),
-);
-assertSchema(emailFormatAndLessThan20, "contact@test.test");
-```
-
-## UUID format schema
-
-∈ `string`
-
-Schema of UUID format. This is `string` subtype.
-
-```ts
-import {
-  assertSchema,
-  UuidFormatSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
-
-const schema = new UuidFormatSchema();
-assertSchema(schema, "00000000-0000-0000-0000-000000000000");
-assertThrows(() => assertSchema(schema, "invalid UUID"));
-```
-
-## Hostname format schema
-
-∈ `string`
-
-Schema of hostname format. This is `string` subtype.
-
-Compliant with
-[RFC 1123, 2.1 Host Names and Numbers](https://www.rfc-editor.org/rfc/rfc1123#page-13)
-
-```ts
-import {
-  assertSchema,
-  HostnameFormatSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
-
-const schema = new HostnameFormatSchema();
-assertSchema(schema, "a");
-assertThrows(() => assertSchema(schema, "a".repeat(64)));
-assertThrows(() => assertSchema(schema, "invalid hostname"));
-```
-
-## URL format schema
-
-∈ `string`
-
-Schema of URL format. This is `string` subtype.
-
-```ts
-import {
-  assertSchema,
-  UrlFormatSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
-
-const schema = new UrlFormatSchema();
-assertSchema(schema, "http://localhost");
-assertThrows(() => assertSchema(schema, "invalid URL"));
-```
-
-## URI format schema
-
-∈ `string`
-
-Schema of URI format. This is `string` subtype.
-
-```ts
-import {
-  assertSchema,
-  UriFormatSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
-
-const schema = new UriFormatSchema();
-assertSchema(
-  schema,
-  "https://user:password@www.example.test:123/path/to/?tag=networking&order=newest#top",
-);
-assertThrows(() => assertSchema(schema, "invalid URI"));
-```
-
-## Date format schema
-
-∈ `string`
-
-Schema of date format. This is `string` subtype.
-
-Compliant with
-[RFC 3339, section-5.6, full-date](https://www.rfc-editor.org/rfc/rfc3339#section-5.6)
-
-```ts
-import {
-  assertSchema,
-  DateFormatSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
-
-const schema = new DateFormatSchema();
-assertSchema(schema, "1000-01-01");
-assertThrows(() => assertSchema(schema, "0000-00-00"));
-assertThrows(() => assertSchema(schema, "invalid Date"));
-```
-
-## Time format schema
-
-∈ `string`
-
-Schema of time format. This is `string` subtype.
-
-Compliant with
-[RFC 3339, section-5.6, full-time](https://www.rfc-editor.org/rfc/rfc3339#section-5.6)
-
-```ts
-import {
-  assertSchema,
-  TimeFormatSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
-
-const schema = new TimeFormatSchema();
-assertSchema(schema, "00:00:00Z");
-assertSchema(schema, "23:59:59+19:59");
-assertThrows(() => assertSchema(schema, "00:00:00"));
-assertThrows(() => assertSchema(schema, "invalid Time"));
-```
-
-## Date time format schema
-
-∈ `string`
-
-Schema of date time format. This is `string` subtype.
-
-Compliant with
-[RFC 3339, section-5.6, date-time](https://www.rfc-editor.org/rfc/rfc3339#section-5.6)
-
-```ts
-import {
-  assertSchema,
-  DateTimeFormatSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
-
-const schema = new DateTimeFormatSchema();
-assertSchema(schema, "1000-01-01T00:00:00Z");
-assertSchema(schema, "9999-12-31T23:59:59+19:59");
-assertThrows(() => assertSchema(schema, "0000-00-00:00:00:00Z"));
-assertThrows(() => assertSchema(schema, "invalid date time"));
-```
-
-## Ipv4 format schema
-
-∈ `string`
-
-Schema of IPv4 format. This is `string` subtype.
-
-```ts
-import {
-  assertSchema,
-  Ipv4FormatSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
-
-const schema = new Ipv4FormatSchema();
-assertSchema(schema, "0.0.0.0");
-assertSchema(schema, "127.0.0.1");
-assertThrows(() => assertSchema(schema, "256.255.255.255"));
-assertThrows(() => assertSchema(schema, "invalid IPv4"));
-```
-
-## Ipv6 format schema
-
-∈ `string`
-
-Schema of IPv6 format. This is `string` subtype.
-
-```ts
-import {
-  assertSchema,
-  Ipv6FormatSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
-
-const schema = new Ipv6FormatSchema();
-assertSchema(schema, "::");
-assertThrows(() => assertSchema(schema, ":"));
-assertThrows(() => assertSchema(schema, "invalid IPv6"));
-```
-
-## Pattern schema
-
-∈ `string`
-
-Schema of regex pattern. This is `string` subtype.
-
-```ts
-import {
-  assertSchema,
-  PatternSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
-
-const schema = new PatternSchema(/^(\\([0-9]{3}\\))?[0-9]{3}-[0-9]{4}$/);
-assertSchema(schema, "555-1212");
-assertSchema(schema, "(888)555-1212");
-assertThrows(() => assertSchema(schema, "(888)555-1212 ext. 532"));
-assertThrows(() => assertSchema(schema, "invalid phone number"));
-```
-
-## Partial schema
-
-Schema of optional properties.
-
-```ts
-import {
-  assertSchema,
-  FunctionSchema,
-  PartialSchema,
-  StringSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-
-const abilitySchema = new PartialSchema({
-  fly: new FunctionSchema(),
-});
-const model = { type: "bird" } as const;
-assertSchema(abilitySchema, model);
-// { type: "bird", fly?: Function }
-```
-
-## Record schema
-
-Schema of `Record` object.
-
-```ts
-import {
-  NumberSchema,
-  RecordSchema,
-  StringSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-
-const schema = new RecordSchema(new StringSchema(), new NumberSchema());
-// Record<string, number>
-```
-
-> TypeScript accepts `PropertyKey` ( `string` | `number` |`symbol` ) for
-> `Record` type, but this is restricted to `string` and `symbol` only.
->
-> This is because JavaScript always casts the object key from a `number` to a
-> `string`.
-
-## Unknown schema
-
-Schema of `unknown`. This is the Top type.
-
-```ts
-import {
-  assertSchema,
-  RecordSchema,
-  StringSchema,
-  UnknownSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-
-const schema = new RecordSchema(new StringSchema(), new UnknownSchema());
-// schema for `Record<string, unknown>`
-```
-
-## Never schema
-
-Schema of `never`. This it Bottom type.
-
-```ts
-import {
-  assertSchema,
-  NeverSchema,
-  RecordSchema,
-  StringSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-
-const schema = new RecordSchema(new StringSchema(), new NeverSchema());
-// schema for `Record<string, never>`
-```
-
-## Union subtype schema
-
-The union subtype schema is a schema that can be used for multiple types.
-
-### Max schema
-
-type &isin; `number` &#x22C3; `bigint`
-
-Schema of max value for `number` or `bigint` subtype.
-
-```ts
-import {
-  assertSchema,
-  MaxSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
-
-assertSchema(new MaxSchema(10), 5);
-assertThrows(() => assertSchema(new MaxSchema(10), 11));
-```
-
-### Min schema
-
-type ∈ `number` &#x22C3; `bigint`
-
-Schema of min value for `number` or `bigint` subtype.
-
-```ts
-import {
-  assertSchema,
-  MinSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
-
-assertSchema(new MinSchema(5), 10);
-assertThrows(() => assertSchema(new MinSchema(5), 0));
-```
-
-### Count schema
-
-type ∈ `Iterable<unknown>`
-
-Schema of number of elements for `Iterable` data types.
-
-```ts
-import {
-  assertSchema,
-  CountSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-import {
-  assertEquals,
-  assertThrows,
-} from "https://deno.land/std@$VERSION/testing/asserts.ts";
-
-const schema = new CountSchema(10);
-assertSchema(schema, "abcdefghij");
-assertThrows(() => assertSchema(schema, []));
-```
-
-### Min count schema
-
-type ∈ `Iterable<unknown>`
-
-Schema of min number of elements for `Iterable` data types.
-
-```ts
-import {
-  assertSchema,
-  MinCountSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-import {
-  assertEquals,
-  assertThrows,
-} from "https://deno.land/std@$VERSION/testing/asserts.ts";
-
-const schema = new MinCountSchema(8);
-assertSchema(schema, "password");
-assertThrows(() => assertSchema(schema, new Array(4)));
-```
-
-### Max count schema
-
-type ∈ `Iterable<unknown>`
-
-Schema of max number of elements for `Iterable` data types.
-
-```ts
-import {
-  assertSchema,
-  MaxCountSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-import {
-  assertEquals,
-  assertThrows,
-} from "https://deno.land/std@$VERSION/testing/asserts.ts";
-
-const schema = new MaxCountSchema(255);
-assertSchema(schema, "https://test.com");
-assertThrows(() => assertSchema(schema, new Array(1000)));
-```
-
-#### Difference of Length schema
-
-- Length retrieves a value from the `length` property.
-- Count counts the actual number of elements.
-- They differ in the way they count strings.
-
-In strings, Length schema counts the number of code units. In contrast, Count
-schema counts the number of characters.
-
-```ts
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
-assertEquals("A\uD87E\uDC04Z".length, 4);
-assertEquals([..."A\uD87E\uDC04Z"].length, 3);
-```
-
-You should use the count schema in most cases.
-
-## Built-in Objects schema
-
-This project provide built-in object schemas.
-
-[All list](./docs/built_in_objects.md)
-
-## Array schema
-
-```ts
-import {
-  ArraySchema,
-  assertSchema,
-  StringSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-
-const value: unknown = undefined;
-assertSchema(new ArraySchema(), value);
-// value is `{}[]`
-assertSchema(new ArraySchema([new StringSchema()]), value);
-// value is `string[]`
-```
-
-### Tuple schema
-
-It is a sub-type of the `Array` object and represents an array of a finite
-number of elements.
-
-```ts
-import {
-  ArraySchema,
-  assertSchema,
-  NumberSchema,
-  StringSchema,
-  TupleSchema,
-  UndefinedSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-
-const value: any[] = [];
-const tupleSchema = new TupleSchema(
-  new NumberSchema(),
-  new StringSchema(),
-  new UndefinedSchema(),
-);
-assertSchema(tupleSchema, value);
-// value is [number, string, undefined]
-```
-
-## Date schema
-
-Schema of `Date` object.
-
-```ts
-import {
-  assertSchema,
-  DateSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-import {
-  assertThrows,
-} from "https://deno.land/std@$VERSION/testing/asserts.ts";
-
-const schema = new DateSchema();
-assertSchema(schema, new Date());
-assertThrows(() => assertSchema(schema, {}));
-```
-
-## Type inference
-
-You can derive the correct type inference by assertSchema, but you can do the
-same from TypeScript types.
-
-```ts
-import {
-  ArraySchema,
-  InferSchema,
-  NumberSchema,
-  ObjectSchema,
-  StringSchema,
-  TupleSchema,
-} from "https://deno.land/x/schema_js@$VERSION/mod.ts";
-
-const schema = new ObjectSchema({
-  a: new StringSchema(),
-  b: new ArraySchema().and(
-    new TupleSchema(new StringSchema(), new NumberSchema()),
-  ),
-  c: new ObjectSchema({
-    d: 0,
-  }),
-});
-
-type Schema = InferSchema<typeof schema>;
-type EqualTo = {
-  a: string;
-  b: [string, number];
-  c: { d: 0 };
-};
-```
+In this way, you can compose type-safe.
 
 ## API
 
