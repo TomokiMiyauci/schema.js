@@ -1,3 +1,5 @@
+import { IsTopType } from "./deps.ts";
+
 export const type = Symbol("type");
 export type type = typeof type;
 
@@ -7,7 +9,7 @@ export interface Extendable {
 }
 
 /** Checkable API. */
-export interface Checkable<Out extends In, In = unknown> {
+export interface Checkable<In, Out = In> {
   /** Checks input and returns an iterated issue if there is a problem. */
   readonly check: (input: In, context: InputContext) => Iterable<Issue>;
 
@@ -35,10 +37,10 @@ export interface Showable {
 }
 
 /** Dada struct API. */
-export interface Struct<Out extends In, In = unknown>
-  extends Showable, Checkable<Out, In> {}
+export interface Struct<In, Out = In> extends Showable, Checkable<In, Out> {}
 
-export type Infer<T> = T extends Checkable<infer U, infer U> ? Infer<U>
+export type Infer<T> = IsTopType<T> extends true ? T
+  : T extends Checkable<infer U, infer U> ? Infer<U>
   : { [k in keyof T]: Infer<T[k]> };
 
 /** Struct check options. */
@@ -51,6 +53,6 @@ export interface ObjectSchema {
   readonly [k: string]: Struct<unknown>;
 }
 
-export interface Intersection<Out extends In, In> {
-  and(struct: Struct<Out, Out>): this;
+export interface Intersection<In, Out> {
+  and: (struct: Struct<In, Out>) => this;
 }
