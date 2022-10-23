@@ -15,7 +15,7 @@ import { Construct, constructorName, formatActExp } from "./utils.ts";
 import { or } from "./operators.ts";
 
 /** Create `string` data type struct. */
-export function string(): Struct<string> {
+export function string(): Struct<unknown, string> {
   return new Construct("string", function* (input) {
     if (!isString(input)) {
       yield { message: formatActExp("string", typeof input) };
@@ -24,7 +24,7 @@ export function string(): Struct<string> {
 }
 
 /** Create `number` data type struct. */
-export function number(): Struct<number> {
+export function number(): Struct<unknown, number> {
   return new Construct("number", function* (input) {
     if (!isNumber(input)) {
       yield { message: formatActExp("number", typeof input) };
@@ -33,7 +33,7 @@ export function number(): Struct<number> {
 }
 
 /** Create `bigint` data type struct. */
-export function bigint(): Struct<bigint> {
+export function bigint(): Struct<unknown, bigint> {
   return new Construct("bigint", function* (input) {
     if (!isBigint(input)) {
       yield { message: formatActExp("bigint", typeof input) };
@@ -42,7 +42,7 @@ export function bigint(): Struct<bigint> {
 }
 
 /** Create `boolean` data type struct. */
-export function boolean(): Struct<boolean> {
+export function boolean(): Struct<unknown, boolean> {
   return new Construct("boolean", function* (input) {
     if (!isBoolean(input)) {
       yield { message: formatActExp("boolean", typeof input) };
@@ -51,7 +51,7 @@ export function boolean(): Struct<boolean> {
 }
 
 /** Create `function` data type struct. */
-export function func(): Struct<Function> {
+export function func(): Struct<unknown, Function> {
   return new Construct("func", function* (input) {
     if (!isFunction(input)) {
       yield { message: formatActExp("function", typeof input) };
@@ -60,7 +60,7 @@ export function func(): Struct<Function> {
 }
 
 /** Create `symbol` data type struct. */
-export function symbol(): Struct<symbol> {
+export function symbol(): Struct<unknown, symbol> {
   return new Construct("symbol", function* (input) {
     if (!isSymbol(input)) {
       yield { message: formatActExp("symbol", typeof input) };
@@ -72,7 +72,7 @@ export function literal<
   T extends string | number | bigint | null | undefined | symbol | boolean,
 >(
   value: T,
-): Struct<T> {
+): Struct<unknown, T> {
   return new Construct("literal", function* (input) {
     if (!Object.is(input, value)) {
       yield { message: formatActExp(value, input) };
@@ -85,10 +85,10 @@ export function literal<
  */
 export function object<S extends ObjectSchema>(
   schema: S,
-): Struct<S> & Definable<S> {
+): Struct<unknown, S> & Definable<S> {
   const knowns = Object.keys(schema);
 
-  const check = new Construct<S>("object", function* (input, context) {
+  const check = new Construct<unknown, S>("object", function* (input, context) {
     if (!isObject(input)) {
       return yield {
         message: formatActExp("object", input === null ? "null" : typeof input),
@@ -120,7 +120,7 @@ export function object<S extends ObjectSchema>(
 
 export function list<S>(
   struct: Struct<S>,
-): Struct<S[]> {
+): Struct<unknown, S[]> {
   return new Construct("list", function* (input, context) {
     if (!Array.isArray(input)) {
       return yield { message: formatActExp("Array", constructorName(input)) };
@@ -135,7 +135,7 @@ export function list<S>(
 
 export function tuple<F, R extends readonly Struct<unknown>[]>(
   structs: [Struct<F>, ...R],
-): Struct<[F, ...R]> {
+): Struct<unknown, [F, ...R]> {
   return new Construct("tuple", function* (input, context) {
     if (!Array.isArray(input)) {
       return yield { message: formatActExp("Array", constructorName(input)) };
@@ -156,31 +156,33 @@ export function tuple<F, R extends readonly Struct<unknown>[]>(
 }
 
 export function record<K extends string, V>(
-  key: Struct<K>,
-  value: Struct<V>,
-): Struct<Record<K, V>> {
-  return new Construct<Record<K, V>>("record", function* (input, context) {
-    if (typeof input !== "object") return;
-    for (const k in input) {
-      yield* key.check(k, context);
-      yield* value.check(input[k as keyof {}], context);
-    }
-  });
+  key: Struct<unknown, K>,
+  value: Struct<unknown, V>,
+): Struct<unknown, Record<K, V>> {
+  return new Construct<unknown, Record<K, V>>(
+    "record",
+    function* (input, context) {
+      if (typeof input !== "object") return;
+      for (const k in input) {
+        yield* key.check(k, context);
+        yield* value.check(input[k as keyof {}], context);
+      }
+    },
+  );
 }
 
 export function partial<S extends ObjectSchema>(
-  struct: Struct<S> & Definable<S>,
-): Struct<Partial<S>> & Definable<Partial<S>> {
+  struct: Struct<unknown, S> & Definable<S>,
+): Struct<unknown, Partial<S>> & Definable<Partial<S>> {
   const definition: Partial<S> = {};
 
   for (const key in struct.definition) {
     (definition as Writeable<ObjectSchema>)[key] = or(
       literal(undefined),
-      struct.definition[key],
-    );
+    ).or(struct.definition[key]);
   }
 
-  const check = new Construct<Partial<S>>(
+  const check = new Construct<unknown, Partial<S>>(
     "partial",
     function* (input, context) {
       if (!isObject(input)) {
@@ -204,9 +206,9 @@ export function partial<S extends ObjectSchema>(
 }
 
 export function pick<U extends ObjectSchema, K extends keyof U>(
-  struct: Struct<U> & Definable<U>,
+  struct: Struct<unknown, U> & Definable<U>,
   ...keys: K[]
-): Struct<Pick<U, K>> {
+): Struct<unknown, Pick<U, K>> {
   const schema = keys.reduce((acc, key) => {
     acc[key] = struct.definition[key];
 
@@ -217,9 +219,9 @@ export function pick<U extends ObjectSchema, K extends keyof U>(
 }
 
 export function omit<S extends ObjectSchema, K extends keyof S>(
-  struct: Struct<S> & Definable<S>,
+  struct: Struct<unknown, S> & Definable<S>,
   ...keys: K[]
-): Struct<Omit<S, K>> {
+): Struct<unknown, Omit<S, K>> {
   const { definition } = struct;
 
   for (const key of keys) {

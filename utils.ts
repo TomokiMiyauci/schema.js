@@ -10,8 +10,7 @@ export function constructorName(value: unknown): string {
   return String(value);
 }
 
-export class Construct<Out extends In, In = unknown>
-  implements Struct<Out, In> {
+export class Construct<In, Out> implements Struct<In, Out> {
   public check: (input: In, context: InputContext) => Iterable<Issue>;
 
   #name: string;

@@ -56,3 +56,6 @@ export type Is<T extends Function> = T extends (value: any) => value is infer X
 export type Writeable<T> = {
   -readonly [k in keyof T]: T[k];
 };
+
+/** Whether the type is Top-type or not. */
+export type IsTopType<T> = unknown extends T ? true : false;

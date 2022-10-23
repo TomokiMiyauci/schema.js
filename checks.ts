@@ -2,8 +2,8 @@ import { Checkable, CheckOptions, Infer, Issue } from "./types.ts";
 import { SchemaError } from "./error.ts";
 import { iter } from "./deps.ts";
 
-export function validate<Out extends In, In>(
-  checkable: Checkable<Out, In>,
+export function validate<In, Out>(
+  checkable: Checkable<In, Out>,
   input: In,
   options?: CheckOptions,
 ): [data: Infer<Out>, issues: undefined] | [
@@ -20,12 +20,12 @@ export function validate<Out extends In, In>(
   return [input as Infer<Out>, undefined];
 }
 
-export function is<Out extends In, In, T extends In>(
-  checkable: Checkable<Out, In>,
+export function is<In, Out, T extends In>(
+  checkable: Checkable<In, Out>,
   input: T,
   options?: CheckOptions,
-): input is Infer<Out> extends T ? Infer<Out> : never {
-  const result = validate(checkable, input as In, options);
+): input is Infer<Out> extends T ? Infer<Out> : T & Infer<Out> {
+  const result = validate(checkable, input, options);
 
   return !result[1];
 }
@@ -35,13 +35,13 @@ export function is<Out extends In, In, T extends In>(
  * @param input Input value.
  * @throws {SchemaError} When assertion is fail.
  */
-export function assert<Out extends In, In, T extends In>(
-  checkable: Checkable<Out, In>,
+export function assert<In, Out, T extends In>(
+  checkable: Checkable<In, Out>,
   input: T,
   options?: CheckOptions,
 ): asserts input is Infer<Out> extends T ? Infer<Out>
-  : never {
-  const result = validate(checkable, input as In, options);
+  : T & Infer<Out> {
+  const result = validate(checkable, input, options);
 
   if (result[1]) {
     const e = new SchemaError(result[1].map(customIssue));

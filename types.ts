@@ -9,7 +9,7 @@ export interface Extendable {
 }
 
 /** Checkable API. */
-export interface Checkable<In, Out = In> {
+export interface Checkable<In, Out> {
   /** Checks input and returns an iterated issue if there is a problem. */
   readonly check: (input: In, context: InputContext) => Iterable<Issue>;
 
@@ -37,7 +37,7 @@ export interface Showable {
 }
 
 /** Dada struct API. */
-export interface Struct<In, Out = In> extends Showable, Checkable<In, Out> {}
+export interface Struct<In, Out = any> extends Showable, Checkable<In, Out> {}
 
 export type Infer<T> = IsTopType<T> extends true ? T
   : T extends Checkable<infer U, infer U> ? Infer<U>
