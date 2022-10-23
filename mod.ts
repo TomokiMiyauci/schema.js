@@ -4,12 +4,15 @@ export {
   bigint,
   boolean,
   func,
+  list,
+  literal,
   number,
   object,
   partial,
   pick,
   record,
   string,
+  symbol,
   tuple,
 } from "./cores.ts";
 export { maximum, maxSize, minimum, minSize } from "./subsets.ts";
