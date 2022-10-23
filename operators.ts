@@ -9,10 +9,10 @@ import {
 import { formatActExp } from "./utils.ts";
 import { iter, prop } from "./deps.ts";
 
-export function or<Out extends In, In>(
-  struct: Struct<Out, In>,
+export function or<In, Out>(
+  struct: Struct<In, Out>,
 ) {
-  class UnionStruct<_ extends In = Out> implements Struct<_, In> {
+  class UnionStruct<_ = Out> implements Struct<In, _> {
     constructor(public structs: Struct<any, any>[]) {}
 
     *check(input: In, context: InputContext): Iterable<Issue> {
@@ -35,7 +35,7 @@ export function or<Out extends In, In>(
 
     declare [type]: _;
 
-    or = <T extends In>(struct: Struct<T, In>): UnionStruct<T | _> => {
+    or = <T extends In>(struct: Struct<In, T>): UnionStruct<T | _> => {
       return new UnionStruct([...this.structs, struct]);
     };
   }
@@ -44,14 +44,14 @@ export function or<Out extends In, In>(
 }
 
 /** Create intersection struct. */
-export function and<Out extends In, In>(
-  struct: Struct<Out, In>,
-): Struct<Out, In> & Intersection<Out, Out> {
+export function and<In, Out>(
+  struct: Struct<In, Out>,
+): Struct<In, Out> & Intersection<Out, Out> {
   class IntersectionStruct
-    implements Checkable<Out, In>, Intersection<Out, Out> {
+    implements Checkable<In, Out>, Intersection<Out, Out> {
     constructor(private structs: Struct<any, any>[]) {}
 
-    and<T extends Out>(struct: Struct<T, Out>): this {
+    and<T extends Out>(struct: Struct<T, T>): this {
       return new IntersectionStruct([...this.structs, struct]) as this;
     }
 
@@ -69,7 +69,7 @@ export function and<Out extends In, In>(
 
     get [Symbol.toStringTag](): string {
       const name = this.structs.map(prop(Symbol.toStringTag)).join(" & ");
-      return `(${name})`;
+      return name;
     }
 
     declare [type]: Out;
