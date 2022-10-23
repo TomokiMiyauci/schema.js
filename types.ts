@@ -3,11 +3,6 @@ import { IsTopType } from "./deps.ts";
 export const type = Symbol("type");
 export type type = typeof type;
 
-/** Dynamic extendable object API. */
-export interface Extendable {
-  extend<V>(value: V): this & V;
-}
-
 /** Checkable API. */
 export interface Checkable<In, Out> {
   /** Checks input and returns an iterated issue if there is a problem. */
