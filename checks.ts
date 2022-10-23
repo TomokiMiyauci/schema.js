@@ -1,23 +1,60 @@
 import { Checkable, CheckOptions, Infer, Issue } from "./types.ts";
-import { SchemaError } from "./error.ts";
+import { StructError } from "./error.ts";
 import { iter } from "./deps.ts";
 
+/** Validate result. */
+export type ValidateResult<T> = {
+  /** Whether the input is valid or not. */
+  valid: true;
+
+  /** Actual input with inferred types. */
+  data: T;
+} | {
+  /** Whether the input is invalid or not. */
+  valid: false;
+
+  /** Data structure issues. */
+  errors: Issue[];
+};
+
+/** Returns the checking result. If input satisfies struct, the `valid` field is
+ * `true` and returns an object with type-inferred `data`. Otherwise, the `valid`
+ * field is `false` and returns an object containing the `errors` field.
+ * @param checkable The {@link Checkable} object.
+ * @param input Input value.
+ * @param options Check options.
+ *
+ * @example
+ * ```ts
+ * import {
+ *   number,
+ *   object,
+ *   validate,
+ * } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "[https://](https://deno.land/std@$VERSION/testing/asserts/mod.ts)";
+ *
+ * const Product = object({
+ *   price: number(),
+ * });
+ * assertEquals(validate(Product, { price: 100 }), {
+ *   valid: true,
+ *   data: { price: 100 },
+ * });
+ * ```
+ */
 export function validate<In, Out>(
   checkable: Checkable<In, Out>,
   input: In,
   options?: CheckOptions,
-): [data: Infer<Out>, issues: undefined] | [
-  data: undefined,
-  issues: Issue[],
-] {
+): ValidateResult<Infer<Out>> {
   const issues = resolveIterable(
     checkable.check(input, { paths: [] }),
     options?.failFast,
   );
 
-  if (issues.length) return [, issues];
+  if (issues.length) return { valid: false, errors: issues };
 
-  return [input as Infer<Out>, undefined];
+  return { valid: true, data: input as Infer<Out> };
 }
 
 /** Whether the input satisfies struct or not. With type guard, inputs are type inferred.
@@ -41,7 +78,7 @@ export function is<In, Out, T extends In>(
 ): input is Infer<Out> extends T ? Infer<Out> : T & Infer<Out> {
   const result = validate(checkable, input, options);
 
-  return !result[1];
+  return result.valid;
 }
 
 /** Assert value with checkable.
@@ -71,16 +108,16 @@ export function assert<In, Out, T extends In>(
   : T & Infer<Out> {
   const result = validate(checkable, input, options);
 
-  if (result[1]) {
-    const e = new SchemaError(result[1].map(customIssue));
+  if (!result.valid) {
+    const e = new StructError(result.errors.map(formatIssue));
     Error.captureStackTrace(e, assert);
 
     throw e;
   }
 }
 
-function resolveIterable<T>(iterable: Iterable<T>, failFast?: boolean): T[] {
-  if (failFast) {
+function resolveIterable<T>(iterable: Iterable<T>, only?: boolean): T[] {
+  if (only) {
     const { done, value } = iter(iterable).next();
 
     return done ? [] : [value];
@@ -88,17 +125,14 @@ function resolveIterable<T>(iterable: Iterable<T>, failFast?: boolean): T[] {
   return [...iterable];
 }
 
-function customIssue({ message, paths, ...rest }: Issue): Issue {
+function formatIssue({ message, paths }: Issue): Issue {
   return {
     message: toString({ message, paths }),
     paths,
-    ...rest,
   };
 }
 
-function toString(
-  { message, paths }: Issue,
-): string {
+function toString({ message, paths }: Issue): string {
   const pathInfo = paths.length ? ["$", ...paths].join(".") + " - " : "";
 
   return pathInfo + message;

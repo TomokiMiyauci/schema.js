@@ -94,6 +94,31 @@ import { assertThrows } from "[https://](https://deno.land/std@$VERSION/testing/
 assertThrows(() => assert(maxSize(5), "typestruct"), StructError);
 ```
 
+### validate
+
+Returns the checking result. If input satisfies struct, the `valid` field is
+`true` and returns an object with type-inferred `data`. Otherwise, the `valid`
+field is `false` and returns an object containing the `errors` field.
+
+Use this if you want to control the check results.
+
+```ts
+import {
+  number,
+  object,
+  validate,
+} from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "[https://](https://deno.land/std@$VERSION/testing/asserts/mod.ts)";
+
+const Product = object({
+  price: number(),
+});
+assertEquals(validate(Product, { price: 100 }), {
+  valid: true,
+  data: { price: 100 },
+});
+```
+
 ## Struct deep dive
 
 The essence of struct is to guarantee types and values. And you probably do
