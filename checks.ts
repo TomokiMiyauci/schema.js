@@ -20,6 +20,20 @@ export function validate<In, Out>(
   return [input as Infer<Out>, undefined];
 }
 
+/** Whether the input satisfies struct or not. With type guard, inputs are type inferred.
+ * @param checkable The {@link Checkable} object.
+ * @param input Input value.
+ * @param options Check options.
+ *
+ * @example
+ * ```ts
+ * import { is, string } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * assertEquals(is(string(), "any input"), true);
+ * assertEquals(is(string(), {}), false);
+ * ```
+ */
 export function is<In, Out, T extends In>(
   checkable: Checkable<In, Out>,
   input: T,
@@ -31,9 +45,23 @@ export function is<In, Out, T extends In>(
 }
 
 /** Assert value with checkable.
- * @param checkable
+ * @param checkable The {@link Checkable} object.
  * @param input Input value.
+ * @param options Check options.
  * @throws {SchemaError} When assertion is fail.
+ *
+ * @example
+ * ```ts
+ * import {
+ *   assert,
+ *   maxSize,
+ *   minSize,
+ *   StructError,
+ * } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * assertThrows(() => assert(maxSize(5), "typestruct"), StructError);
+ * ```
  */
 export function assert<In, Out, T extends In>(
   checkable: Checkable<In, Out>,
