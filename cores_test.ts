@@ -1,4 +1,5 @@
 import {
+  array,
   bigint,
   boolean,
   func,
@@ -126,5 +127,21 @@ describe("object", () => {
 
   it("should return empty list when input type is object", () => {
     assertEquals([...object().check(new Object())], []);
+  });
+});
+
+describe("array", () => {
+  it("should return issue when input is not Array", () => {
+    assertEquals([
+      ...array().check(""),
+    ], [{
+      message: "expected Array, actual String",
+    }]);
+  });
+
+  it("should return empty list when input is Array", () => {
+    assertEquals([
+      ...array().check([]),
+    ], []);
   });
 });

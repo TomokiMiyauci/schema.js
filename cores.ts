@@ -190,9 +190,7 @@ export function object(structMap?: StructMap): Struct<unknown, object> {
   return Object.assign(check, { definition: structMap });
 }
 
-export function list<S>(
-  struct: Struct<unknown, S>,
-): Struct<unknown, S[]> {
+export function list<S>(struct: Struct<unknown, S>): Struct<unknown, S[]> {
   return new Construct("list", function* (input) {
     if (!Array.isArray(input)) {
       return yield { message: formatActExp("Array", constructorName(input)) };
@@ -203,6 +201,24 @@ export function list<S>(
         const paths = [key].concat(_);
         yield { message, paths };
       }
+    }
+  });
+}
+
+/** Create `any[]` data type struct.
+ * @example
+ * ```ts
+ * import { array, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * assertEquals(is(array(), [], true));
+ * assertEquals(is(array(), {}, false));
+ * ```
+ */
+export function array(): Struct<unknown, any[]> {
+  return new Construct("array", function* (input) {
+    if (!Array.isArray(input)) {
+      return yield { message: formatActExp("Array", constructorName(input)) };
     }
   });
 }

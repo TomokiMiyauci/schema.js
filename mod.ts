@@ -1,6 +1,7 @@
 export { StructError } from "./error.ts";
 export { type CheckOptions, type Infer, type Showable } from "./types.ts";
 export {
+  array,
   bigint,
   boolean,
   func,
