@@ -22,6 +22,7 @@ export {
   minimum,
   minSize,
   nonempty,
+  pattern,
 } from "./subsets.ts";
 export { assert, is, validate, type ValidateResult } from "./checks.ts";
 export { and, or } from "./operators.ts";

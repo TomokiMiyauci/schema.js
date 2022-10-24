@@ -5,6 +5,7 @@ import {
   minimum,
   minSize,
   nonempty,
+  pattern,
 } from "./subsets.ts";
 import { assertEquals, describe, it } from "./dev_deps.ts";
 
@@ -91,5 +92,19 @@ describe("nonempty", () => {
 
   it("should return empty list when the input is non empty", () => {
     assertEquals([...nonempty().check([""], { paths: [] })], []);
+  });
+});
+
+describe("pattern", () => {
+  it("should return issue when the input does not match regexp", () => {
+    assertEquals([
+      ...pattern(/^t/).check("not match", {
+        paths: [],
+      }),
+    ], [{ message: "expected match /^t/, actual not match", paths: [] }]);
+  });
+
+  it("should return empty list when the input match regexp", () => {
+    assertEquals([...pattern(/t/).check("test", { paths: [] })], []);
   });
 });

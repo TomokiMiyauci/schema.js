@@ -195,6 +195,18 @@ assertEquals(is(nonempty(), new Set([1, 2, 3])), true);
 assertEquals(is(nonempty(), new Map(), false);
 ```
 
+#### pattern
+
+Create pattern struct. Ensure the input match to the pattern.
+
+```ts
+import { is, pattern } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+
+assertEquals(is(pattern(/type/), "typescript", true);
+assertEquals(is(pattern(/type/), "javascript", false);
+```
+
 ## Struct deep dive
 
 The essence of struct is to guarantee types and values. And you probably do

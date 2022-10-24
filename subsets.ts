@@ -135,3 +135,22 @@ export function nonempty(): Struct<Iterable<unknown>> {
     }
   });
 }
+
+/** Create pattern struct. Ensure the input match to the pattern.
+ * @param regexp `RegExp` pattern
+ * @example
+ * ```ts
+ * import { is, pattern } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * assertEquals(is(pattern(/type/), "typescript", true);
+ * assertEquals(is(pattern(/type/), "javascript", false);
+ * ```
+ */
+export function pattern(regexp: RegExp): Struct<string> {
+  return new Construct("pattern", function* (input) {
+    if (!regexp.test(input)) {
+      yield { message: formatActExp(`match ${regexp}`, "not match") };
+    }
+  });
+}
