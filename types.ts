@@ -1,4 +1,4 @@
-import { IsTopType } from "./deps.ts";
+import { IsTopType, PartialBy } from "./deps.ts";
 
 export const type = Symbol("type");
 export type type = typeof type;
@@ -6,7 +6,7 @@ export type type = typeof type;
 /** Checkable API. */
 export interface Checkable<In, Out> {
   /** Checks input and returns an iterated issue if there is a problem. */
-  readonly check: (input: In, context: InputContext) => Iterable<Issue>;
+  readonly check: (input: In) => Iterable<PartialBy<Issue, "paths">>;
 
   /** Guaranteed input types. */
   readonly [type]: Out;
@@ -16,13 +16,10 @@ export interface Definable<D> {
   readonly definition: D;
 }
 
-export interface Issue extends InputContext {
+export interface Issue {
   /** Issue message. */
   readonly message: string;
-}
 
-/** Context for input data. */
-export interface InputContext {
   /** Path to the value. */
   readonly paths: readonly string[];
 }

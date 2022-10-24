@@ -1,6 +1,6 @@
 import { Checkable, CheckOptions, Infer, Issue } from "./types.ts";
 import { StructError } from "./error.ts";
-import { iter } from "./deps.ts";
+import { iter, PartialBy } from "./deps.ts";
 
 /** Validate result. */
 export type ValidateResult<T> = {
@@ -48,11 +48,11 @@ export function validate<In, Out>(
   options?: CheckOptions,
 ): ValidateResult<Infer<Out>> {
   const issues = resolveIterable(
-    checkable.check(input, { paths: [] }),
+    checkable.check(input),
     options?.failFast,
   );
 
-  if (issues.length) return { valid: false, errors: issues };
+  if (issues.length) return { valid: false, errors: issues.map(fill) };
 
   return { valid: true, data: input as Infer<Out> };
 }
@@ -130,6 +130,10 @@ function formatIssue({ message, paths }: Issue): Issue {
     message: toString({ message, paths }),
     paths,
   };
+}
+
+function fill({ paths = [], message }: PartialBy<Issue, "paths">): Issue {
+  return { message, paths };
 }
 
 function toString({ message, paths }: Issue): string {
