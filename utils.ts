@@ -1,5 +1,5 @@
 import { isNonNullable, PartialBy } from "./deps.ts";
-import { InputContext, Issue, Struct, type } from "./types.ts";
+import { Issue, Struct, type } from "./types.ts";
 
 /** Get constructor name.
  * When the value can not construct, return `"null"` or `"undefined"`.
@@ -11,23 +11,13 @@ export function constructorName(value: unknown): string {
 }
 
 export class Construct<In, Out> implements Struct<In, Out> {
-  public check: (input: In, context: InputContext) => Iterable<Issue>;
-
   #name: string;
 
   constructor(
     name: string,
-    check: (
-      input: In,
-      context: InputContext,
-    ) => Iterable<PartialBy<Issue, "paths">>,
+    public check: (input: In) => Iterable<PartialBy<Issue, "paths">>,
   ) {
     this.#name = name;
-    this.check = function* (value, context) {
-      for (const issue of check(value, context)) {
-        yield { ...context, ...issue };
-      }
-    };
   }
 
   public get [Symbol.toStringTag](): string {
@@ -39,4 +29,28 @@ export class Construct<In, Out> implements Struct<In, Out> {
 
 export function formatActExp(expected: unknown, actual: unknown): string {
   return `expected ${expected}, actual ${actual}`;
+}
+
+/** Plural-aware formatter. */
+export function formatPlural(value: string, number: number): string {
+  if (1 < number) {
+    value = `${value}s`;
+  }
+
+  return `${number} ${value}`;
+}
+
+type DataType =
+  | "null"
+  | "string"
+  | "number"
+  | "bigint"
+  | "boolean"
+  | "function"
+  | "object"
+  | "undefined"
+  | "symbol";
+
+export function formatType(value: unknown): DataType {
+  return value === null ? "null" : typeof value;
 }
