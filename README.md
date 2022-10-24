@@ -119,6 +119,102 @@ assertEquals(validate(Product, { price: 100 }), {
 });
 ```
 
+### Core Struct
+
+#### string
+
+Create `string` data type struct.
+
+```ts
+import { is, string } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+
+assertEquals(is(string(), ""), true);
+assertEquals(is(string(), 0), false);
+```
+
+#### number
+
+Create `number` data type struct.
+
+```ts
+import { is, number } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+
+assertEquals(is(number(), 0), true);
+assertEquals(is(number(), ""), false);
+```
+
+#### bigint
+
+Create `bigint` data type struct.
+
+```ts
+import { bigint, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+
+assertEquals(is(bigint(), 0), true);
+assertEquals(is(bigint(), 0n), false);
+```
+
+#### boolean
+
+Create `boolean` data type struct.
+
+```ts
+import { boolean, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+
+assertEquals(is(boolean(), true), true);
+assertEquals(is(boolean(), ""), false);
+```
+
+#### func
+
+Create `function` data type struct.
+
+```ts
+import { func, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+
+assertEquals(is(func(), () => {}), true);
+assertEquals(is(func(), {}), false);
+```
+
+#### symbol
+
+Create `symbol` data type struct.
+
+```ts
+import { is, symbol } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+
+assertEquals(is(symbol(), Symbol.iterator), true);
+assertEquals(is(symbol(), {}), false);
+```
+
+#### object
+
+Create `object` data type struct. Treat `null` as not an `object`.
+
+```ts
+import {
+  is,
+  object,
+  string,
+} from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+
+assertEquals(is(object(), {}), true);
+assertEquals(
+  is(object({ title: string(), postBy: object({ name: string() }) }), {
+    title: "Diary of Anne Frank",
+    postBy: { name: "Anne Frank" },
+  }),
+  true,
+);
+```
+
 ### Sub Struct
 
 Sub struct refers to a struct whose input type is other than Top-type.

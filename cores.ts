@@ -1,4 +1,4 @@
-import { Definable, ObjectSchema, Struct } from "./types.ts";
+import { Definable, Struct, StructMap } from "./types.ts";
 import {
   hasOwn,
   isBigint,
@@ -11,10 +11,24 @@ import {
   isUndefined,
   Writeable,
 } from "./deps.ts";
-import { Construct, constructorName, formatActExp } from "./utils.ts";
+import {
+  Construct,
+  constructorName,
+  formatActExp,
+  formatType,
+} from "./utils.ts";
 import { or } from "./operators.ts";
 
-/** Create `string` data type struct. */
+/** Create `string` data type struct.
+ * @example
+ * ```ts
+ * import { is, string } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * assertEquals(is(string(), ""), true);
+ * assertEquals(is(string(), 0), false);
+ * ```
+ */
 export function string(): Struct<unknown, string> {
   return new Construct("string", function* (input) {
     if (!isString(input)) {
@@ -23,7 +37,16 @@ export function string(): Struct<unknown, string> {
   });
 }
 
-/** Create `number` data type struct. */
+/** Create `number` data type struct.
+ * @example
+ * ```ts
+ * import { is, number } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * assertEquals(is(number(), 0), true);
+ * assertEquals(is(number(), ""), false);
+ * ```
+ */
 export function number(): Struct<unknown, number> {
   return new Construct("number", function* (input) {
     if (!isNumber(input)) {
@@ -32,7 +55,16 @@ export function number(): Struct<unknown, number> {
   });
 }
 
-/** Create `bigint` data type struct. */
+/** Create `bigint` data type struct.
+ * @example
+ * ```ts
+ * import { bigint, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * assertEquals(is(bigint(), 0), true);
+ * assertEquals(is(bigint(), 0n), false);
+ * ```
+ */
 export function bigint(): Struct<unknown, bigint> {
   return new Construct("bigint", function* (input) {
     if (!isBigint(input)) {
@@ -41,7 +73,16 @@ export function bigint(): Struct<unknown, bigint> {
   });
 }
 
-/** Create `boolean` data type struct. */
+/** Create `boolean` data type struct.
+ * @example
+ * ```ts
+ * import { boolean, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * assertEquals(is(boolean(), true), true);
+ * assertEquals(is(boolean(), ""), false);
+ * ```
+ */
 export function boolean(): Struct<unknown, boolean> {
   return new Construct("boolean", function* (input) {
     if (!isBoolean(input)) {
@@ -50,7 +91,16 @@ export function boolean(): Struct<unknown, boolean> {
   });
 }
 
-/** Create `function` data type struct. */
+/** Create `function` data type struct.
+ * @example
+ * ```ts
+ * import { func, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * assertEquals(is(func(), () => {}), true);
+ * assertEquals(is(func(), {}), false);
+ * ```
+ */
 export function func(): Struct<unknown, Function> {
   return new Construct("func", function* (input) {
     if (!isFunction(input)) {
@@ -59,7 +109,16 @@ export function func(): Struct<unknown, Function> {
   });
 }
 
-/** Create `symbol` data type struct. */
+/** Create `symbol` data type struct.
+ * @example
+ * ```ts
+ * import { is, symbol } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * assertEquals(is(symbol(), Symbol.iterator), true);
+ * assertEquals(is(symbol(), {}), false);
+ * ```
+ */
 export function symbol(): Struct<unknown, symbol> {
   return new Construct("symbol", function* (input) {
     if (!isSymbol(input)) {
@@ -80,55 +139,70 @@ export function literal<
   });
 }
 
-/** Create `object` data type struct.
- * `null` is not object.
+/** Create `object` data type struct. Treat `null` as not an `object`.
+ * @example
+ * ```ts
+ * import {
+ *   is,
+ *   object,
+ *   string,
+ * } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * assertEquals(is(object(), {}), true);
+ * assertEquals(
+ *   is(object({ title: string(), postBy: object({ name: string() }) }), {
+ *     title: "Diary of Anne Frank",
+ *     postBy: { name: "Anne Frank" },
+ *   }),
+ *   true,
+ * );
+ * ```
  */
-export function object<S extends ObjectSchema>(
-  schema: S,
-): Struct<unknown, S> & Definable<S> {
-  const knowns = Object.keys(schema);
-
-  const check = new Construct<unknown, S>("object", function* (input, context) {
-    if (!isObject(input)) {
-      return yield {
-        message: formatActExp("object", input === null ? "null" : typeof input),
-      };
-    }
-
-    for (const key in schema) {
-      const paths = context.paths.concat(key);
-
-      if (!hasOwn(key, input)) {
-        yield { message: "property does not exist", paths };
-        continue;
+export function object<S extends StructMap>(
+  structMap: S,
+): Struct<unknown, S & Record<PropertyKey, unknown>> & Definable<S>;
+export function object(): Struct<unknown, object>;
+export function object(structMap?: StructMap): Struct<unknown, object> {
+  const check = new Construct<unknown, StructMap>(
+    "object",
+    function* (input) {
+      if (!isObject(input)) {
+        return yield { message: formatActExp("object", formatType(input)) };
       }
 
-      yield* schema[key].check(input[key], { paths });
+      for (const key in structMap) {
+        if (!hasOwn(key, input)) {
+          yield { message: "property does not exist", paths: [key] };
+          continue;
+        }
 
-      for (const key in input) {
-        if (knowns.includes(key)) continue;
-
-        const paths = context.paths.concat(key);
-
-        yield { message: formatActExp("never", input[key]), paths };
+        for (
+          const { message, paths: _ = [] } of structMap[key].check(input?.[key])
+        ) {
+          const paths = [key].concat(_);
+          yield { message, paths };
+        }
       }
-    }
-  });
+    },
+  );
 
-  return Object.assign(check, { definition: schema });
+  return Object.assign(check, { definition: structMap });
 }
 
 export function list<S>(
-  struct: Struct<S>,
+  struct: Struct<unknown, S>,
 ): Struct<unknown, S[]> {
-  return new Construct("list", function* (input, context) {
+  return new Construct("list", function* (input) {
     if (!Array.isArray(input)) {
       return yield { message: formatActExp("Array", constructorName(input)) };
     }
 
     for (const key in input) {
-      const paths = context.paths.concat(key);
-      yield* struct.check(input[key], { paths });
+      for (const { message, paths: _ = [] } of struct.check(input[key])) {
+        const paths = [key].concat(_);
+        yield { message, paths };
+      }
     }
   });
 }
@@ -136,7 +210,7 @@ export function list<S>(
 export function tuple<F, R extends readonly Struct<unknown>[]>(
   structs: [Struct<F>, ...R],
 ): Struct<unknown, [F, ...R]> {
-  return new Construct("tuple", function* (input, context) {
+  return new Construct("tuple", function* (input) {
     if (!Array.isArray(input)) {
       return yield { message: formatActExp("Array", constructorName(input)) };
     }
@@ -144,12 +218,15 @@ export function tuple<F, R extends readonly Struct<unknown>[]>(
     const length = Math.max(structs.length, input.length);
 
     for (let i = 0; i < length; i++) {
-      const paths = context.paths.concat(i.toString());
+      const key = i.toString();
 
       if (i in structs) {
-        yield* structs[i].check(input[i], { paths });
+        for (const { message, paths: _ = [] } of structs[i].check(input[i])) {
+          const paths = [key].concat(_);
+          yield { message, paths };
+        }
       } else {
-        yield { message: formatActExp("never", input[i]), paths };
+        yield { message: formatActExp("never", input[i]), paths: [key] };
       }
     }
   });
@@ -161,43 +238,45 @@ export function record<K extends string, V>(
 ): Struct<unknown, Record<K, V>> {
   return new Construct<unknown, Record<K, V>>(
     "record",
-    function* (input, context) {
+    function* (input) {
       if (typeof input !== "object") return;
       for (const k in input) {
-        yield* key.check(k, context);
-        yield* value.check(input[k as keyof {}], context);
+        yield* key.check(k);
+        yield* value.check(input[k as keyof {}]);
       }
     },
   );
 }
 
-export function partial<S extends ObjectSchema>(
+export function partial<S extends StructMap>(
   struct: Struct<unknown, S> & Definable<S>,
 ): Struct<unknown, Partial<S>> & Definable<Partial<S>> {
   const definition: Partial<S> = {};
 
   for (const key in struct.definition) {
-    (definition as Writeable<ObjectSchema>)[key] = or(
+    (definition as Writeable<StructMap>)[key] = or(
       literal(undefined),
     ).or(struct.definition[key]);
   }
 
   const check = new Construct<unknown, Partial<S>>(
     "partial",
-    function* (input, context) {
+    function* (input) {
       if (!isObject(input)) {
-        return yield {
-          message: `expected object, actual ${typeof input}`,
-          ...context,
-        };
+        return yield { message: formatActExp("object", formatType(input)) };
       }
 
       for (const key in struct.definition) {
         if (!hasOwn(key, input) || isUndefined(input[key])) continue;
 
-        const paths = context.paths.concat(key);
-
-        yield* struct.definition[key].check(input[key], { paths });
+        for (
+          const { message, paths: _ = [] } of struct.definition[key].check(
+            input[key],
+          )
+        ) {
+          const paths = [...key, ..._];
+          yield { message, paths };
+        }
       }
     },
   );
@@ -205,7 +284,7 @@ export function partial<S extends ObjectSchema>(
   return Object.assign(check, { definition });
 }
 
-export function pick<U extends ObjectSchema, K extends keyof U>(
+export function pick<U extends StructMap, K extends keyof U>(
   struct: Struct<unknown, U> & Definable<U>,
   ...keys: K[]
 ): Struct<unknown, Pick<U, K>> {
@@ -218,7 +297,7 @@ export function pick<U extends ObjectSchema, K extends keyof U>(
   return object<Pick<U, K>>(schema);
 }
 
-export function omit<S extends ObjectSchema, K extends keyof S>(
+export function omit<S extends StructMap, K extends keyof S>(
   struct: Struct<unknown, S> & Definable<S>,
   ...keys: K[]
 ): Struct<unknown, Omit<S, K>> {
