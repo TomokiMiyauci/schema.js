@@ -38,13 +38,13 @@ export function or<In, Out>(
 /** Create intersection struct. */
 export function and<In, Out>(
   struct: Struct<In, Out>,
-): Struct<In, Out> & Intersection<Out, Out> {
-  class IntersectionStruct
-    implements Checkable<In, Out>, Intersection<Out, Out> {
+): Struct<In, Out> & Intersection<In, Out> {
+  class IntersectionStruct<In, Out>
+    implements Checkable<In, Out>, Intersection<In, Out> {
     constructor(private structs: Struct<any, any>[]) {}
 
-    and<T extends Out>(struct: Struct<T, T>): this {
-      return new IntersectionStruct([...this.structs, struct]) as this;
+    and<T extends Out>(struct: Struct<Out, T>): IntersectionStruct<In, T> {
+      return new IntersectionStruct([...this.structs, struct]);
     }
 
     *check(input: In): Iterable<PartialBy<Issue, "paths">> {
@@ -67,5 +67,5 @@ export function and<In, Out>(
     declare [type]: Out;
   }
 
-  return new IntersectionStruct([struct]);
+  return new IntersectionStruct<In, Out>([struct]);
 }

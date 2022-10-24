@@ -41,10 +41,12 @@ export interface CheckOptions {
   readonly failFast?: boolean;
 }
 
-export interface ObjectSchema {
+export interface StructMap {
   readonly [k: string]: Struct<unknown>;
 }
 
 export interface Intersection<In, Out> {
-  and: (struct: Struct<In, Out>) => this;
+  and: <T extends Out>(
+    struct: Struct<Out, T>,
+  ) => Struct<In, IsTopType<T> extends true ? Out : T> & Intersection<In, Out>;
 }
