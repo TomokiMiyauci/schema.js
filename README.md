@@ -123,6 +123,30 @@ assertEquals(validate(Product, { price: 100 }), {
 
 Sub struct refers to a struct whose input type is other than Top-type.
 
+#### maxSize
+
+Create max size struct. Sets the maximum number of elements.
+
+```ts
+import { is, maxSize } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+
+assertEquals(is(maxSize(10), "typestruct"), true);
+assertEquals(is(maxSize(4), new Array(5)), false);
+```
+
+#### minSize
+
+Create min size struct. Sets the minimum number of elements.
+
+```ts
+import { is, minSize } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+
+assertEquals(is(minSize(10), "typestruct"), true);
+assertEquals(is(minSize(10), new Array(5)), false);
+```
+
 #### empty
 
 Create empty struct. Empty means there are no elements.
