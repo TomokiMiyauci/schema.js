@@ -123,6 +123,30 @@ assertEquals(validate(Product, { price: 100 }), {
 
 Sub struct refers to a struct whose input type is other than Top-type.
 
+#### maximum
+
+Create maximum struct. Ensure the input less than or equal to threshold.
+
+```ts
+import { is, maximum } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+
+assertEquals(is(maximum(5), 5), true);
+assertEquals(is(maximum(5), 6), false);
+```
+
+#### minimum
+
+Create minimum struct. Ensure the input grater than or equal to threshold.
+
+```ts
+import { is, minimum } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+
+assertEquals(is(minimum(5), 5), true);
+assertEquals(is(minimum(5), 4), false);
+```
+
 #### maxSize
 
 Create max size struct. Sets the maximum number of elements.

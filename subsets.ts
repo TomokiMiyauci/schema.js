@@ -2,20 +2,44 @@ import { Construct, formatActExp, formatPlural } from "./utils.ts";
 import { Struct } from "./types.ts";
 import { getSize } from "./deps.ts";
 
-export function maximum(max: number): Struct<number> {
+/** Create maximum struct. Ensure the input less than or equal to threshold.
+ * @param threshold
+ * @example
+ * ```ts
+ * import { is, maximum } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * assertEquals(is(maximum(5), 5), true);
+ * assertEquals(is(maximum(5), 6), false);
+ * ```
+ */
+export function maximum(threshold: number): Struct<number> {
   return new Construct("maximum", function* (input) {
-    if (max < input) {
+    if (threshold < input) {
       yield {
-        message: formatActExp(`less than or equal to ${max}`, input),
+        message: formatActExp(`less than or equal to ${threshold}`, input),
       };
     }
   });
 }
 
-export function minimum(min: number): Struct<number> {
+/** Create minimum struct. Ensure the input grater than or equal to threshold.
+ * @param threshold
+ * @example
+ * ```ts
+ * import { is, minimum } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * assertEquals(is(minimum(5), 5), true);
+ * assertEquals(is(minimum(5), 4), false);
+ * ```
+ */
+export function minimum(threshold: number): Struct<number> {
   return new Construct("minimum", function* (input) {
-    if (min > input) {
-      yield { message: formatActExp(`greater than or equal to ${min}`, input) };
+    if (threshold > input) {
+      yield {
+        message: formatActExp(`greater than or equal to ${threshold}`, input),
+      };
     }
   });
 }
