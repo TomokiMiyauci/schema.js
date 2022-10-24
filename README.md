@@ -119,6 +119,34 @@ assertEquals(validate(Product, { price: 100 }), {
 });
 ```
 
+### Sub Struct
+
+Sub struct refers to a struct whose input type is other than Top-type.
+
+#### empty
+
+Create empty struct. Empty means there are no elements.
+
+```ts
+import { empty, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+
+assertEquals(is(empty(), ""), true);
+assertEquals(is(empty(), [1]), false);
+```
+
+#### nonempty
+
+Create non empty struct. Non empty meas there are more than one element.
+
+```ts
+import { is, nonempty } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+
+assertEquals(is(nonempty(), new Set([1, 2, 3])), true);
+assertEquals(is(nonempty(), new Map(), false);
+```
+
 ## Struct deep dive
 
 The essence of struct is to guarantee types and values. And you probably do

@@ -1,4 +1,4 @@
-export { SchemaError } from "./error.ts";
+export { StructError } from "./error.ts";
 export { type CheckOptions, type Infer, type Showable } from "./types.ts";
 export {
   bigint,
@@ -15,6 +15,13 @@ export {
   symbol,
   tuple,
 } from "./cores.ts";
-export { maximum, maxSize, minimum, minSize } from "./subsets.ts";
-export { assert, is, validate } from "./checks.ts";
+export {
+  empty,
+  maximum,
+  maxSize,
+  minimum,
+  minSize,
+  nonempty,
+} from "./subsets.ts";
+export { assert, is, validate, type ValidateResult } from "./checks.ts";
 export { and, or } from "./operators.ts";

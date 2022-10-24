@@ -25,6 +25,11 @@ export function iter<T>(iterable: Iterable<T>): Iterator<T> {
   return iterable[Symbol.iterator]();
 }
 
+/** Get number of elements. */
+export function getSize(iterable: Iterable<unknown>): number {
+  return Array.from(iterable).length;
+}
+
 export function isNativeObject(
   value: unknown,
 ): value is Record<PropertyKey, unknown> {

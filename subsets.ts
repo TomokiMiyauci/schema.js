@@ -1,5 +1,6 @@
-import { Construct, formatActExp } from "./utils.ts";
+import { Construct, formatActExp, formatPlural } from "./utils.ts";
 import { Struct } from "./types.ts";
+import { getSize } from "./deps.ts";
 
 export function maximum(max: number): Struct<number> {
   return new Construct("maximum", function* (input) {
@@ -43,6 +44,46 @@ export function minSize(size: number): Struct<Iterable<unknown>> {
           `${length} elements`,
         ),
       };
+    }
+  });
+}
+
+/** Create empty struct. Empty means there are no elements.
+ *
+ * @example
+ * ```ts
+ * import { empty, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * assertEquals(is(empty(), ""), true);
+ * assertEquals(is(empty(), [1]), false);
+ * ```
+ */
+export function empty(): Struct<Iterable<unknown>> {
+  return new Construct("empty", function* (input) {
+    const size = getSize(input);
+    if (size) {
+      yield { message: formatActExp("empty", formatPlural("element", size)) };
+    }
+  });
+}
+
+/** Create non empty struct. Non empty meas there are more than one element.
+ *
+ * @example
+ * ```ts
+ * import { is, nonempty } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * assertEquals(is(nonempty(), new Set([1, 2, 3])), true);
+ * assertEquals(is(nonempty(), new Map(), false);
+ * ```
+ */
+export function nonempty(): Struct<Iterable<unknown>> {
+  return new Construct("empty", function* (input) {
+    const size = getSize(input);
+    if (!size) {
+      yield { message: formatActExp("non empty", `empty`) };
     }
   });
 }
