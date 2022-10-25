@@ -35,7 +35,25 @@ export function or<In, Out extends In>(
   return new UnionStruct([struct]);
 }
 
-/** Create intersection struct. */
+/** Create intersection struct. Ensure all structures satisfy.
+ * @param struct Any struct.
+ * @example
+ * ```ts
+ * import {
+ *   and,
+ *   is,
+ *   maxSize,
+ *   minSize,
+ *   string,
+ * } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * const String5_10 = and(string()).and(minSize(5)).and(maxSize(10));
+ *
+ * assertEquals(is(String5_10, "typestruct"), true);
+ * assertEquals(is(String5_10, ""), false);
+ * ```
+ */
 export function and<In, Out extends In>(
   struct: Struct<In, Out>,
 ): Struct<In, Out> & Intersection<In, Out> {
@@ -61,7 +79,7 @@ export function and<In, Out extends In>(
 
     get [Symbol.toStringTag](): string {
       const name = this.structs.map(prop(Symbol.toStringTag)).join(" & ");
-      return name;
+      return `(${name})`;
     }
 
     declare [type]: Out;

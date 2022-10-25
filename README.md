@@ -322,6 +322,35 @@ assertEquals(is(User, {}), false);
 assertEquals(is(partial(User), {}), true);
 ```
 
+### Operator Struct
+
+Logical operations for Struct.
+
+#### and
+
+Create intersection struct. Ensure all structures satisfy.
+
+The first `Struct::In` and the last `Struct::Out` create a new
+`Struct<In, Out>`.
+
+Strong type-narrowing safely joins intermediate struct.
+
+```ts
+import {
+  and,
+  is,
+  maxSize,
+  minSize,
+  string,
+} from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+
+const String5_10 = and(string()).and(minSize(5)).and(maxSize(10));
+
+assertEquals(is(String5_10, "typestruct"), true);
+assertEquals(is(String5_10, ""), false);
+```
+
 ### Sub Struct
 
 Sub struct refers to a struct whose input type is other than Top-type.
