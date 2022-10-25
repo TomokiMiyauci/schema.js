@@ -11,6 +11,7 @@ import {
   record,
   string,
   symbol,
+  value,
 } from "./cores.ts";
 import { assertEquals, describe, it } from "../dev_deps.ts";
 import { and } from "./operators.ts";
@@ -111,6 +112,20 @@ describe("symbol", () => {
 
   it("should return empty list when input type is symbol", () => {
     assertEquals([...symbol().check(Symbol.iterator)], []);
+  });
+});
+
+describe("value", () => {
+  it("should return issue when input does not equal to definition", () => {
+    assertEquals([...value(0).check(1)], [{ message: "expected 0, actual 1" }]);
+  });
+
+  it("message override", () => {
+    assertEquals([...value(0, MESSAGE).check(1)], [{ message: MESSAGE }]);
+  });
+
+  it("should return empty list when input equal to definition", () => {
+    assertEquals([...value("").check("")], []);
   });
 });
 

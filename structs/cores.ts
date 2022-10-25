@@ -132,14 +132,27 @@ export function symbol(message?: string): Struct<unknown, symbol> {
   });
 }
 
-export function literal<
+/** Create primitive value struct.
+ * @param primitive Primitive value.
+ * @param message Custom issue message.
+ * @example
+ * ```ts
+ * import { is, value } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * assertEquals(is(value(null), null), true);
+ * assertEquals(is(symbol(null), undefined), false);
+ * ```
+ */
+export function value<
   T extends string | number | bigint | null | undefined | symbol | boolean,
 >(
-  value: T,
+  primitive: T,
+  message?: string,
 ): Struct<unknown, T> {
-  return new Construct(String(value), function* (input) {
-    if (!Object.is(input, value)) {
-      yield { message: formatActExp(value, input) };
+  return new Construct(String(primitive), function* (input) {
+    if (!Object.is(input, primitive)) {
+      yield { message: message ?? formatActExp(primitive, input) };
     }
   });
 }
@@ -276,7 +289,7 @@ export function partial<S extends StructMap>(
 
   for (const key in struct.definition) {
     (definition as Writeable<StructMap>)[key] = or(
-      literal(undefined),
+      value(undefined),
     ).or(struct.definition[key]!);
   }
 

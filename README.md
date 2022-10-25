@@ -230,6 +230,18 @@ assertEquals(
 );
 ```
 
+#### value
+
+Create primitive value struct.
+
+```ts
+import { is, value } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+
+assertEquals(is(value(null), null), true);
+assertEquals(is(symbol(null), undefined), false);
+```
+
 #### record
 
 Create `Record` struct. Ensure the input is object, and keys and values satisfy

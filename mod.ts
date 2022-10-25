@@ -10,7 +10,6 @@ export {
   bigint,
   boolean,
   func,
-  literal,
   number,
   object,
   omit,
@@ -19,6 +18,7 @@ export {
   record,
   string,
   symbol,
+  value,
 } from "./structs/cores.ts";
 export {
   empty,
