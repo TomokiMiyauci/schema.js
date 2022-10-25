@@ -178,14 +178,10 @@ export function object(structMap?: StructMap): Struct<unknown, object> {
         return yield { message: formatActExp("object", formatType(input)) };
       }
 
+      // in operator will improve type inference in TypeScript v4.9
       for (const key in structMap) {
-        if (!hasOwn(key, input)) {
-          yield { message: "property does not exist", paths: [key] };
-          continue;
-        }
-
         yield* mergeIssuePaths(
-          structMap[key]!.check(input?.[key]),
+          structMap[key]!.check((input as Record<any, unknown>)[key]),
           [key],
         );
       }

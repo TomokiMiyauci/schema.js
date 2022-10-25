@@ -120,32 +120,32 @@ describe("object", () => {
     }]);
   });
 
-  it("should return property not exist issue when the property not exist", () => {
+  it("should return issue when the property not exist", () => {
     assertEquals([
       ...object({ a: string() }).check({}),
     ], [{
-      message: "property does not exist",
+      message: "expected string, actual undefined",
       paths: ["a"],
     }]);
   });
 
-  it("should return multiple property not exist issues when the property not exist", () => {
+  it("should return multiple issues when the properties not exist", () => {
     assertEquals([
       ...object({ a: string(), b: string() }).check({}),
     ], [{
-      message: "property does not exist",
+      message: "expected string, actual undefined",
       paths: ["a"],
     }, {
-      message: "property does not exist",
+      message: "expected string, actual undefined",
       paths: ["b"],
     }]);
   });
 
-  it("should return multiple property not exist issues when nested object is passed", () => {
+  it("should return multiple issues when nested object is passed", () => {
     assertEquals([
       ...object({ a: object({ b: string() }) }).check({ a: {} }),
     ], [{
-      message: "property does not exist",
+      message: "expected string, actual undefined",
       paths: ["a", "b"],
     }]);
   });
@@ -244,7 +244,7 @@ describe("pick", () => {
   it("should return issue when picked struct does not satisfy", () => {
     assertEquals([
       ...pick(object({ a: string(), b: string() }), ["a"]).check({}),
-    ], [{ message: "property does not exist", paths: ["a"] }]);
+    ], [{ message: "expected string, actual undefined", paths: ["a"] }]);
   });
 
   it("should return empty list when picked struct satisfy", () => {
@@ -275,7 +275,7 @@ describe("omit", () => {
   it("should return issue when omitted struct does not satisfy", () => {
     assertEquals([
       ...omit(object({ a: string(), b: string() }), ["a"]).check({}),
-    ], [{ message: "property does not exist", paths: ["b"] }]);
+    ], [{ message: "expected string, actual undefined", paths: ["b"] }]);
   });
 
   it("should return empty list when omitted struct satisfy", () => {
