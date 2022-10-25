@@ -306,7 +306,7 @@ describe("partial", () => {
     const O = object({ a: String, b: Number, c: Number });
 
     assertEquals([...partial(O).check({ a: 0 })], [{
-      message: "expected undefined | string, actual 0",
+      message: "expected (undefined | string), actual 0",
       paths: ["a"],
     }]);
   });

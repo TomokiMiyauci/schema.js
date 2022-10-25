@@ -351,6 +351,27 @@ assertEquals(is(String5_10, "typestruct"), true);
 assertEquals(is(String5_10, ""), false);
 ```
 
+#### or
+
+Create union struct. Ensure any of struct satisfy.
+
+The first `Struct::In` and all `Struct::Out` create a new `Struct<In, Out>`
+
+```ts
+import {
+  is,
+  number,
+  or,
+  string,
+} from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+
+const StrOrNum = or(string()).or(number());
+assertEquals(is(StrOrNum, ""), true);
+assertEquals(is(StrOrNum, 0), true);
+assertEquals(is(StrOrNum, {}), false);
+```
+
 ### Sub Struct
 
 Sub struct refers to a struct whose input type is other than Top-type.

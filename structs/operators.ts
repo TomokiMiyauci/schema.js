@@ -2,11 +2,36 @@ import { Checkable, Intersection, Issue, Struct, type } from "../types.ts";
 import { formatActExp } from "../utils.ts";
 import { iter, PartialBy, prop } from "../deps.ts";
 
+/** Union type API. */
+export interface Union<In, Out extends In> {
+  or: <T extends In>(
+    struct: Struct<In, T>,
+  ) => Struct<In, Out | T> & Union<In, Out | T>;
+}
+
+/** Create union struct.
+ * @param struct Any struct.
+ * @example
+ * ```ts
+ * import {
+ *   is,
+ *   number,
+ *   or,
+ *   string,
+ * } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * const StrOrNum = or(string()).or(number());
+ * assertEquals(is(StrOrNum, ""), true);
+ * assertEquals(is(StrOrNum, 0), true);
+ * assertEquals(is(StrOrNum, {}), false);
+ * ```
+ */
 export function or<In, Out extends In>(
   struct: Struct<In, Out>,
-) {
-  class UnionStruct<_ extends Out = Out> implements Struct<In, _> {
-    constructor(public structs: Struct<any, any>[]) {}
+): Struct<In, Out> & Union<In, Out> {
+  class UnionStruct implements Struct<In, Out> {
+    constructor(private structs: Struct<any, any>[]) {}
 
     *check(input: In): Iterable<PartialBy<Issue, "paths">> {
       for (const struct of this.structs) {
@@ -15,19 +40,17 @@ export function or<In, Out extends In>(
         if (!issues.length) return;
       }
 
-      yield {
-        message: formatActExp(this[Symbol.toStringTag], input),
-      };
+      yield { message: formatActExp(this[Symbol.toStringTag], input) };
     }
 
     get [Symbol.toStringTag](): string {
       const name = this.structs.map(prop(Symbol.toStringTag)).join(" | ");
-      return name;
+      return `(${name})`;
     }
 
-    declare [type]: _;
+    declare [type]: Out;
 
-    or = <T extends Out>(struct: Struct<In, T>): UnionStruct<T | _> => {
+    or = <T extends In>(struct: Struct<In, T>): UnionStruct => {
       return new UnionStruct([...this.structs, struct]);
     };
   }
