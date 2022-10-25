@@ -4,7 +4,7 @@ export const type = Symbol("type");
 export type type = typeof type;
 
 /** Checkable API. */
-export interface Checkable<In, Out> {
+export interface Checkable<In, Out extends In> {
   /** Checks input and returns an iterated issue if there is a problem. */
   readonly check: (input: In) => Iterable<PartialBy<Issue, "paths">>;
 
@@ -29,7 +29,8 @@ export interface Showable {
 }
 
 /** Dada struct API. */
-export interface Struct<In, Out = any> extends Showable, Checkable<In, Out> {}
+export interface Struct<In, Out extends In = any>
+  extends Showable, Checkable<In, Out> {}
 
 export type Infer<T> = IsTopType<T> extends true ? T
   : T extends Checkable<infer U, infer U> ? Infer<U>
@@ -45,8 +46,9 @@ export interface StructMap {
   readonly [k: string]: Struct<unknown>;
 }
 
-export interface Intersection<In, Out> {
+export interface Intersection<In, Out extends In> {
   and: <T extends Out>(
     struct: Struct<Out, T>,
-  ) => Struct<In, IsTopType<T> extends true ? Out : T> & Intersection<In, Out>;
+  ) => IsTopType<T> extends true ? Struct<In, Out> & Intersection<In, Out>
+    : Struct<In, T> & Intersection<In, T>;
 }

@@ -2,10 +2,10 @@ import { Checkable, Intersection, Issue, Struct, type } from "./types.ts";
 import { formatActExp } from "./utils.ts";
 import { iter, PartialBy, prop } from "./deps.ts";
 
-export function or<In, Out>(
+export function or<In, Out extends In>(
   struct: Struct<In, Out>,
 ) {
-  class UnionStruct<_ = Out> implements Struct<In, _> {
+  class UnionStruct<_ extends Out = Out> implements Struct<In, _> {
     constructor(public structs: Struct<any, any>[]) {}
 
     *check(input: In): Iterable<PartialBy<Issue, "paths">> {
@@ -27,7 +27,7 @@ export function or<In, Out>(
 
     declare [type]: _;
 
-    or = <T extends In>(struct: Struct<In, T>): UnionStruct<T | _> => {
+    or = <T extends Out>(struct: Struct<In, T>): UnionStruct<T | _> => {
       return new UnionStruct([...this.structs, struct]);
     };
   }
@@ -36,10 +36,10 @@ export function or<In, Out>(
 }
 
 /** Create intersection struct. */
-export function and<In, Out>(
+export function and<In, Out extends In>(
   struct: Struct<In, Out>,
 ): Struct<In, Out> & Intersection<In, Out> {
-  class IntersectionStruct<In, Out>
+  class IntersectionStruct<In, Out extends In>
     implements Checkable<In, Out>, Intersection<In, Out> {
     constructor(private structs: Struct<any, any>[]) {}
 

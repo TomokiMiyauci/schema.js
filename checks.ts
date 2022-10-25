@@ -42,7 +42,7 @@ export type ValidateResult<T> = {
  * });
  * ```
  */
-export function validate<In, Out>(
+export function validate<In, Out extends In>(
   checkable: Checkable<In, Out>,
   input: In,
   options?: CheckOptions,
@@ -71,12 +71,12 @@ export function validate<In, Out>(
  * assertEquals(is(string(), {}), false);
  * ```
  */
-export function is<In, Out, T extends In>(
+export function is<In, Out extends In, T extends In>(
   checkable: Checkable<In, Out>,
   input: T,
   options?: CheckOptions,
 ): input is Infer<Out> extends T ? Infer<Out> : T & Infer<Out> {
-  const result = validate(checkable, input, options);
+  const result = validate(checkable, input as In, options);
 
   return result.valid;
 }
@@ -100,13 +100,13 @@ export function is<In, Out, T extends In>(
  * assertThrows(() => assert(maxSize(5), "typestruct"), StructError);
  * ```
  */
-export function assert<In, Out, T extends In>(
+export function assert<In, Out extends In, T extends In>(
   checkable: Checkable<In, Out>,
   input: T,
   options?: CheckOptions,
 ): asserts input is Infer<Out> extends T ? Infer<Out>
   : T & Infer<Out> {
-  const result = validate(checkable, input, options);
+  const result = validate(checkable, input as In, options);
 
   if (!result.valid) {
     const e = new StructError(result.errors.map(formatIssue));
