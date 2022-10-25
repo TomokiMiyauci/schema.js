@@ -14,6 +14,28 @@ Composable and checkable JavaScript(and TypeScript) data structure.
 
 ## Basic usage
 
+```ts
+import {
+  assert,
+  number,
+  object,
+  string,
+} from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+
+const Product = object({
+  id: string(),
+  name: string(),
+  price: number(),
+  category: object({
+    id: string(),
+    name: string(),
+  }),
+});
+declare const data: unknown;
+
+assert(Product, data);
+```
+
 The `data` is infer as follows:
 
 ```ts
