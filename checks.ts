@@ -1,5 +1,6 @@
 import { Checkable, CheckOptions, Infer, Issue } from "./types.ts";
 import { StructError } from "./error.ts";
+import { formatPlural } from "./utils.ts";
 import { iter, PartialBy } from "./deps.ts";
 
 /** Validate result. */
@@ -109,7 +110,10 @@ export function assert<In, Out extends In, T extends In>(
   const result = validate(checkable, input as In, options);
 
   if (!result.valid) {
-    const e = new StructError(result.errors.map(formatIssue));
+    const e = new StructError(
+      result.errors,
+      `${formatPlural("issue", result.errors.length)} detected`,
+    );
     Error.captureStackTrace(e, assert);
 
     throw e;
@@ -125,19 +129,6 @@ function resolveIterable<T>(iterable: Iterable<T>, only?: boolean): T[] {
   return [...iterable];
 }
 
-function formatIssue({ message, paths }: Issue): Issue {
-  return {
-    message: toString({ message, paths }),
-    paths,
-  };
-}
-
 function fill({ paths = [], message }: PartialBy<Issue, "paths">): Issue {
   return { message, paths };
-}
-
-function toString({ message, paths }: Issue): string {
-  const pathInfo = paths.length ? ["$", ...paths].join(".") + " - " : "";
-
-  return pathInfo + message;
 }

@@ -1,14 +1,32 @@
 import { Issue } from "./types.ts";
 
-export class SchemaError extends Error {
+export class StructError extends Error {
   readonly issues: Issue[];
-  constructor(issues: Iterable<Issue>) {
-    super();
-    this.issues = Array.from(issues);
+  constructor(
+    issues: Iterable<Issue>,
+    message?: string,
+    options?: ErrorOptions,
+  ) {
+    const _issues = Array.from(issues);
+    const issueMessage = _issues.map(toString).join("\n");
 
-    const issueMessage = this.issues.map(({ message }) => message).join("\n");
-    this.message = "one or more issues were detected" + "\n" + issueMessage;
+    message = (message ?? "") +
+      (issueMessage ? "\n" + issueMessage : "");
+    message = nest(message ?? "", "    ");
+
+    super(message, options);
+    this.issues = _issues;
   }
 
-  override name = "SchemaError";
+  override name = "StructError";
+}
+
+function toString({ message, paths }: Issue): string {
+  const pathInfo = paths.length ? ["$", ...paths].join(".") + " - " : "";
+
+  return pathInfo + message;
+}
+
+function nest(value: string, separator: string): string {
+  return value.replaceAll("\n", `\n${separator}`);
 }
