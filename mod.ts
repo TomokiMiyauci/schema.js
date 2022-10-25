@@ -13,6 +13,7 @@ export {
   literal,
   number,
   object,
+  omit,
   partial,
   pick,
   record,

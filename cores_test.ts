@@ -5,6 +5,7 @@ import {
   func,
   number,
   object,
+  omit,
   pick,
   record,
   string,
@@ -253,6 +254,37 @@ describe("pick", () => {
       ...pick(firstPick, ["a"])
         .check(
           { a: "" },
+        ),
+    ], []);
+  });
+});
+
+describe("omit", () => {
+  it("should return omitted definition", () => {
+    const String = string();
+    const Number = number();
+    const O = object({ a: String, b: Number, c: Number });
+    const Omit = omit(O, ["a"]);
+
+    assertEquals(O.definition.a, String);
+    assertEquals(O.definition.b, Number);
+    assertEquals(O.definition.c, Number);
+    assertEquals(Object.keys(Omit.definition), ["b", "c"]);
+  });
+
+  it("should return issue when omitted struct does not satisfy", () => {
+    assertEquals([
+      ...omit(object({ a: string(), b: string() }), ["a"]).check({}),
+    ], [{ message: "property does not exist", paths: ["b"] }]);
+  });
+
+  it("should return empty list when omitted struct satisfy", () => {
+    const O = object({ a: string(), b: string(), c: string() });
+    const firstPick = omit(O, ["a"]);
+    assertEquals([
+      ...omit(firstPick, ["b"])
+        .check(
+          { c: "" },
         ),
     ], []);
   });

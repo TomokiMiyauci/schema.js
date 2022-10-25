@@ -279,7 +279,28 @@ const User = object({ id: string(), name: string() });
 const data = { name: "tom" };
 
 assertEquals(is(User, data), false);
-assertEquals(is(pick(User, ["name"]), data), false);
+assertEquals(is(pick(User, ["name"]), data), true);
+```
+
+#### omit
+
+Create `Omit` struct. From struct, omit a set of properties whose keys are in
+the definition.
+
+```ts
+import {
+  is,
+  object,
+  omit,
+  string,
+} from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+
+const User = object({ id: string(), name: string() });
+const data = { name: "tom" };
+
+assertEquals(is(User, data), false);
+assertEquals(is(omit(User, ["id"]), data), true);
 ```
 
 ### Sub Struct

@@ -306,27 +306,47 @@ export function partial<S extends StructMap>(
  * const data = { name: "tom" };
  *
  * assertEquals(is(User, data), false);
- * assertEquals(is(pick(User, ["name"]), data), false);
+ * assertEquals(is(pick(User, ["name"]), data), true);
  * ```
  */
 export function pick<U extends StructMap, K extends keyof U>(
   struct: Struct<unknown, U> & Definable<U>,
   keys: Iterable<K>,
 ): Struct<unknown, Pick<U, K>> & Definable<Pick<U, K>> {
-  const schema = Array.from(keys).reduce((acc, key) => {
+  const structMap = Array.from(keys).reduce((acc, key) => {
     acc[key] = struct.definition[key];
 
     return acc;
   }, {} as Pick<U, K>);
 
-  return object(schema);
+  return object(structMap);
 }
 
+/** Create `Omit` struct. From struct, omit a set of properties whose keys are in the definition.
+ * @param struct Definable struct.
+ * @param keys Omit properties.
+ * @example
+ * ```ts
+ * import {
+ *   is,
+ *   object,
+ *   omit,
+ *   string,
+ * } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * const User = object({ id: string(), name: string() });
+ * const data = { name: "tom" };
+ *
+ * assertEquals(is(User, data), false);
+ * assertEquals(is(omit(User, ["id"]), data), true);
+ * ```
+ */
 export function omit<S extends StructMap, K extends keyof S>(
   struct: Struct<unknown, S> & Definable<S>,
-  ...keys: K[]
-): Struct<unknown, Omit<S, K>> {
-  const { definition } = struct;
+  keys: Iterable<K>,
+): Struct<unknown, Omit<S, K>> & Definable<Omit<S, K>> {
+  const definition = { ...struct.definition };
 
   for (const key of keys) {
     delete definition[key];
