@@ -1,6 +1,5 @@
 import { Definable, Struct, StructMap } from "./types.ts";
 import {
-  hasOwn,
   isBigint,
   isBoolean,
   isFunction,
@@ -8,7 +7,6 @@ import {
   isObject,
   isString,
   isSymbol,
-  isUndefined,
   Writeable,
 } from "./deps.ts";
 import {
@@ -139,7 +137,7 @@ export function literal<
 >(
   value: T,
 ): Struct<unknown, T> {
-  return new Construct("literal", function* (input) {
+  return new Construct(String(value), function* (input) {
     if (!Object.is(input, value)) {
       yield { message: formatActExp(value, input) };
     }
@@ -253,6 +251,24 @@ export function record<K extends string, V>(
   );
 }
 
+/** Create `Partial` struct. Make all properties in struct optional.
+ * @param struct Definable struct.
+ * @example
+ * ```ts
+ * import {
+ *   is,
+ *   object,
+ *   partial,
+ *   string,
+ * } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * const User = object({ id: string(), name: string() });
+ *
+ * assertEquals(is(User, {}), false);
+ * assertEquals(is(partial(User), {}), true);
+ * ```
+ */
 export function partial<S extends StructMap>(
   struct: Struct<unknown, S> & Definable<S>,
 ): Struct<unknown, Partial<S>> & Definable<Partial<S>> {
@@ -264,25 +280,7 @@ export function partial<S extends StructMap>(
     ).or(struct.definition[key]!);
   }
 
-  const check = new Construct<unknown, Partial<S>>(
-    "partial",
-    function* (input) {
-      if (!isObject(input)) {
-        return yield { message: formatActExp("object", formatType(input)) };
-      }
-
-      for (const key in struct.definition) {
-        if (!hasOwn(key, input) || isUndefined(input[key])) continue;
-
-        yield* mergeIssuePaths(
-          struct.definition[key]!.check(input[key]),
-          [key],
-        );
-      }
-    },
-  );
-
-  return Object.assign(check, { definition });
+  return object(definition as S);
 }
 
 /** Create `Pick` struct. From struct, pick a set of properties whose keys are in the definition.

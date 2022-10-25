@@ -303,6 +303,25 @@ assertEquals(is(User, data), false);
 assertEquals(is(omit(User, ["id"]), data), true);
 ```
 
+#### partial
+
+Create `Partial` struct. Make all properties in struct optional.
+
+```ts
+import {
+  is,
+  object,
+  partial,
+  string,
+} from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+
+const User = object({ id: string(), name: string() });
+
+assertEquals(is(User, {}), false);
+assertEquals(is(partial(User), {}), true);
+```
+
 ### Sub Struct
 
 Sub struct refers to a struct whose input type is other than Top-type.

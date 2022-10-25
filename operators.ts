@@ -22,7 +22,7 @@ export function or<In, Out extends In>(
 
     get [Symbol.toStringTag](): string {
       const name = this.structs.map(prop(Symbol.toStringTag)).join(" | ");
-      return `(${name})`;
+      return name;
     }
 
     declare [type]: _;

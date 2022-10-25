@@ -6,6 +6,7 @@ import {
   number,
   object,
   omit,
+  partial,
   pick,
   record,
   string,
@@ -287,5 +288,26 @@ describe("omit", () => {
           { c: "" },
         ),
     ], []);
+  });
+});
+
+describe("partial", () => {
+  it("should return empty list when input satisfy struct", () => {
+    const String = string();
+    const Number = number();
+    const O = object({ a: String, b: Number, c: Number });
+
+    assertEquals([...partial(O).check({})], []);
+  });
+
+  it("should return empty list when input satisfy struct", () => {
+    const String = string();
+    const Number = number();
+    const O = object({ a: String, b: Number, c: Number });
+
+    assertEquals([...partial(O).check({ a: 0 })], [{
+      message: "expected undefined | string, actual 0",
+      paths: ["a"],
+    }]);
   });
 });
