@@ -5,10 +5,13 @@ import {
   func,
   number,
   object,
+  record,
   string,
   symbol,
 } from "./cores.ts";
 import { assertEquals, describe, it } from "./dev_deps.ts";
+import { and } from "./operators.ts";
+import { pattern } from "./subsets.ts";
 
 const MESSAGE = "custom message";
 
@@ -170,6 +173,54 @@ describe("array", () => {
   it("should return empty list when input is Array", () => {
     assertEquals([
       ...array().check([]),
+    ], []);
+  });
+});
+
+describe("record", () => {
+  it("should return issue when input is not object", () => {
+    assertEquals([...record(string(), string()).check("")], [{
+      message: `expected object, actual string`,
+    }]);
+  });
+
+  it("message override", () => {
+    assertEquals([...record(string(), string(), MESSAGE).check("")], [{
+      message: MESSAGE,
+    }]);
+  });
+
+  it("should return issue when input does not satisfy value", () => {
+    assertEquals([...record(string(), string()).check({ 1: {} })], [{
+      message: `expected string, actual object`,
+      paths: ["1"],
+    }]);
+  });
+
+  it("should return issue when input does not satisfy key", () => {
+    assertEquals([
+      ...record(and(string()).and(pattern(/^t/)), string()).check({ "a": "" }),
+    ], [{
+      message: `expected match /^t/, actual not match`,
+      paths: ["a"],
+    }]);
+  });
+
+  it("should return issue when input does not satisfy key and value", () => {
+    assertEquals([
+      ...record(and(string()).and(pattern(/^t/)), string()).check({ "a": 0 }),
+    ], [{
+      message: `expected match /^t/, actual not match`,
+      paths: ["a"],
+    }, {
+      message: `expected string, actual number`,
+      paths: ["a"],
+    }]);
+  });
+
+  it("should return empty list when input satisfy key and value", () => {
+    assertEquals([
+      ...record(and(string()).and(pattern(/^t/)), string()).check({ "t": "" }),
     ], []);
   });
 });

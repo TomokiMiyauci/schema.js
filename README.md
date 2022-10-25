@@ -230,6 +230,25 @@ assertEquals(
 );
 ```
 
+#### record
+
+Create `Record` struct. Ensure the input is object, and keys and values satisfy
+struct.
+
+```ts
+import {
+  is,
+  number,
+  record,
+  string,
+} from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+
+const Record = record(string(), number()); // { [k: string]: number }
+assertEquals(is(Record, { john: 80, tom: 100 }), true);
+assertEquals(is(Record, { name: "john", hobby: "swimming" }), false);
+```
+
 #### array
 
 Create `any[]` data type struct.

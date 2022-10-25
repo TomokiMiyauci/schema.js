@@ -16,6 +16,7 @@ import {
   constructorName,
   formatActExp,
   formatType,
+  mergeIssuePaths,
 } from "./utils.ts";
 import { or } from "./operators.ts";
 
@@ -184,7 +185,9 @@ export function object(structMap?: StructMap): Struct<unknown, object> {
         }
 
         for (
-          const { message, paths: _ = [] } of structMap[key].check(input?.[key])
+          const { message, paths: _ = [] } of structMap[key]!.check(
+            input?.[key],
+          )
         ) {
           const paths = [key].concat(_);
           yield { message, paths };
@@ -217,17 +220,42 @@ export function array(message?: string): Struct<unknown, any[]> {
   });
 }
 
+/** Create `Record` struct. Ensure the input is object, and keys and values satisfy
+ * struct.
+ * @param key - The key of struct.
+ * @param value - The value of struct.
+ * @param message Custom issue message.
+ * @example
+ * ```ts
+ * import {
+ *   is,
+ *   number,
+ *   record,
+ *   string,
+ * } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * const Record = record(string(), number()); // { [k: string]: number }
+ * assertEquals(is(Record, { john: 80, tom: 100 }), true);
+ * assertEquals(is(Record, { name: "john", hobby: "swimming" }), false);
+ * ```
+ */
 export function record<K extends string, V>(
   key: Struct<unknown, K>,
   value: Struct<unknown, V>,
+  message?: string,
 ): Struct<unknown, Record<K, V>> {
   return new Construct<unknown, Record<K, V>>(
     "record",
     function* (input) {
-      if (typeof input !== "object") return;
+      if (typeof input !== "object") {
+        return yield {
+          message: message ?? formatActExp("object", formatType(input)),
+        };
+      }
       for (const k in input) {
-        yield* key.check(k);
-        yield* value.check(input[k as keyof {}]);
+        yield* mergeIssuePaths(key.check(k), [k]);
+        yield* mergeIssuePaths(value.check(input[k as keyof {}]), [k]);
       }
     },
   );
@@ -241,7 +269,7 @@ export function partial<S extends StructMap>(
   for (const key in struct.definition) {
     (definition as Writeable<StructMap>)[key] = or(
       literal(undefined),
-    ).or(struct.definition[key]);
+    ).or(struct.definition[key]!);
   }
 
   const check = new Construct<unknown, Partial<S>>(
@@ -255,7 +283,7 @@ export function partial<S extends StructMap>(
         if (!hasOwn(key, input) || isUndefined(input[key])) continue;
 
         for (
-          const { message, paths: _ = [] } of struct.definition[key].check(
+          const { message, paths: _ = [] } of struct.definition[key]!.check(
             input[key],
           )
         ) {
