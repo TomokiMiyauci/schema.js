@@ -1,6 +1,6 @@
-import { Construct, formatActExp, formatPlural } from "./utils.ts";
-import { Struct } from "./types.ts";
-import { getSize } from "./deps.ts";
+import { Construct, formatActExp, formatPlural } from "../utils.ts";
+import { Struct } from "../types.ts";
+import { getSize } from "../deps.ts";
 
 /** Create maximum struct. Ensure the input less than or equal to threshold.
  * @param threshold

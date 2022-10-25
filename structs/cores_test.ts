@@ -12,7 +12,7 @@ import {
   string,
   symbol,
 } from "./cores.ts";
-import { assertEquals, describe, it } from "./dev_deps.ts";
+import { assertEquals, describe, it } from "../dev_deps.ts";
 import { and } from "./operators.ts";
 import { pattern } from "./subsets.ts";
 

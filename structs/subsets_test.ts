@@ -9,7 +9,7 @@ import {
   pattern,
   tuple,
 } from "./subsets.ts";
-import { assertEquals, describe, it } from "./dev_deps.ts";
+import { assertEquals, describe, it } from "../dev_deps.ts";
 import { number, object, string } from "./cores.ts";
 
 const MESSAGE = "custom message";
@@ -151,7 +151,7 @@ describe("list", () => {
     assertEquals([...list(object({ a: string() })).check([0, "", {}])], [
       { message: "expected object, actual number", paths: ["0"] },
       { message: "expected object, actual string", paths: ["1"] },
-      { message: "property does not exist", paths: ["2", "a"] },
+      { message: "expected string, actual undefined", paths: ["2", "a"] },
     ]);
   });
 
@@ -173,7 +173,7 @@ describe("tuple", () => {
 
   it("should return issue when the input does not satisfy nested children struct", () => {
     assertEquals([...tuple([object({ a: string() })]).check([{}])], [
-      { message: "property does not exist", paths: ["0", "a"] },
+      { message: "expected string, actual undefined", paths: ["0", "a"] },
     ]);
   });
 
@@ -181,7 +181,7 @@ describe("tuple", () => {
     assertEquals(
       [...tuple([object({ a: string() })], MESSAGE).check([{}, ""])],
       [
-        { message: "property does not exist", paths: ["0", "a"] },
+        { message: "expected string, actual undefined", paths: ["0", "a"] },
         { message: MESSAGE, paths: ["1"] },
       ],
     );

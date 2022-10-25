@@ -1,4 +1,4 @@
-import { Definable, Struct, StructMap } from "./types.ts";
+import { Definable, Struct, StructMap } from "../types.ts";
 import {
   isBigint,
   isBoolean,
@@ -8,14 +8,14 @@ import {
   isString,
   isSymbol,
   Writeable,
-} from "./deps.ts";
+} from "../deps.ts";
 import {
   Construct,
   constructorName,
   formatActExp,
   formatType,
   mergeIssuePaths,
-} from "./utils.ts";
+} from "../utils.ts";
 import { or } from "./operators.ts";
 
 /** Create `string` data type struct.

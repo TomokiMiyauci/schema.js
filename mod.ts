@@ -19,7 +19,7 @@ export {
   record,
   string,
   symbol,
-} from "./cores.ts";
+} from "./structs/cores.ts";
 export {
   empty,
   list,
@@ -30,6 +30,6 @@ export {
   nonempty,
   pattern,
   tuple,
-} from "./subsets.ts";
+} from "./structs/subsets.ts";
 export { assert, is, validate, type ValidateResult } from "./checks.ts";
-export { and, or } from "./operators.ts";
+export { and, or } from "./structs/operators.ts";

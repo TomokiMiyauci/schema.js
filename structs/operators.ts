@@ -1,6 +1,6 @@
-import { Checkable, Intersection, Issue, Struct, type } from "./types.ts";
-import { formatActExp } from "./utils.ts";
-import { iter, PartialBy, prop } from "./deps.ts";
+import { Checkable, Intersection, Issue, Struct, type } from "../types.ts";
+import { formatActExp } from "../utils.ts";
+import { iter, PartialBy, prop } from "../deps.ts";
 
 export function or<In, Out extends In>(
   struct: Struct<In, Out>,
