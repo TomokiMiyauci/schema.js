@@ -1,3 +1,6 @@
+// Copyright 2022-latest Tomoki Miyauchi. All rights reserved. MIT license.
+// This module is browser compatible.
+
 import { Checkable, Issue, Struct, type } from "../types.ts";
 import { formatActExp } from "../utils.ts";
 import { IsTopType, iter, PartialBy, prop } from "../deps.ts";

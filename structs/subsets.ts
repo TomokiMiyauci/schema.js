@@ -1,3 +1,6 @@
+// Copyright 2022-latest Tomoki Miyauchi. All rights reserved. MIT license.
+// This module is browser compatible.
+
 import { Construct, formatActExp, formatPlural } from "../utils.ts";
 import { Struct } from "../types.ts";
 import { getSize } from "../deps.ts";

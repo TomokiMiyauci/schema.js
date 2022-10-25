@@ -640,6 +640,6 @@ You can check the
 
 ## License
 
-Copyright © 2022-present [schemaland](https://github.com/schemaland).
+Copyright © 2022-present [Tomoki Miyauchi](https://github.com/TomkiMiyauci).
 
 Released under the [MIT](./LICENSE) license

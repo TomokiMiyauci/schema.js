@@ -1,3 +1,6 @@
+// Copyright 2022-latest Tomoki Miyauchi. All rights reserved. MIT license.
+// This module is browser compatible.
+
 import { isNullable } from "https://deno.land/x/isx@1.0.0-beta.22/mod.ts";
 export {
   isBigint,

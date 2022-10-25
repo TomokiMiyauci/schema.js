@@ -1,3 +1,6 @@
+// Copyright 2022-latest Tomoki Miyauchi. All rights reserved. MIT license.
+// This module is browser compatible.
+
 import { Issue } from "./types.ts";
 
 export class StructError extends Error {

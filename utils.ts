@@ -1,3 +1,6 @@
+// Copyright 2022-latest Tomoki Miyauchi. All rights reserved. MIT license.
+// This module is browser compatible.
+
 import { isNonNullable, PartialBy } from "./deps.ts";
 import { Issue, Struct, type } from "./types.ts";
 
@@ -55,6 +58,9 @@ export function formatType(value: unknown): DataType {
   return value === null ? "null" : typeof value;
 }
 
+/** Utility for merging issue paths.
+ * @internal
+ */
 export function* mergeIssuePaths(
   issues: Iterable<PartialBy<Issue, "paths">>,
   paths: Iterable<string>,
