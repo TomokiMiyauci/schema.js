@@ -18,7 +18,6 @@ export {
   record,
   string,
   symbol,
-  tuple,
 } from "./cores.ts";
 export {
   empty,
@@ -29,6 +28,7 @@ export {
   minSize,
   nonempty,
   pattern,
+  tuple,
 } from "./subsets.ts";
 export { assert, is, validate, type ValidateResult } from "./checks.ts";
 export { and, or } from "./operators.ts";
