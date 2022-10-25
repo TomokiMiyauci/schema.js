@@ -21,5 +21,10 @@
       "exclude": ["npm", "CHANGELOG.md", "CODE_OF_CONDUCT.md"]
     }
   },
-  "importMap": "_test_import_map.json"
+  "importMap": "_test_import_map.json",
+
+  "compilerOptions": {
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true
+  }
 }
