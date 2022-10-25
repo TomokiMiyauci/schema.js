@@ -12,8 +12,8 @@ export interface Checkable<In, Out extends In> {
   readonly [type]: Out;
 }
 
-export interface Definable<D> {
-  readonly definition: D;
+export interface Definable<S> {
+  readonly definition: S;
 }
 
 export interface Issue {
@@ -44,11 +44,4 @@ export interface CheckOptions {
 
 export interface StructMap {
   readonly [k: string]: Struct<unknown>;
-}
-
-export interface Intersection<In, Out extends In> {
-  and: <T extends Out>(
-    struct: Struct<Out, T>,
-  ) => IsTopType<T> extends true ? Struct<In, Out> & Intersection<In, Out>
-    : Struct<In, T> & Intersection<In, T>;
 }

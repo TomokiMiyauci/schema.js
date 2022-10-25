@@ -32,4 +32,4 @@ export {
   tuple,
 } from "./structs/subsets.ts";
 export { assert, is, validate, type ValidateResult } from "./checks.ts";
-export { and, or, type Union } from "./structs/operators.ts";
+export { and, type Intersection, or, type Union } from "./structs/operators.ts";

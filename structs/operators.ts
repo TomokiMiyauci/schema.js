@@ -1,12 +1,20 @@
-import { Checkable, Intersection, Issue, Struct, type } from "../types.ts";
+import { Checkable, Issue, Struct, type } from "../types.ts";
 import { formatActExp } from "../utils.ts";
-import { iter, PartialBy, prop } from "../deps.ts";
+import { IsTopType, iter, PartialBy, prop } from "../deps.ts";
 
 /** Union type API. */
 export interface Union<In, Out extends In> {
   or: <T extends In>(
     struct: Struct<In, T>,
   ) => Struct<In, Out | T> & Union<In, Out | T>;
+}
+
+/** Intersection type API. */
+export interface Intersection<In, Out extends In> {
+  and: <T extends Out>(
+    struct: Struct<Out, T>,
+  ) => IsTopType<T> extends true ? Struct<In, Out> & Intersection<In, Out>
+    : Struct<In, T> & Intersection<In, T>;
 }
 
 /** Create union struct.
