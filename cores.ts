@@ -184,14 +184,10 @@ export function object(structMap?: StructMap): Struct<unknown, object> {
           continue;
         }
 
-        for (
-          const { message, paths: _ = [] } of structMap[key]!.check(
-            input?.[key],
-          )
-        ) {
-          const paths = [key].concat(_);
-          yield { message, paths };
-        }
+        yield* mergeIssuePaths(
+          structMap[key]!.check(input?.[key]),
+          [key],
+        );
       }
     },
   );
@@ -248,7 +244,7 @@ export function record<K extends string, V>(
   return new Construct<unknown, Record<K, V>>(
     "record",
     function* (input) {
-      if (typeof input !== "object") {
+      if (!isObject(input)) {
         return yield {
           message: message ?? formatActExp("object", formatType(input)),
         };
@@ -282,14 +278,10 @@ export function partial<S extends StructMap>(
       for (const key in struct.definition) {
         if (!hasOwn(key, input) || isUndefined(input[key])) continue;
 
-        for (
-          const { message, paths: _ = [] } of struct.definition[key]!.check(
-            input[key],
-          )
-        ) {
-          const paths = [...key, ..._];
-          yield { message, paths };
-        }
+        yield* mergeIssuePaths(
+          struct.definition[key]!.check(input[key]),
+          [key],
+        );
       }
     },
   );

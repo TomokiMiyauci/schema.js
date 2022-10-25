@@ -54,3 +54,12 @@ type DataType =
 export function formatType(value: unknown): DataType {
   return value === null ? "null" : typeof value;
 }
+
+export function* mergeIssuePaths(
+  issues: Iterable<PartialBy<Issue, "paths">>,
+  paths: Iterable<string>,
+): Iterable<Issue> {
+  for (const issue of issues) {
+    yield { message: issue.message, paths: [...paths, ...issue.paths ?? []] };
+  }
+}
