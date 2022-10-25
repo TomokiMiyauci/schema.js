@@ -10,6 +10,7 @@ export {
   bigint,
   boolean,
   func,
+  instance,
   number,
   object,
   omit,

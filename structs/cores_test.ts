@@ -3,6 +3,7 @@ import {
   bigint,
   boolean,
   func,
+  instance,
   number,
   object,
   omit,
@@ -324,5 +325,23 @@ describe("partial", () => {
       message: "expected (undefined | string), actual 0",
       paths: ["a"],
     }]);
+  });
+});
+
+describe("instance", () => {
+  it("should return issue when input is not instance of definition", () => {
+    assertEquals([...instance(Array).check(null)], [{
+      message: "expected instance of Array, actual null",
+    }]);
+  });
+
+  it("message override", () => {
+    assertEquals([...instance(Array, MESSAGE).check(null)], [{
+      message: MESSAGE,
+    }]);
+  });
+
+  it("should return empty issue when input is instance of definition", () => {
+    assertEquals([...instance(Array).check([])], []);
   });
 });

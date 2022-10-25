@@ -223,6 +223,36 @@ export function array(message?: string): Struct<unknown, any[]> {
   });
 }
 
+/** Create `instanceof` struct. Ensure that the input is an instance of a defined
+ * constructor.
+ * @param constructor Any constructor.
+ * @param message Custom issue message.
+ * @example
+ * ```ts
+ * import { instance, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+ *
+ * assertEquals(is(instance(Array), []), true);
+ * assertEquals(is(instance(class Any {}), null), false);
+ * ```
+ */
+export function instance<T extends abstract new (...args: any) => any>(
+  constructor: T,
+  message?: string,
+): Struct<unknown, InstanceType<T>> {
+  return new Construct("instance", function* (input) {
+    if (!(input instanceof constructor)) {
+      yield {
+        message: message ??
+          formatActExp(
+            `instance of ${constructor.name}`,
+            constructorName(input),
+          ),
+      };
+    }
+  });
+}
+
 /** Create `Record` struct. Ensure the input is object, and keys and values satisfy
  * struct.
  * @param key - The key of struct.

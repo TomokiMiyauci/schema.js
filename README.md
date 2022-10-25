@@ -213,6 +213,18 @@ assertEquals(is(symbol(), Symbol.iterator), true);
 assertEquals(is(symbol(), {}), false);
 ```
 
+#### value
+
+Create primitive value struct.
+
+```ts
+import { is, value } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+assertEquals(is(value(null), null), true);
+assertEquals(is(value(null), undefined), false);
+```
+
 #### object
 
 Create `object` data type struct. Treat `null` as not an `object`.
@@ -233,18 +245,6 @@ assertEquals(
   }),
   true,
 );
-```
-
-#### value
-
-Create primitive value struct.
-
-```ts
-import { is, value } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
-
-assertEquals(is(value(null), null), true);
-assertEquals(is(value(null), undefined), false);
 ```
 
 #### record
@@ -276,6 +276,19 @@ import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts"
 
 assertEquals(is(array(), []), true);
 assertEquals(is(array(), {}), false);
+```
+
+#### instance
+
+Create `instanceof` struct. Ensure that the input is an instance of a defined
+constructor.
+
+```ts
+import { instance, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+assertEquals(is(instance(Array), []), true);
+assertEquals(is(instance(class Any {}), null), false);
 ```
 
 #### pick
