@@ -5,6 +5,7 @@ import {
   func,
   number,
   object,
+  pick,
   record,
   string,
   symbol,
@@ -221,6 +222,38 @@ describe("record", () => {
   it("should return empty list when input satisfy key and value", () => {
     assertEquals([
       ...record(and(string()).and(pattern(/^t/)), string()).check({ "t": "" }),
+    ], []);
+  });
+});
+
+describe("pick", () => {
+  it("should return picked definition", () => {
+    const String = string();
+    const Number = number();
+    const O = object({ a: String, b: Number, c: Number });
+    const Pick = pick(O, ["a", "b"]);
+
+    assertEquals(O.definition.a, String);
+    assertEquals(O.definition.b, Number);
+    assertEquals(O.definition.c, Number);
+    assertEquals(Object.keys(Pick.definition), ["a", "b"]);
+    assertEquals(Object.keys(pick(Pick, ["a"]).definition), ["a"]);
+  });
+
+  it("should return issue when picked struct does not satisfy", () => {
+    assertEquals([
+      ...pick(object({ a: string(), b: string() }), ["a"]).check({}),
+    ], [{ message: "property does not exist", paths: ["a"] }]);
+  });
+
+  it("should return empty list when picked struct satisfy", () => {
+    const O = object({ a: string(), b: string(), c: string() });
+    const firstPick = pick(O, ["a", "b"]);
+    assertEquals([
+      ...pick(firstPick, ["a"])
+        .check(
+          { a: "" },
+        ),
     ], []);
   });
 });

@@ -261,6 +261,27 @@ assertEquals(is(array(), [], true));
 assertEquals(is(array(), {}, false));
 ```
 
+#### pick
+
+Create `Pick` struct. From struct, pick a set of properties whose keys are in
+the definition.
+
+```ts
+import {
+  is,
+  object,
+  pick,
+  string,
+} from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+
+const User = object({ id: string(), name: string() });
+const data = { name: "tom" };
+
+assertEquals(is(User, data), false);
+assertEquals(is(pick(User, ["name"]), data), false);
+```
+
 ### Sub Struct
 
 Sub struct refers to a struct whose input type is other than Top-type.

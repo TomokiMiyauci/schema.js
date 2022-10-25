@@ -289,17 +289,37 @@ export function partial<S extends StructMap>(
   return Object.assign(check, { definition });
 }
 
+/** Create `Pick` struct. From struct, pick a set of properties whose keys are in the definition.
+ * @param struct Definable struct.
+ * @param keys Pick properties.
+ * @example
+ * ```ts
+ * import {
+ *   is,
+ *   object,
+ *   pick,
+ *   string,
+ * } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * const User = object({ id: string(), name: string() });
+ * const data = { name: "tom" };
+ *
+ * assertEquals(is(User, data), false);
+ * assertEquals(is(pick(User, ["name"]), data), false);
+ * ```
+ */
 export function pick<U extends StructMap, K extends keyof U>(
   struct: Struct<unknown, U> & Definable<U>,
-  ...keys: K[]
-): Struct<unknown, Pick<U, K>> {
-  const schema = keys.reduce((acc, key) => {
+  keys: Iterable<K>,
+): Struct<unknown, Pick<U, K>> & Definable<Pick<U, K>> {
+  const schema = Array.from(keys).reduce((acc, key) => {
     acc[key] = struct.definition[key];
 
     return acc;
   }, {} as Pick<U, K>);
 
-  return object<Pick<U, K>>(schema);
+  return object(schema);
 }
 
 export function omit<S extends StructMap, K extends keyof S>(
