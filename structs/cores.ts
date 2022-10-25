@@ -23,7 +23,7 @@ import { or } from "./operators.ts";
  * @example
  * ```ts
  * import { is, string } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
  * assertEquals(is(string(), ""), true);
  * assertEquals(is(string(), 0), false);
@@ -42,7 +42,7 @@ export function string(message?: string): Struct<unknown, string> {
  * @example
  * ```ts
  * import { is, number } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
  * assertEquals(is(number(), 0), true);
  * assertEquals(is(number(), ""), false);
@@ -61,7 +61,7 @@ export function number(message?: string): Struct<unknown, number> {
  * @example
  * ```ts
  * import { bigint, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
  * assertEquals(is(bigint(), 0), true);
  * assertEquals(is(bigint(), 0n), false);
@@ -80,7 +80,7 @@ export function bigint(message?: string): Struct<unknown, bigint> {
  * @example
  * ```ts
  * import { boolean, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
  * assertEquals(is(boolean(), true), true);
  * assertEquals(is(boolean(), ""), false);
@@ -99,7 +99,7 @@ export function boolean(message?: string): Struct<unknown, boolean> {
  * @example
  * ```ts
  * import { func, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
  * assertEquals(is(func(), () => {}), true);
  * assertEquals(is(func(), {}), false);
@@ -118,7 +118,7 @@ export function func(message?: string): Struct<unknown, Function> {
  * @example
  * ```ts
  * import { is, symbol } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
  * assertEquals(is(symbol(), Symbol.iterator), true);
  * assertEquals(is(symbol(), {}), false);
@@ -138,10 +138,10 @@ export function symbol(message?: string): Struct<unknown, symbol> {
  * @example
  * ```ts
  * import { is, value } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
  * assertEquals(is(value(null), null), true);
- * assertEquals(is(symbol(null), undefined), false);
+ * assertEquals(is(value(null), undefined), false);
  * ```
  */
 export function value<
@@ -165,7 +165,7 @@ export function value<
  *   object,
  *   string,
  * } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
  * assertEquals(is(object(), {}), true);
  * assertEquals(
@@ -207,10 +207,10 @@ export function object(structMap?: StructMap): Struct<unknown, object> {
  * @example
  * ```ts
  * import { array, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
- * assertEquals(is(array(), [], true));
- * assertEquals(is(array(), {}, false));
+ * assertEquals(is(array(), []), true);
+ * assertEquals(is(array(), {}), false);
  * ```
  */
 export function array(message?: string): Struct<unknown, any[]> {
@@ -236,7 +236,7 @@ export function array(message?: string): Struct<unknown, any[]> {
  *   record,
  *   string,
  * } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
  * const Record = record(string(), number()); // { [k: string]: number }
  * assertEquals(is(Record, { john: 80, tom: 100 }), true);
@@ -274,7 +274,7 @@ export function record<K extends string, V>(
  *   partial,
  *   string,
  * } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
  * const User = object({ id: string(), name: string() });
  *
@@ -307,7 +307,7 @@ export function partial<S extends StructMap>(
  *   pick,
  *   string,
  * } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
  * const User = object({ id: string(), name: string() });
  * const data = { name: "tom" };
@@ -340,7 +340,7 @@ export function pick<U extends StructMap, K extends keyof U>(
  *   omit,
  *   string,
  * } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
  * const User = object({ id: string(), name: string() });
  * const data = { name: "tom" };

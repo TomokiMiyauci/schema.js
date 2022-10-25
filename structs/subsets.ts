@@ -8,7 +8,7 @@ import { getSize } from "../deps.ts";
  * @example
  * ```ts
  * import { is, maximum } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
  * assertEquals(is(maximum(5), 5), true);
  * assertEquals(is(maximum(5), 6), false);
@@ -31,7 +31,7 @@ export function maximum(threshold: number, message?: string): Struct<number> {
  * @example
  * ```ts
  * import { is, minimum } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
  * assertEquals(is(minimum(5), 5), true);
  * assertEquals(is(minimum(5), 4), false);
@@ -54,7 +54,7 @@ export function minimum(threshold: number, message?: string): Struct<number> {
  * @example
  * ```ts
  * import { is, maxSize } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
  * assertEquals(is(maxSize(10), "typestruct"), true);
  * assertEquals(is(maxSize(4), new Array(5)), false);
@@ -83,7 +83,7 @@ export function maxSize(
  * @example
  * ```ts
  * import { is, minSize } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
  * assertEquals(is(minSize(10), "typestruct"), true);
  * assertEquals(is(minSize(10), new Array(5)), false);
@@ -111,7 +111,7 @@ export function minSize(
  * @example
  * ```ts
  * import { empty, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
  * assertEquals(is(empty(), ""), true);
  * assertEquals(is(empty(), [1]), false);
@@ -134,10 +134,10 @@ export function empty(message?: string): Struct<Iterable<unknown>> {
  * @example
  * ```ts
  * import { is, nonempty } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
  * assertEquals(is(nonempty(), new Set([1, 2, 3])), true);
- * assertEquals(is(nonempty(), new Map(), false);
+ * assertEquals(is(nonempty(), new Map()), false);
  * ```
  */
 export function nonempty(message?: string): Struct<Iterable<unknown>> {
@@ -155,10 +155,10 @@ export function nonempty(message?: string): Struct<Iterable<unknown>> {
  * @example
  * ```ts
  * import { is, pattern } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
- * assertEquals(is(pattern(/type/), "typescript", true);
- * assertEquals(is(pattern(/type/), "javascript", false);
+ * assertEquals(is(pattern(/type/), "typescript"), true);
+ * assertEquals(is(pattern(/type/), "javascript"), false);
  * ```
  */
 export function pattern(regexp: RegExp, message?: string): Struct<string> {
@@ -177,10 +177,10 @@ export function pattern(regexp: RegExp, message?: string): Struct<string> {
  * @example
  * ```ts
  * import { is, list, and, array, number, string } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
- * assertEquals(is(list(string()), ["typescript", "javascript"], true);
- * assertEquals(is(and(array()).and(list(number())), [1, 2, 3] as unknown, true);
+ * assertEquals(is(list(string()), ["typescript", "javascript"]), true);
+ * assertEquals(is(and(array()).and(list(number())), [1, 2, 3]), true);
  * ```
  */
 export function list<S>(struct: Struct<unknown, S>): Struct<any[], S[]> {
@@ -201,10 +201,12 @@ export function list<S>(struct: Struct<unknown, S>): Struct<any[], S[]> {
  * @example
  * ```ts
  * import { is, tuple, and, array, number, string, object } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
- * assertEquals(is(tuple([[string(), number(), object()]), ["", 0, {}], true);
- * assertEquals(is(and(array()).and(tuple([number(), number(), number()])), [1, 2, 3] as unknown, true);
+ * const Tuple = tuple([string(), number(), object()]);
+ *
+ * assertEquals(is(Tuple, ["", 0, {}]), true);
+ * assertEquals(is(and(array()).and(Tuple), [1, 2, 3] as unknown), true);
  * ```
  */
 export function tuple<F, R extends readonly Struct<unknown>[]>(

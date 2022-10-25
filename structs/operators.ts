@@ -27,7 +27,7 @@ export interface Intersection<In, Out extends In> {
  *   or,
  *   string,
  * } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
  * const StrOrNum = or(string()).or(number());
  * assertEquals(is(StrOrNum, ""), true);
@@ -77,7 +77,7 @@ export function or<In, Out extends In>(
  *   minSize,
  *   string,
  * } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
  * const String5_10 = and(string()).and(minSize(5)).and(maxSize(10));
  *

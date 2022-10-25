@@ -14,23 +14,6 @@ Composable and checkable JavaScript(and TypeScript) data structure.
 
 ## Basic usage
 
-```ts
-import { assert, number, object, string } from "https://deno.land/x/struct";
-
-const Product = object({
-  id: string(),
-  name: string(),
-  price: number(),
-  category: object({
-    id: string(),
-    name: string(),
-  }),
-});
-
-declare const data: unknown;
-assert(Product, data);
-```
-
 The `data` is infer as follows:
 
 ```ts
@@ -67,7 +50,7 @@ satisfied.
 
 ```ts
 import { is, string } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "[https://](https://deno.land/std@$VERSION/testing/asserts/mod.ts)";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
 assertEquals(is(string(), "any input"), true);
 assertEquals(is(string(), {}), false);
@@ -89,7 +72,7 @@ import {
   minSize,
   StructError,
 } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertThrows } from "[https://](https://deno.land/std@$VERSION/testing/asserts/mod.ts)";
+import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
 assertThrows(() => assert(maxSize(5), "typestruct"), StructError);
 ```
@@ -108,7 +91,7 @@ import {
   object,
   validate,
 } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "[https://](https://deno.land/std@$VERSION/testing/asserts/mod.ts)";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
 const Product = object({
   price: number(),
@@ -142,7 +125,7 @@ Create `string` data type struct.
 
 ```ts
 import { is, string } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
 assertEquals(is(string(), ""), true);
 assertEquals(is(string(), 0), false);
@@ -154,7 +137,7 @@ Create `number` data type struct.
 
 ```ts
 import { is, number } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
 assertEquals(is(number(), 0), true);
 assertEquals(is(number(), ""), false);
@@ -166,7 +149,7 @@ Create `bigint` data type struct.
 
 ```ts
 import { bigint, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
 assertEquals(is(bigint(), 0), true);
 assertEquals(is(bigint(), 0n), false);
@@ -178,7 +161,7 @@ Create `boolean` data type struct.
 
 ```ts
 import { boolean, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
 assertEquals(is(boolean(), true), true);
 assertEquals(is(boolean(), ""), false);
@@ -190,7 +173,7 @@ Create `function` data type struct.
 
 ```ts
 import { func, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
 assertEquals(is(func(), () => {}), true);
 assertEquals(is(func(), {}), false);
@@ -202,7 +185,7 @@ Create `symbol` data type struct.
 
 ```ts
 import { is, symbol } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
 assertEquals(is(symbol(), Symbol.iterator), true);
 assertEquals(is(symbol(), {}), false);
@@ -218,7 +201,7 @@ import {
   object,
   string,
 } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
 assertEquals(is(object(), {}), true);
 assertEquals(
@@ -236,10 +219,10 @@ Create primitive value struct.
 
 ```ts
 import { is, value } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
 assertEquals(is(value(null), null), true);
-assertEquals(is(symbol(null), undefined), false);
+assertEquals(is(value(null), undefined), false);
 ```
 
 #### record
@@ -254,7 +237,7 @@ import {
   record,
   string,
 } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
 const Record = record(string(), number()); // { [k: string]: number }
 assertEquals(is(Record, { john: 80, tom: 100 }), true);
@@ -267,10 +250,10 @@ Create `any[]` data type struct.
 
 ```ts
 import { array, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
-assertEquals(is(array(), [], true));
-assertEquals(is(array(), {}, false));
+assertEquals(is(array(), []), true);
+assertEquals(is(array(), {}), false);
 ```
 
 #### pick
@@ -285,7 +268,7 @@ import {
   pick,
   string,
 } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
 const User = object({ id: string(), name: string() });
 const data = { name: "tom" };
@@ -306,7 +289,7 @@ import {
   omit,
   string,
 } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
 const User = object({ id: string(), name: string() });
 const data = { name: "tom" };
@@ -326,7 +309,7 @@ import {
   partial,
   string,
 } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
 const User = object({ id: string(), name: string() });
 
@@ -355,7 +338,7 @@ import {
   minSize,
   string,
 } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
 const String5_10 = and(string()).and(minSize(5)).and(maxSize(10));
 
@@ -376,7 +359,7 @@ import {
   or,
   string,
 } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
 const StrOrNum = or(string()).or(number());
 assertEquals(is(StrOrNum, ""), true);
@@ -394,7 +377,7 @@ Create maximum struct. Ensure the input less than or equal to threshold.
 
 ```ts
 import { is, maximum } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
 assertEquals(is(maximum(5), 5), true);
 assertEquals(is(maximum(5), 6), false);
@@ -406,7 +389,7 @@ Create minimum struct. Ensure the input grater than or equal to threshold.
 
 ```ts
 import { is, minimum } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
 assertEquals(is(minimum(5), 5), true);
 assertEquals(is(minimum(5), 4), false);
@@ -418,7 +401,7 @@ Create max size struct. Sets the maximum number of elements.
 
 ```ts
 import { is, maxSize } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
 assertEquals(is(maxSize(10), "typestruct"), true);
 assertEquals(is(maxSize(4), new Array(5)), false);
@@ -430,7 +413,7 @@ Create min size struct. Sets the minimum number of elements.
 
 ```ts
 import { is, minSize } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
 assertEquals(is(minSize(10), "typestruct"), true);
 assertEquals(is(minSize(10), new Array(5)), false);
@@ -442,7 +425,7 @@ Create empty struct. Empty means there are no elements.
 
 ```ts
 import { empty, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
 assertEquals(is(empty(), ""), true);
 assertEquals(is(empty(), [1]), false);
@@ -454,10 +437,10 @@ Create non empty struct. Non empty meas there are more than one element.
 
 ```ts
 import { is, nonempty } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
 assertEquals(is(nonempty(), new Set([1, 2, 3])), true);
-assertEquals(is(nonempty(), new Map(), false);
+assertEquals(is(nonempty(), new Map()), false);
 ```
 
 #### pattern
@@ -466,10 +449,10 @@ Create pattern struct. Ensure the input match to the pattern.
 
 ```ts
 import { is, pattern } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
-assertEquals(is(pattern(/type/), "typescript", true);
-assertEquals(is(pattern(/type/), "javascript", false);
+assertEquals(is(pattern(/type/), "typescript"), true);
+assertEquals(is(pattern(/type/), "javascript"), false);
 ```
 
 #### list
@@ -478,11 +461,18 @@ Create list struct. List is array subtype. Ensure that all elements are same
 type.
 
 ```ts
-import { is, list, and, array, number, string } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import {
+  and,
+  array,
+  is,
+  list,
+  number,
+  string,
+} from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
-assertEquals(is(list(string()), ["typescript", "javascript"], true);
-assertEquals(is(and(array()).and(list(number())), [1, 2, 3] as unknown, true);
+assertEquals(is(list(string()), ["typescript", "javascript"]), true);
+assertEquals(is(and(array()).and(list(number())), [1, 2, 3]), true);
 ```
 
 #### tuple
@@ -491,11 +481,21 @@ Create tuple struct. Tuple is array subtype. Ensure that the position and type
 of the elements match.
 
 ```ts
-import { is, tuple, and, array, number, string, object } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
-import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+import {
+  and,
+  array,
+  is,
+  number,
+  object,
+  string,
+  tuple,
+} from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
-assertEquals(is(tuple([[string(), number(), object()]), ["", 0, {}], true);
-assertEquals(is(and(array()).and(tuple([number(), number(), number()])), [1, 2, 3] as unknown, true);
+const Tuple = tuple([string(), number(), object()]);
+
+assertEquals(is(Tuple, ["", 0, {}]), true);
+assertEquals(is(and(array()).and(Tuple), [1, 2, 3] as unknown), true);
 ```
 
 ## Struct deep dive
@@ -520,7 +520,7 @@ of narrowing the data.
 Now let's look at the `string` factory.
 
 ```ts
-import { Struct } from "https://deno.land/x/typestruct/mod.ts";
+import { string } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
 const String = string(); // Struct<unknown, string>
 ```
 
@@ -536,7 +536,7 @@ If there is no type narrowing, nothing needs to be specified for `Out`. This
 implies that it is a value-checking struct.
 
 ```ts
-import { maxSize } from "https://deno.land/x/typestruct/mod.ts";
+import { maxSize } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
 const MaxSize = maxSize(5); // Struct<Iterable<unknown>>
 ```
 
@@ -567,7 +567,7 @@ import {
   maxSize,
   minSize,
   string,
-} from "https://deno.land/x/typestruct/mod.ts";
+} from "https://deno.land/x/typestruct@$VERSION/mod.ts";
 
 const MinSize10 = minSize(10);
 const MaxSize100 = maxSize(100);

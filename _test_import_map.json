@@ -1,6 +1,6 @@
 {
   "imports": {
-    "https://deno.land/x/schema_js@$VERSION/": "./",
-    "https://deno.land/std@$VERSION/": "https://deno.land/std@0.151.0/"
+    "https://deno.land/x/typestruct@$VERSION/": "./",
+    "https://deno.land/std@$VERSION/": "https://deno.land/std@0.160.0/"
   }
 }

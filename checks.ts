@@ -31,7 +31,7 @@ export type ValidateResult<T> = {
  *   object,
  *   validate,
  * } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "[https://](https://deno.land/std@$VERSION/testing/asserts/mod.ts)";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
  * const Product = object({
  *   price: number(),
@@ -42,9 +42,9 @@ export type ValidateResult<T> = {
  * });
  * ```
  */
-export function validate<In, Out extends In>(
+export function validate<In, Out extends In, T extends In>(
   checkable: Checkable<In, Out>,
-  input: In,
+  input: T,
   options?: CheckOptions,
 ): ValidateResult<Infer<Out>> {
   const issues = resolveIterable(
@@ -65,7 +65,7 @@ export function validate<In, Out extends In>(
  * @example
  * ```ts
  * import { is, string } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
  * assertEquals(is(string(), "any input"), true);
  * assertEquals(is(string(), {}), false);
@@ -95,7 +95,7 @@ export function is<In, Out extends In, T extends In>(
  *   minSize,
  *   StructError,
  * } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
- * import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ * import { assertThrows } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
  * assertThrows(() => assert(maxSize(5), "typestruct"), StructError);
  * ```
