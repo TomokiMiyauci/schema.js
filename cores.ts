@@ -20,6 +20,7 @@ import {
 import { or } from "./operators.ts";
 
 /** Create `string` data type struct.
+ * @param message Custom issue message.
  * @example
  * ```ts
  * import { is, string } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
@@ -29,15 +30,16 @@ import { or } from "./operators.ts";
  * assertEquals(is(string(), 0), false);
  * ```
  */
-export function string(): Struct<unknown, string> {
+export function string(message?: string): Struct<unknown, string> {
   return new Construct("string", function* (input) {
     if (!isString(input)) {
-      yield { message: formatActExp("string", typeof input) };
+      yield { message: message ?? formatActExp("string", typeof input) };
     }
   });
 }
 
 /** Create `number` data type struct.
+ * @param message Custom issue message.
  * @example
  * ```ts
  * import { is, number } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
@@ -47,15 +49,16 @@ export function string(): Struct<unknown, string> {
  * assertEquals(is(number(), ""), false);
  * ```
  */
-export function number(): Struct<unknown, number> {
+export function number(message?: string): Struct<unknown, number> {
   return new Construct("number", function* (input) {
     if (!isNumber(input)) {
-      yield { message: formatActExp("number", typeof input) };
+      yield { message: message ?? formatActExp("number", typeof input) };
     }
   });
 }
 
 /** Create `bigint` data type struct.
+ * @param message Custom issue message.
  * @example
  * ```ts
  * import { bigint, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
@@ -65,15 +68,16 @@ export function number(): Struct<unknown, number> {
  * assertEquals(is(bigint(), 0n), false);
  * ```
  */
-export function bigint(): Struct<unknown, bigint> {
+export function bigint(message?: string): Struct<unknown, bigint> {
   return new Construct("bigint", function* (input) {
     if (!isBigint(input)) {
-      yield { message: formatActExp("bigint", typeof input) };
+      yield { message: message ?? formatActExp("bigint", typeof input) };
     }
   });
 }
 
 /** Create `boolean` data type struct.
+ * @param message Custom issue message.
  * @example
  * ```ts
  * import { boolean, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
@@ -83,15 +87,16 @@ export function bigint(): Struct<unknown, bigint> {
  * assertEquals(is(boolean(), ""), false);
  * ```
  */
-export function boolean(): Struct<unknown, boolean> {
+export function boolean(message?: string): Struct<unknown, boolean> {
   return new Construct("boolean", function* (input) {
     if (!isBoolean(input)) {
-      yield { message: formatActExp("boolean", typeof input) };
+      yield { message: message ?? formatActExp("boolean", typeof input) };
     }
   });
 }
 
 /** Create `function` data type struct.
+ * @param message Custom issue message.
  * @example
  * ```ts
  * import { func, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
@@ -101,15 +106,16 @@ export function boolean(): Struct<unknown, boolean> {
  * assertEquals(is(func(), {}), false);
  * ```
  */
-export function func(): Struct<unknown, Function> {
+export function func(message?: string): Struct<unknown, Function> {
   return new Construct("func", function* (input) {
     if (!isFunction(input)) {
-      yield { message: formatActExp("function", typeof input) };
+      yield { message: message ?? formatActExp("function", typeof input) };
     }
   });
 }
 
 /** Create `symbol` data type struct.
+ * @param message Custom issue message.
  * @example
  * ```ts
  * import { is, symbol } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
@@ -119,10 +125,10 @@ export function func(): Struct<unknown, Function> {
  * assertEquals(is(symbol(), {}), false);
  * ```
  */
-export function symbol(): Struct<unknown, symbol> {
+export function symbol(message?: string): Struct<unknown, symbol> {
   return new Construct("symbol", function* (input) {
     if (!isSymbol(input)) {
-      yield { message: formatActExp("symbol", typeof input) };
+      yield { message: message ?? formatActExp("symbol", typeof input) };
     }
   });
 }
@@ -190,7 +196,8 @@ export function object(structMap?: StructMap): Struct<unknown, object> {
   return Object.assign(check, { definition: structMap });
 }
 
-/** Create `any[]` data type struct.
+/** Create `Array` data type struct.
+ * @param message Custom issue message.
  * @example
  * ```ts
  * import { array, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
@@ -200,10 +207,12 @@ export function object(structMap?: StructMap): Struct<unknown, object> {
  * assertEquals(is(array(), {}, false));
  * ```
  */
-export function array(): Struct<unknown, any[]> {
+export function array(message?: string): Struct<unknown, any[]> {
   return new Construct("array", function* (input) {
     if (!Array.isArray(input)) {
-      return yield { message: formatActExp("Array", constructorName(input)) };
+      return yield {
+        message: message ?? formatActExp("Array", constructorName(input)),
+      };
     }
   });
 }

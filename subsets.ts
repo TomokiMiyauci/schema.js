@@ -4,6 +4,7 @@ import { getSize } from "./deps.ts";
 
 /** Create maximum struct. Ensure the input less than or equal to threshold.
  * @param threshold
+ * @param message Custom issue message.
  * @example
  * ```ts
  * import { is, maximum } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
@@ -13,11 +14,12 @@ import { getSize } from "./deps.ts";
  * assertEquals(is(maximum(5), 6), false);
  * ```
  */
-export function maximum(threshold: number): Struct<number> {
+export function maximum(threshold: number, message?: string): Struct<number> {
   return new Construct("maximum", function* (input) {
     if (threshold < input) {
       yield {
-        message: formatActExp(`less than or equal to ${threshold}`, input),
+        message: message ??
+          formatActExp(`less than or equal to ${threshold}`, input),
       };
     }
   });
@@ -25,6 +27,7 @@ export function maximum(threshold: number): Struct<number> {
 
 /** Create minimum struct. Ensure the input grater than or equal to threshold.
  * @param threshold
+ * @param message Custom issue message.
  * @example
  * ```ts
  * import { is, minimum } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
@@ -34,11 +37,12 @@ export function maximum(threshold: number): Struct<number> {
  * assertEquals(is(minimum(5), 4), false);
  * ```
  */
-export function minimum(threshold: number): Struct<number> {
+export function minimum(threshold: number, message?: string): Struct<number> {
   return new Construct("minimum", function* (input) {
     if (threshold > input) {
       yield {
-        message: formatActExp(`greater than or equal to ${threshold}`, input),
+        message: message ??
+          formatActExp(`greater than or equal to ${threshold}`, input),
       };
     }
   });
@@ -46,7 +50,7 @@ export function minimum(threshold: number): Struct<number> {
 
 /** Create max size struct. Sets the maximum number of elements.
  * @param size Maximum size of elements.
- *
+ * @param message Custom issue message.
  * @example
  * ```ts
  * import { is, maxSize } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
@@ -56,12 +60,15 @@ export function minimum(threshold: number): Struct<number> {
  * assertEquals(is(maxSize(4), new Array(5)), false);
  * ```
  */
-export function maxSize(size: number): Struct<Iterable<unknown>> {
+export function maxSize(
+  size: number,
+  message?: string,
+): Struct<Iterable<unknown>> {
   return new Construct("maxSize", function* (input) {
     const length = [...input].length;
     if (size < length) {
       yield {
-        message: formatActExp(
+        message: message ?? formatActExp(
           `less than or equal to ${formatPlural("element", size)}`,
           formatPlural("element", length),
         ),
@@ -72,7 +79,7 @@ export function maxSize(size: number): Struct<Iterable<unknown>> {
 
 /** Create min size struct. Sets the minimum number of elements.
  * @param size Minimum size of elements.
- *
+ * @param message Custom issue message.
  * @example
  * ```ts
  * import { is, minSize } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
@@ -82,12 +89,15 @@ export function maxSize(size: number): Struct<Iterable<unknown>> {
  * assertEquals(is(minSize(10), new Array(5)), false);
  * ```
  */
-export function minSize(size: number): Struct<Iterable<unknown>> {
+export function minSize(
+  size: number,
+  message?: string,
+): Struct<Iterable<unknown>> {
   return new Construct("minSize", function* (input) {
     const length = [...input].length;
     if (size > length) {
       yield {
-        message: formatActExp(
+        message: message ?? formatActExp(
           `greater than or equal to ${formatPlural("element", size)}`,
           formatPlural("element", length),
         ),
@@ -97,7 +107,7 @@ export function minSize(size: number): Struct<Iterable<unknown>> {
 }
 
 /** Create empty struct. Empty means there are no elements.
- *
+ * @param message Custom issue message.
  * @example
  * ```ts
  * import { empty, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
@@ -107,17 +117,20 @@ export function minSize(size: number): Struct<Iterable<unknown>> {
  * assertEquals(is(empty(), [1]), false);
  * ```
  */
-export function empty(): Struct<Iterable<unknown>> {
+export function empty(message?: string): Struct<Iterable<unknown>> {
   return new Construct("empty", function* (input) {
     const size = getSize(input);
     if (size) {
-      yield { message: formatActExp("empty", formatPlural("element", size)) };
+      yield {
+        message: message ??
+          formatActExp("empty", formatPlural("element", size)),
+      };
     }
   });
 }
 
 /** Create non empty struct. Non empty meas there are more than one element.
- *
+ * @param message Custom issue message
  * @example
  * ```ts
  * import { is, nonempty } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
@@ -127,17 +140,18 @@ export function empty(): Struct<Iterable<unknown>> {
  * assertEquals(is(nonempty(), new Map(), false);
  * ```
  */
-export function nonempty(): Struct<Iterable<unknown>> {
+export function nonempty(message?: string): Struct<Iterable<unknown>> {
   return new Construct("empty", function* (input) {
     const size = getSize(input);
     if (!size) {
-      yield { message: formatActExp("non empty", `empty`) };
+      yield { message: message ?? formatActExp("non empty", `empty`) };
     }
   });
 }
 
 /** Create pattern struct. Ensure the input match to the pattern.
  * @param regexp `RegExp` pattern
+ * @param message Custom issue message.
  * @example
  * ```ts
  * import { is, pattern } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
@@ -147,10 +161,12 @@ export function nonempty(): Struct<Iterable<unknown>> {
  * assertEquals(is(pattern(/type/), "javascript", false);
  * ```
  */
-export function pattern(regexp: RegExp): Struct<string> {
+export function pattern(regexp: RegExp, message?: string): Struct<string> {
   return new Construct("pattern", function* (input) {
     if (!regexp.test(input)) {
-      yield { message: formatActExp(`match ${regexp}`, "not match") };
+      yield {
+        message: message ?? formatActExp(`match ${regexp}`, "not match"),
+      };
     }
   });
 }
@@ -181,6 +197,7 @@ export function list<S>(struct: Struct<unknown, S>): Struct<any[], S[]> {
 /** Create tuple struct. Tuple is array subtype. Ensure that the position and type
  * of the elements match.
  * @param structs
+ * @param message Custom issue message.
  * @example
  * ```ts
  * import { is, tuple, and, array, number, string, object } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
@@ -192,6 +209,7 @@ export function list<S>(struct: Struct<unknown, S>): Struct<any[], S[]> {
  */
 export function tuple<F, R extends readonly Struct<unknown>[]>(
   structs: [Struct<unknown, F>, ...R],
+  message?: string,
 ): Struct<any[], [F, ...R]> {
   return new Construct("tuple", function* (input) {
     const length = Math.max(structs.length, input.length);
@@ -205,7 +223,10 @@ export function tuple<F, R extends readonly Struct<unknown>[]>(
           yield { message, paths };
         }
       } else {
-        yield { message: formatActExp("never", input[i]), paths: [key] };
+        yield {
+          message: message ?? formatActExp("never", input[i]),
+          paths: [key],
+        };
       }
     }
   });

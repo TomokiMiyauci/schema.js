@@ -10,11 +10,17 @@ import {
 } from "./cores.ts";
 import { assertEquals, describe, it } from "./dev_deps.ts";
 
+const MESSAGE = "custom message";
+
 describe("string", () => {
   it("should return issue when input type is not string", () => {
     assertEquals([...string().check(0)], [{
       message: "expected string, actual number",
     }]);
+  });
+
+  it("message override", () => {
+    assertEquals([...string(MESSAGE).check(0)], [{ message: MESSAGE }]);
   });
 
   it("should return empty list when input type is string", () => {
@@ -29,6 +35,10 @@ describe("number", () => {
     }]);
   });
 
+  it("message override", () => {
+    assertEquals([...number(MESSAGE).check("")], [{ message: MESSAGE }]);
+  });
+
   it("should return empty list when input type is number", () => {
     assertEquals([...number().check(0)], []);
   });
@@ -39,6 +49,10 @@ describe("bigint", () => {
     assertEquals([...bigint().check("")], [{
       message: "expected bigint, actual string",
     }]);
+  });
+
+  it("message override", () => {
+    assertEquals([...bigint(MESSAGE).check("")], [{ message: MESSAGE }]);
   });
 
   it("should return empty list when input type is bigint", () => {
@@ -53,6 +67,10 @@ describe("boolean", () => {
     }]);
   });
 
+  it("message override", () => {
+    assertEquals([...boolean(MESSAGE).check("")], [{ message: MESSAGE }]);
+  });
+
   it("should return empty list when input type is boolean", () => {
     assertEquals([...boolean().check(true)], []);
   });
@@ -65,6 +83,10 @@ describe("func", () => {
     }]);
   });
 
+  it("message override", () => {
+    assertEquals([...func(MESSAGE).check("")], [{ message: MESSAGE }]);
+  });
+
   it("should return empty list when input type is Function", () => {
     assertEquals([...func().check(() => {})], []);
   });
@@ -75,6 +97,10 @@ describe("symbol", () => {
     assertEquals([...symbol().check("")], [{
       message: "expected symbol, actual string",
     }]);
+  });
+
+  it("message override", () => {
+    assertEquals([...symbol(MESSAGE).check("")], [{ message: MESSAGE }]);
   });
 
   it("should return empty list when input type is symbol", () => {
@@ -132,11 +158,13 @@ describe("object", () => {
 
 describe("array", () => {
   it("should return issue when input is not Array", () => {
-    assertEquals([
-      ...array().check(""),
-    ], [{
+    assertEquals([...array().check("")], [{
       message: "expected Array, actual String",
     }]);
+  });
+
+  it("message override", () => {
+    assertEquals([...array(MESSAGE).check("")], [{ message: MESSAGE }]);
   });
 
   it("should return empty list when input is Array", () => {

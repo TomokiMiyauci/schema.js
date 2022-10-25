@@ -119,7 +119,22 @@ assertEquals(validate(Product, { price: 100 }), {
 });
 ```
 
-### Core Struct
+### Struct factory
+
+Central to the definition of Struct is the use of struct factories.
+
+The standard struct factory makes it easy to create a basic Struct that checks
+for standard types and values.
+
+For example, the `maxSize` returns `Struct<Iterable<unknown>>`. This guarantees
+an upper bound on the number of elements in the input.
+
+```ts
+import { maxSize } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+const Max10 = maxSize(10);
+```
+
+### Core Struct factories
 
 #### string
 

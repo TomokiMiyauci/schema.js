@@ -12,6 +12,8 @@ import {
 import { assertEquals, describe, it } from "./dev_deps.ts";
 import { number, object, string } from "./cores.ts";
 
+const MESSAGE = "custom message";
+
 describe("maximum", () => {
   it("should return issue when the input exceed max", () => {
     assertEquals([...maximum(5).check(6)], [{
@@ -21,6 +23,10 @@ describe("maximum", () => {
 
   it("should return empty list when the input less than or equal to", () => {
     assertEquals([...maximum(5).check(5)], []);
+  });
+
+  it("message override", () => {
+    assertEquals([...maximum(5, MESSAGE).check(6)], [{ message: MESSAGE }]);
   });
 });
 
@@ -34,6 +40,10 @@ describe("minimum", () => {
   it("should return empty list when the input greater than or equal to", () => {
     assertEquals([...minimum(5).check(5)], []);
   });
+
+  it("message override", () => {
+    assertEquals([...minimum(5, MESSAGE).check(4)], [{ message: MESSAGE }]);
+  });
 });
 
 describe("maxSize", () => {
@@ -45,6 +55,12 @@ describe("maxSize", () => {
 
   it("should return empty list when the input element less than or equal to size", () => {
     assertEquals([...maxSize(5).check("a".repeat(5))], []);
+  });
+
+  it("message override", () => {
+    assertEquals([...maxSize(5, MESSAGE).check("a".repeat(6))], [{
+      message: MESSAGE,
+    }]);
   });
 });
 
@@ -58,6 +74,12 @@ describe("minSize", () => {
 
   it("should return empty list when the input element greater than or equal to size", () => {
     assertEquals([...minSize(5).check("a".repeat(5))], []);
+  });
+
+  it("message override", () => {
+    assertEquals([...minSize(5, MESSAGE).check("a".repeat(4))], [{
+      message: MESSAGE,
+    }]);
   });
 });
 
@@ -77,6 +99,10 @@ describe("empty", () => {
   it("should return empty list when the input is empty", () => {
     assertEquals([...empty().check([])], []);
   });
+
+  it("message override", () => {
+    assertEquals([...empty(MESSAGE).check("aa")], [{ message: MESSAGE }]);
+  });
 });
 
 describe("nonempty", () => {
@@ -84,6 +110,10 @@ describe("nonempty", () => {
     assertEquals([...nonempty().check("")], [{
       message: "expected non empty, actual empty",
     }]);
+  });
+
+  it("message override", () => {
+    assertEquals([...nonempty(MESSAGE).check("")], [{ message: MESSAGE }]);
   });
 
   it("should return empty list when the input is non empty", () => {
@@ -96,6 +126,12 @@ describe("pattern", () => {
     assertEquals([
       ...pattern(/^t/).check("not match"),
     ], [{ message: "expected match /^t/, actual not match" }]);
+  });
+
+  it("message override", () => {
+    assertEquals([...pattern(/^t/, MESSAGE).check("not match")], [{
+      message: MESSAGE,
+    }]);
   });
 
   it("should return empty list when the input match regexp", () => {
@@ -139,6 +175,16 @@ describe("tuple", () => {
     assertEquals([...tuple([object({ a: string() })]).check([{}])], [
       { message: "property does not exist", paths: ["0", "a"] },
     ]);
+  });
+
+  it("message override", () => {
+    assertEquals(
+      [...tuple([object({ a: string() })], MESSAGE).check([{}, ""])],
+      [
+        { message: "property does not exist", paths: ["0", "a"] },
+        { message: MESSAGE, paths: ["1"] },
+      ],
+    );
   });
 
   it("should return empty list when the input satisfy children struct", () => {
