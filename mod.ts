@@ -1,11 +1,15 @@
 export { StructError } from "./error.ts";
-export { type CheckOptions, type Infer, type Showable } from "./types.ts";
+export {
+  type CheckOptions,
+  type Infer,
+  type Showable,
+  type Struct,
+} from "./types.ts";
 export {
   array,
   bigint,
   boolean,
   func,
-  list,
   literal,
   number,
   object,
@@ -18,6 +22,7 @@ export {
 } from "./cores.ts";
 export {
   empty,
+  list,
   maximum,
   maxSize,
   minimum,

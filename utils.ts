@@ -10,7 +10,7 @@ export function constructorName(value: unknown): string {
   return String(value);
 }
 
-export class Construct<In, Out> implements Struct<In, Out> {
+export class Construct<In, Out extends In> implements Struct<In, Out> {
   #name: string;
 
   constructor(

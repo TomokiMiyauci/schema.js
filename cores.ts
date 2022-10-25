@@ -190,21 +190,6 @@ export function object(structMap?: StructMap): Struct<unknown, object> {
   return Object.assign(check, { definition: structMap });
 }
 
-export function list<S>(struct: Struct<unknown, S>): Struct<unknown, S[]> {
-  return new Construct("list", function* (input) {
-    if (!Array.isArray(input)) {
-      return yield { message: formatActExp("Array", constructorName(input)) };
-    }
-
-    for (const key in input) {
-      for (const { message, paths: _ = [] } of struct.check(input[key])) {
-        const paths = [key].concat(_);
-        yield { message, paths };
-      }
-    }
-  });
-}
-
 /** Create `any[]` data type struct.
  * @example
  * ```ts
@@ -219,31 +204,6 @@ export function array(): Struct<unknown, any[]> {
   return new Construct("array", function* (input) {
     if (!Array.isArray(input)) {
       return yield { message: formatActExp("Array", constructorName(input)) };
-    }
-  });
-}
-
-export function tuple<F, R extends readonly Struct<unknown>[]>(
-  structs: [Struct<F>, ...R],
-): Struct<unknown, [F, ...R]> {
-  return new Construct("tuple", function* (input) {
-    if (!Array.isArray(input)) {
-      return yield { message: formatActExp("Array", constructorName(input)) };
-    }
-
-    const length = Math.max(structs.length, input.length);
-
-    for (let i = 0; i < length; i++) {
-      const key = i.toString();
-
-      if (i in structs) {
-        for (const { message, paths: _ = [] } of structs[i].check(input[i])) {
-          const paths = [key].concat(_);
-          yield { message, paths };
-        }
-      } else {
-        yield { message: formatActExp("never", input[i]), paths: [key] };
-      }
     }
   });
 }

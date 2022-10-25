@@ -1,13 +1,16 @@
 import {
   empty,
+  list,
   maximum,
   maxSize,
   minimum,
   minSize,
   nonempty,
   pattern,
+  tuple,
 } from "./subsets.ts";
 import { assertEquals, describe, it } from "./dev_deps.ts";
+import { number, object, string } from "./cores.ts";
 
 describe("maximum", () => {
   it("should return issue when the input exceed max", () => {
@@ -97,5 +100,50 @@ describe("pattern", () => {
 
   it("should return empty list when the input match regexp", () => {
     assertEquals([...pattern(/t/).check("test")], []);
+  });
+});
+
+describe("list", () => {
+  it("should return issue when the input does not satisfy child struct", () => {
+    assertEquals([...list(string()).check([0, "", {}])], [
+      { message: "expected string, actual number", paths: ["0"] },
+      { message: "expected string, actual object", paths: ["2"] },
+    ]);
+  });
+
+  it("should return issue when the input does not satisfy nested child struct", () => {
+    assertEquals([...list(object({ a: string() })).check([0, "", {}])], [
+      { message: "expected object, actual number", paths: ["0"] },
+      { message: "expected object, actual string", paths: ["1"] },
+      { message: "property does not exist", paths: ["2", "a"] },
+    ]);
+  });
+
+  it("should return empty list when the input satisfy child struct", () => {
+    assertEquals([
+      ...list(string()).check(["", "a", "b"]),
+    ], []);
+  });
+});
+
+describe("tuple", () => {
+  it("should return issue when the input does not satisfy children struct", () => {
+    assertEquals([...tuple([string(), number()]).check([0, "", {}])], [
+      { message: "expected string, actual number", paths: ["0"] },
+      { message: "expected number, actual string", paths: ["1"] },
+      { message: "expected never, actual [object Object]", paths: ["2"] },
+    ]);
+  });
+
+  it("should return issue when the input does not satisfy nested children struct", () => {
+    assertEquals([...tuple([object({ a: string() })]).check([{}])], [
+      { message: "property does not exist", paths: ["0", "a"] },
+    ]);
+  });
+
+  it("should return empty list when the input satisfy children struct", () => {
+    assertEquals([
+      ...tuple([string(), number(), object()]).check(["", 0, {}]),
+    ], []);
   });
 });

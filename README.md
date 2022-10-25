@@ -315,6 +315,32 @@ assertEquals(is(pattern(/type/), "typescript", true);
 assertEquals(is(pattern(/type/), "javascript", false);
 ```
 
+#### list
+
+Create list struct. List is array subtype. Ensure that all elements are same
+type.
+
+```ts
+import { is, list, and, array, number, string } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+
+assertEquals(is(list(string()), ["typescript", "javascript"], true);
+assertEquals(is(and(array()).and(list(number())), [1, 2, 3] as unknown, true);
+```
+
+#### tuple
+
+Create tuple struct. Tuple is array subtype. Ensure that the position and type
+of the elements match.
+
+```ts
+import { is, tuple, and, array, number, string, object } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+
+assertEquals(is(tuple([[string(), number(), object()]), ["", 0, {}], true);
+assertEquals(is(and(array()).and(tuple([number(), number(), number()])), [1, 2, 3] as unknown, true);
+```
+
 ## Struct deep dive
 
 The essence of struct is to guarantee types and values. And you probably do

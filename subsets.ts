@@ -154,3 +154,59 @@ export function pattern(regexp: RegExp): Struct<string> {
     }
   });
 }
+
+/** Create list struct. List is array subtype. Ensure that all elements are same
+ * type.
+ * @param struct
+ * @example
+ * ```ts
+ * import { is, list, and, array, number, string } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * assertEquals(is(list(string()), ["typescript", "javascript"], true);
+ * assertEquals(is(and(array()).and(list(number())), [1, 2, 3] as unknown, true);
+ * ```
+ */
+export function list<S>(struct: Struct<unknown, S>): Struct<any[], S[]> {
+  return new Construct("list", function* (input) {
+    for (const key in input) {
+      for (const { message, paths: _ = [] } of struct.check(input[key])) {
+        const paths = [key].concat(_);
+        yield { message, paths };
+      }
+    }
+  });
+}
+
+/** Create tuple struct. Tuple is array subtype. Ensure that the position and type
+ * of the elements match.
+ * @param structs
+ * @example
+ * ```ts
+ * import { is, tuple, and, array, number, string, object } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts/mod.ts";
+ *
+ * assertEquals(is(tuple([[string(), number(), object()]), ["", 0, {}], true);
+ * assertEquals(is(and(array()).and(tuple([number(), number(), number()])), [1, 2, 3] as unknown, true);
+ * ```
+ */
+export function tuple<F, R extends readonly Struct<unknown>[]>(
+  structs: [Struct<unknown, F>, ...R],
+): Struct<any[], [F, ...R]> {
+  return new Construct("tuple", function* (input) {
+    const length = Math.max(structs.length, input.length);
+
+    for (let i = 0; i < length; i++) {
+      const key = i.toString();
+
+      if (i in structs) {
+        for (const { message, paths: _ = [] } of structs[i].check(input[i])) {
+          const paths = [key].concat(_);
+          yield { message, paths };
+        }
+      } else {
+        yield { message: formatActExp("never", input[i]), paths: [key] };
+      }
+    }
+  });
+}
