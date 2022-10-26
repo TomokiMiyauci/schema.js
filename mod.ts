@@ -16,14 +16,11 @@ export {
   instance,
   number,
   object,
-  omit,
-  partial,
-  pick,
-  record,
   string,
   symbol,
   value,
 } from "./structs/cores.ts";
+export { omit, partial, pick, record } from "./structs/utils.ts";
 export {
   empty,
   int,
