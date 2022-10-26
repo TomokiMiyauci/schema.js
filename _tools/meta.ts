@@ -8,7 +8,7 @@ export const makeOptions = (version: string): BuildOptions => ({
   outDir: "./npm",
   compilerOptions: { lib: ["es2022"] },
   package: {
-    name: "type-struct",
+    name: "@schemaland/typestruct",
     version,
     description:
       "Composable and checkable JavaScript(and TypeScript) data structure",
@@ -41,6 +41,9 @@ export const makeOptions = (version: string): BuildOptions => ({
     type: "module",
     devDependencies: {
       "@types/node": "^18",
+    },
+    publishConfig: {
+      access: "public",
     },
   },
   packageManager: "pnpm",
