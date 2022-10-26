@@ -269,3 +269,22 @@ export function tuple<F, R extends readonly Struct<unknown>[]>(
     }
   });
 }
+
+/** Create integer struct. Ensure the input is integer.
+ * @param message Custom issue message.
+ * @example
+ * ```ts
+ * import { int, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+ *
+ * assertEquals(is(int(), 1.0), true);
+ * assertEquals(is(int(), 1.1), false);
+ * ```
+ */
+export function int(message?: string): Struct<number> {
+  return new Construct("int", function* (input) {
+    if (!Number.isInteger(input)) {
+      yield { message: message ?? formatActExp("integer", input) };
+    }
+  });
+}

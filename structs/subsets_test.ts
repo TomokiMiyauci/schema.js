@@ -1,5 +1,6 @@
 import {
   empty,
+  int,
   list,
   maximum,
   maxSize,
@@ -208,5 +209,21 @@ describe("tuple", () => {
     assertEquals([
       ...tuple([string(), number(), object()]).check(["", 0, {}]),
     ], []);
+  });
+});
+
+describe("int", () => {
+  it("should return issue when the input is not integer", () => {
+    assertEquals([...int().check(1.1)], [{
+      message: "expected integer, actual 1.1",
+    }]);
+  });
+
+  it("message override", () => {
+    assertEquals([...int(MESSAGE).check(1.1)], [{ message: MESSAGE }]);
+  });
+
+  it("should return empty list when the input is integer", () => {
+    assertEquals([...int().check(1.0)], []);
   });
 });

@@ -26,6 +26,7 @@ export {
 } from "./structs/cores.ts";
 export {
   empty,
+  int,
   list,
   maximum,
   maxSize,

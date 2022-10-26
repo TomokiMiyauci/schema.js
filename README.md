@@ -538,6 +538,18 @@ assertEquals(is(Tuple, ["", 0, {}]), true);
 assertEquals(is(and(array()).and(Tuple), [1, 2, 3] as unknown), true);
 ```
 
+### int
+
+Create integer struct. Ensure the input is integer.
+
+```ts
+import { int, is } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+assertEquals(is(int(), 1.0), true);
+assertEquals(is(int(), 1.1), false);
+```
+
 ## Struct deep dive
 
 The essence of struct is to guarantee types and values. And you probably do
