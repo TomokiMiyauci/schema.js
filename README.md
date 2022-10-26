@@ -447,6 +447,18 @@ assertEquals(is(minSize(10), "typestruct"), true);
 assertEquals(is(minSize(10), new Array(5)), false);
 ```
 
+#### size
+
+Create size struct. Ensure the number of elements.
+
+```ts
+import { is, size } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+assertEquals(is(size(10), "typestruct"), true);
+assertEquals(is(size(1), new Set()), false);
+```
+
 #### empty
 
 Create empty struct. Empty means there are no elements.

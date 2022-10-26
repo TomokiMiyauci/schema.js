@@ -68,7 +68,7 @@ export function maxSize(
   message?: string,
 ): Struct<Iterable<unknown>> {
   return new Construct("maxSize", function* (input) {
-    const length = [...input].length;
+    const length = getSize(input);
     if (size < length) {
       yield {
         message: message ?? formatActExp(
@@ -97,13 +97,44 @@ export function minSize(
   message?: string,
 ): Struct<Iterable<unknown>> {
   return new Construct("minSize", function* (input) {
-    const length = [...input].length;
+    const length = getSize(input);
     if (size > length) {
       yield {
         message: message ?? formatActExp(
           `greater than or equal to ${formatPlural("element", size)}`,
           formatPlural("element", length),
         ),
+      };
+    }
+  });
+}
+
+/** Create size struct. Ensure the number of elements.
+ * @param size Element size.
+ * @param message Custom issue message.
+ * @example
+ * ```ts
+ * import { is, size } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+ *
+ * assertEquals(is(size(10), "typestruct"), true);
+ * assertEquals(is(size(1), new Set()), false);
+ * ```
+ */
+export function size(
+  size: number,
+  message?: string,
+): Struct<Iterable<unknown>> {
+  return new Construct("size", function* (input) {
+    const length = getSize(input);
+
+    if (size !== length) {
+      yield {
+        message: message ??
+          formatActExp(
+            formatPlural("element", size),
+            formatPlural("element", length),
+          ),
       };
     }
   });

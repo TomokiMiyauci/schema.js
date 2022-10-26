@@ -33,6 +33,7 @@ export {
   minSize,
   nonempty,
   pattern,
+  size,
   tuple,
 } from "./structs/subsets.ts";
 export { assert, is, validate, type ValidateResult } from "./checks.ts";

@@ -7,6 +7,7 @@ import {
   minSize,
   nonempty,
   pattern,
+  size,
   tuple,
 } from "./subsets.ts";
 import { assertEquals, describe, it } from "../dev_deps.ts";
@@ -80,6 +81,22 @@ describe("minSize", () => {
     assertEquals([...minSize(5, MESSAGE).check("a".repeat(4))], [{
       message: MESSAGE,
     }]);
+  });
+});
+
+describe("size", () => {
+  it("should return issue when the input element size does not equal to definition", () => {
+    assertEquals([...size(1).check("")], [{
+      message: "expected 1 element, actual 0 element",
+    }]);
+  });
+
+  it("message override", () => {
+    assertEquals([...size(1, MESSAGE).check("")], [{ message: MESSAGE }]);
+  });
+
+  it("should return empty list when the input element size equal to definition", () => {
+    assertEquals([...size(2).check([1, 2])], []);
   });
 });
 
