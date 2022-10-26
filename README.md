@@ -677,6 +677,50 @@ In this way, you can compose type-safe.
 All APIs can be found in the
 [deno doc](https://doc.deno.land/https/deno.land/x/typestruct/mod.ts).
 
+## Bundle size
+
+The bundle size adapted to tree-shaking with ESbuild is as follows:
+
+<!-- start-bundle-size -->
+
+| Module      | Size                                                                                                                           |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| *           | ![*](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts)                                       |
+| StructError | ![StructError](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7BStructError%7D) |
+| and         | ![and](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Band%7D)                 |
+| array       | ![array](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Barray%7D)             |
+| assert      | ![assert](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bassert%7D)           |
+| bigint      | ![bigint](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bbigint%7D)           |
+| boolean     | ![boolean](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bboolean%7D)         |
+| empty       | ![empty](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bempty%7D)             |
+| func        | ![func](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bfunc%7D)               |
+| instance    | ![instance](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Binstance%7D)       |
+| int         | ![int](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bint%7D)                 |
+| is          | ![is](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bis%7D)                   |
+| list        | ![list](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Blist%7D)               |
+| maxSize     | ![maxSize](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7BmaxSize%7D)         |
+| maximum     | ![maximum](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bmaximum%7D)         |
+| minSize     | ![minSize](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7BminSize%7D)         |
+| minimum     | ![minimum](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bminimum%7D)         |
+| nonempty    | ![nonempty](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bnonempty%7D)       |
+| not         | ![not](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bnot%7D)                 |
+| number      | ![number](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bnumber%7D)           |
+| object      | ![object](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bobject%7D)           |
+| omit        | ![omit](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bomit%7D)               |
+| or          | ![or](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bor%7D)                   |
+| partial     | ![partial](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bpartial%7D)         |
+| pattern     | ![pattern](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bpattern%7D)         |
+| pick        | ![pick](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bpick%7D)               |
+| record      | ![record](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Brecord%7D)           |
+| size        | ![size](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bsize%7D)               |
+| string      | ![string](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bstring%7D)           |
+| symbol      | ![symbol](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bsymbol%7D)           |
+| tuple       | ![tuple](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Btuple%7D)             |
+| validate    | ![validate](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bvalidate%7D)       |
+| value       | ![value](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bvalue%7D)             |
+
+<!-- end-bundle-size -->
+
 ## License
 
 Copyright © 2022-present [Tomoki Miyauchi](https://github.com/TomkiMiyauci).
