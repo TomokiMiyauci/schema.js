@@ -1,3 +1,16 @@
+# [1.0.0-beta.2](https://github.com/TomokiMiyauci/typestruct/compare/1.0.0-beta.1...1.0.0-beta.2) (2022-10-26)
+
+
+### Features
+
+* **checks:** change `is` function interface ([dbf3006](https://github.com/TomokiMiyauci/typestruct/commit/dbf30060ba2b5a77ec662125cb6287a4f84b2a81))
+* **cores:** add custom message interface to `object` factory ([3ede273](https://github.com/TomokiMiyauci/typestruct/commit/3ede27392b480ce1bf2b99009437544948ac3d88))
+* improve array types ([95b1d83](https://github.com/TomokiMiyauci/typestruct/commit/95b1d838340ef2c77a56ff3f998eef7a87afd68d))
+* **operators:** add `not` struct factory that invert struct result ([a7f46e6](https://github.com/TomokiMiyauci/typestruct/commit/a7f46e6eed38843e62a44153ef900297071a56c5))
+* **subsets:** add `int` struct factory for interger ([4e75de9](https://github.com/TomokiMiyauci/typestruct/commit/4e75de9cd89dc62154791c37d2c447675516ad27))
+* **subsets:** add `size` struct factory that ensure element size ([d151653](https://github.com/TomokiMiyauci/typestruct/commit/d151653e5201a4c0b6ce2ad5a5f050e63d5c735e))
+* **types:** change struct interface ([7b6b9ee](https://github.com/TomokiMiyauci/typestruct/commit/7b6b9eee12d4d6df9a40c8f1eec3eb413932a088))
+
 # 1.0.0-beta.1 (2022-10-26)
 
 
