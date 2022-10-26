@@ -1,21 +1,17 @@
 // Copyright 2022-latest Tomoki Miyauchi. All rights reserved. MIT license.
 // This module is browser compatible.
 
-import { isNullable } from "https://deno.land/x/isx@1.0.0-beta.22/mod.ts";
 export {
   isBigint,
   isBoolean,
   isFunction,
+  isNonNullable,
   isNumber,
   isObject,
   isString,
   isSymbol,
-} from "https://deno.land/x/isx@1.0.0-beta.22/mod.ts";
+} from "https://deno.land/x/isx@1.0.0-beta.23/mod.ts";
 export { prop } from "https://deno.land/x/prelude_js@1.0.0-beta.3/mod.ts";
-
-export function isNonNullable(value: unknown): value is {} {
-  return !isNullable(value);
-}
 
 /** Create iterator from iterable object. */
 export function iter<T>(iterable: Iterable<T>): Iterator<T> {

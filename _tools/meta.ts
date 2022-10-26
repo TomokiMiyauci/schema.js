@@ -45,9 +45,9 @@ export const makeOptions = (version: string): BuildOptions => ({
   },
   packageManager: "pnpm",
   mappings: {
-    "https://deno.land/x/isx@1.0.0-beta.22/mod.ts": {
+    "https://deno.land/x/isx@1.0.0-beta.23/mod.ts": {
       name: "isxx",
-      version: "1.0.0-beta.22",
+      version: "1.0.0-beta.23",
     },
   },
 });
