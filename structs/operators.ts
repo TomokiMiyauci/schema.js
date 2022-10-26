@@ -3,7 +3,7 @@
 
 import { Checkable, Issue, Struct, type } from "../types.ts";
 import { formatActExp } from "../utils.ts";
-import { IsTopType, iter, PartialBy, prop } from "../deps.ts";
+import { IsTopType, iter, PartialBy } from "../deps.ts";
 
 /** Union type API. */
 export interface Union<In, Out extends In> {
@@ -51,11 +51,11 @@ export function or<In, Out extends In>(
         if (!issues.length) return;
       }
 
-      yield { message: formatActExp(this[Symbol.toStringTag], input) };
+      yield { message: formatActExp(this.toString(), input) };
     }
 
-    get [Symbol.toStringTag](): string {
-      const name = this.structs.map(prop(Symbol.toStringTag)).join(" | ");
+    toString(): string {
+      const name = this.structs.join(" | ");
       return `(${name})`;
     }
 
@@ -111,8 +111,8 @@ export function and<In, Out extends In>(
       }
     }
 
-    get [Symbol.toStringTag](): string {
-      const name = this.structs.map(prop(Symbol.toStringTag)).join(" & ");
+    toString(): string {
+      const name = this.structs.join(" & ");
       return `(${name})`;
     }
 

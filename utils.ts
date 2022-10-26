@@ -23,11 +23,11 @@ export class Construct<In, Out extends In> implements Struct<In, Out> {
     this.#name = name;
   }
 
-  public get [Symbol.toStringTag](): string {
+  declare [type]: Out;
+
+  toString(): string {
     return this.#name;
   }
-
-  declare [type]: Out;
 }
 
 export function formatActExp(expected: unknown, actual: unknown): string {

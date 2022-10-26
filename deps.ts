@@ -11,7 +11,6 @@ export {
   isString,
   isSymbol,
 } from "https://deno.land/x/isx@1.0.0-beta.23/mod.ts";
-export { prop } from "https://deno.land/x/prelude_js@1.0.0-beta.3/mod.ts";
 
 /** Create iterator from iterable object. */
 export function iter<T>(iterable: Iterable<T>): Iterator<T> {

@@ -28,7 +28,7 @@ export interface Issue {
 }
 
 export interface Showable {
-  readonly [Symbol.toStringTag]: string;
+  readonly toString: () => string;
 }
 
 /** Dada struct API. */
