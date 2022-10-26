@@ -64,7 +64,6 @@ export function validate<In, Out extends In, T extends In>(
 /** Whether the input satisfies struct or not. With type guard, inputs are type inferred.
  * @param checkable The {@link Checkable} object.
  * @param input Input value.
- * @param options Check options.
  *
  * @example
  * ```ts
@@ -78,9 +77,8 @@ export function validate<In, Out extends In, T extends In>(
 export function is<In, Out extends In, T extends In>(
   checkable: Checkable<In, Out>,
   input: T,
-  options?: CheckOptions,
 ): input is Infer<Out> extends T ? Infer<Out> : T & Infer<Out> {
-  const result = validate(checkable, input as In, options);
+  const result = validate(checkable, input as In, { failFast: true });
 
   return result.valid;
 }
