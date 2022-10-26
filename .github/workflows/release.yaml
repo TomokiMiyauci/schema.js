@@ -17,7 +17,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - uses: denoland/setup-deno@v1
         with:
@@ -38,7 +38,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - uses: denoland/setup-deno@v1
         with:
@@ -48,33 +48,14 @@ jobs:
         run: deno task test --coverage=coverage
 
       - name: Generate coverage
-        run: deno task coverage coverage --output=cov_profile.lcov --lcov
+        run: deno coverage coverage --output=cov_profile.lcov --lcov
 
-      - uses: codecov/codecov-action@v2
+      - uses: codecov/codecov-action@v3
         with:
           files: cov_profile.lcov
 
-  bench:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        deno: [v1.x]
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: ${{ matrix.deno }}
-
-      - name: Benchmark
-        run: deno bench --unstable
-
   release:
-    needs: [lint, test, bench]
+    needs: [lint, test]
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -83,7 +64,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - uses: cycjimmy/semantic-release-action@v3
         with:

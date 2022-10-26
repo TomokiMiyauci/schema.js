@@ -12,11 +12,11 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         deno: [v1.x]
-        node: [16.x]
+        node: [18.x]
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - uses: denoland/setup-deno@v1
         with:

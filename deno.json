@@ -1,7 +1,6 @@
 {
   "tasks": {
-    "test": "deno test --doc",
-    "coverage": "deno coverage"
+    "test": "deno test --doc"
   },
   "fmt": {
     "files": {
