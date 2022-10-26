@@ -158,7 +158,9 @@ export function value<
   });
 }
 
-/** Create `object` data type struct. Treat `null` as not an `object`.
+/** Create object literal struct. Additional properties will ignore.
+ * @param structMap Struct map.
+ * @param message Custom issue message.
  * @example
  * ```ts
  * import {
@@ -168,9 +170,15 @@ export function value<
  * } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
  * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
  *
- * assertEquals(is(object(), {}), true);
+ * const Book = object({
+ *   title: string(),
+ *   postBy: object({
+ *     name: string(),
+ *   }),
+ * });
+ *
  * assertEquals(
- *   is(object({ title: string(), postBy: object({ name: string() }) }), {
+ *   is(Book, {
  *     title: "Diary of Anne Frank",
  *     postBy: { name: "Anne Frank" },
  *   }),
@@ -180,14 +188,35 @@ export function value<
  */
 export function object<S extends StructMap>(
   structMap: S,
+  message?: string,
 ): Struct<unknown, S & Record<PropertyKey, unknown>> & Definable<S>;
-export function object(): Struct<unknown, object>;
-export function object(structMap?: StructMap): Struct<unknown, object> {
+/** Create `object` data type struct. Treat `null` as not an `object`.
+ * @param message Custom issue message.
+ * @example
+ * ```ts
+ * import { is, object } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+ *
+ * assertEquals(is(object(), {}), true);
+ * assertEquals(is(object(), null), false);
+ * ```
+ */
+export function object(message?: string): Struct<unknown, object>;
+export function object(
+  structMapOrMessage?: StructMap | string,
+  message?: string,
+): Struct<unknown, object> {
+  const structMap = isObject(structMapOrMessage) ? structMapOrMessage : {};
+  message = message ??
+    (isString(structMapOrMessage) ? structMapOrMessage : undefined);
+
   const check = new Construct<unknown, StructMap>(
     "object",
     function* (input) {
       if (!isObject(input)) {
-        return yield { message: formatActExp("object", formatType(input)) };
+        return yield {
+          message: message ?? formatActExp("object", formatType(input)),
+        };
       }
 
       // in operator will improve type inference in TypeScript v4.9

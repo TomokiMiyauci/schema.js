@@ -223,6 +223,16 @@ assertEquals(is(value(null), undefined), false);
 Create `object` data type struct. Treat `null` as not an `object`.
 
 ```ts
+import { is, object } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+assertEquals(is(object(), {}), true);
+assertEquals(is(object(), null), false);
+```
+
+Create object literal struct. Additional properties will ignore.
+
+```ts
 import {
   is,
   object,
@@ -230,9 +240,15 @@ import {
 } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
 import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
 
-assertEquals(is(object(), {}), true);
+const Book = object({
+  title: string(),
+  postBy: object({
+    name: string(),
+  }),
+});
+
 assertEquals(
-  is(object({ title: string(), postBy: object({ name: string() }) }), {
+  is(Book, {
     title: "Diary of Anne Frank",
     postBy: { name: "Anne Frank" },
   }),

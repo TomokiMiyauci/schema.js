@@ -170,6 +170,16 @@ describe("object", () => {
   it("should return empty list when input type is object", () => {
     assertEquals([...object().check(new Object())], []);
   });
+
+  it("message override for plain", () => {
+    assertEquals([...object(MESSAGE).check("")], [{ message: MESSAGE }]);
+  });
+
+  it("message override for record", () => {
+    assertEquals([...object({}, MESSAGE).check("")], [{
+      message: MESSAGE,
+    }]);
+  });
 });
 
 describe("array", () => {
