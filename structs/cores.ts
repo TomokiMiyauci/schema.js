@@ -216,7 +216,7 @@ export function object(structMap?: StructMap): Struct<unknown, object> {
  * assertEquals(is(array(), {}), false);
  * ```
  */
-export function array(message?: string): Struct<unknown, any[]> {
+export function array(message?: string): Struct<unknown, unknown[]> {
   return new Construct("array", function* (input) {
     if (!Array.isArray(input)) {
       return yield {

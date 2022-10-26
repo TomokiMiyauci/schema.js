@@ -186,7 +186,9 @@ export function pattern(regexp: RegExp, message?: string): Struct<string> {
  * assertEquals(is(and(array()).and(list(number())), [1, 2, 3]), true);
  * ```
  */
-export function list<S>(struct: Struct<unknown, S>): Struct<any[], S[]> {
+export function list<S>(
+  struct: Struct<unknown, S>,
+): Struct<readonly unknown[], S[]> {
   return new Construct("list", function* (input) {
     for (const key in input) {
       for (const { message, paths: _ = [] } of struct.check(input[key])) {
@@ -215,7 +217,7 @@ export function list<S>(struct: Struct<unknown, S>): Struct<any[], S[]> {
 export function tuple<F, R extends readonly Struct<unknown>[]>(
   structs: [Struct<unknown, F>, ...R],
   message?: string,
-): Struct<any[], [F, ...R]> {
+): Struct<readonly unknown[], [F, ...R]> {
   return new Construct("tuple", function* (input) {
     const length = Math.max(structs.length, input.length);
 
