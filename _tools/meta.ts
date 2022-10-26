@@ -1,41 +1,53 @@
-import { BuildOptions } from "https://deno.land/x/dnt@0.30.0/mod.ts";
+import { BuildOptions } from "https://deno.land/x/dnt@0.31.0/mod.ts";
 
 export const makeOptions = (version: string): BuildOptions => ({
   test: false,
   shims: {},
-  compilerOptions: {
-    lib: ["es2022", "dom"],
-  },
   typeCheck: true,
   entryPoints: ["./mod.ts"],
   outDir: "./npm",
+  compilerOptions: { lib: ["es2022"] },
   package: {
-    name: "@schemaland/schema-js",
+    name: "type-struct",
     version,
-    description: "Universal, tiny schema for JavaScript data types",
+    description:
+      "Composable and checkable JavaScript(and TypeScript) data structure",
     keywords: [
-      "schema",
+      "struct",
+      "structure",
+      "check",
+      "checker",
       "validate",
       "validator",
-      "validation",
       "assert",
       "assertion",
-      "javascript",
+      "is",
+      "data",
+      "valid",
+      "invalid",
+      "error",
+      "schema",
     ],
     license: "MIT",
-    homepage: "https://github.com/schemaland/schema.js",
+    homepage: "https://github.com/TomokiMiyauci/typestruct",
     repository: {
       type: "git",
-      url: "git+https://github.com/schemaland/schema.js.git",
+      url: "git+https://github.com/TomokiMiyauci/typestruct.git",
     },
     bugs: {
-      url: "https://github.com/schemaland/schema.js/issues",
+      url: "https://github.com/TomokiMiyauci/typestruct/issues",
     },
     sideEffects: false,
     type: "module",
-    publishConfig: {
-      access: "public",
+    devDependencies: {
+      "@types/node": "^18",
     },
   },
   packageManager: "pnpm",
+  mappings: {
+    "https://deno.land/x/isx@1.0.0-beta.22/mod.ts": {
+      name: "isxx",
+      version: "1.0.0-beta.22",
+    },
+  },
 });

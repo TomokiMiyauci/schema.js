@@ -1,16 +1,9 @@
-<div align="center">
-
 # typestruct
 
-<img alt="logo icon" src="./_medias/logo.png" width="180px" height="180px">
+Composable and checkable JavaScript (and TypeScript) data structure.
 
-Composable and checkable JavaScript(and TypeScript) data structure.
-
-[![deno land](http://img.shields.io/badge/available%20on-deno.land/x-lightgrey.svg?logo=deno)](https://deno.land/x/schema_js)
-[![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/schema_js/mod.ts)
-[![codecov](https://codecov.io/gh/schemaland/schema.js/branch/beta/graph/badge.svg?token=nHsoT44zg6)](https://codecov.io/gh/schemaland/schema.js)
-
-</div>
+[![deno land](http://img.shields.io/badge/available%20on-deno.land/x-lightgrey.svg?logo=deno)](https://deno.land/x/typestruct)
+[![deno doc](https://doc.deno.land/badge.svg)](https://doc.deno.land/https/deno.land/x/typestruct/mod.ts)
 
 ## Basic usage
 
@@ -625,18 +618,7 @@ In this way, you can compose type-safe.
 ## API
 
 All APIs can be found in the
-[deno doc](https://doc.deno.land/https/deno.land/x/schema_js/mod.ts).
-
-## Performance
-
-Benchmark script with comparison to several popular schema library is available.
-
-```bash
-deno bench --unstable
-```
-
-You can check the
-[benchmark](https://github.com/schemaland/schema.js/runs/7979671007?check_suite_focus=true#step:4:26).
+[deno doc](https://doc.deno.land/https/deno.land/x/typestruct/mod.ts).
 
 ## License
 
