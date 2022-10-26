@@ -395,6 +395,23 @@ assertEquals(is(StrOrNum, 0), true);
 assertEquals(is(StrOrNum, {}), false);
 ```
 
+#### not
+
+Create Inversion struct. Ensure the structure is not satisfied.
+
+```ts
+import {
+  is,
+  not,
+  string,
+} from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+const NotString = not(string());
+assertEquals(is(NotString, 0), true);
+assertEquals(is(NotString, "typestruct"), false);
+```
+
 ### Sub Struct
 
 Sub struct refers to a struct whose input type is other than Top-type.

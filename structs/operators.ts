@@ -2,7 +2,7 @@
 // This module is browser compatible.
 
 import { Checkable, Issue, Struct, type } from "../types.ts";
-import { formatActExp } from "../utils.ts";
+import { Construct, formatActExp } from "../utils.ts";
 import { IsTopType, iter, PartialBy } from "../deps.ts";
 
 /** Union type API. */
@@ -120,4 +120,34 @@ export function and<In, Out extends In>(
   }
 
   return new IntersectionStruct<In, Out>([struct]);
+}
+
+/** Create inversion struct. Ensure the structure is not satisfied.
+ * @param struct Any struct.
+ * @param message Custom issue message.
+ * @example
+ * ```ts
+ * import {
+ *   is,
+ *   not,
+ *   string,
+ * } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+ *
+ * const NotString = not(string());
+ * assertEquals(is(NotString, 0), true);
+ * assertEquals(is(NotString, "typestruct"), false);
+ * ```
+ */
+export function not<In, Out extends In>(
+  struct: Struct<In, Out>,
+  message?: string,
+): Struct<In, Out> {
+  return new Construct(`not(${struct})`, function* (input) {
+    const valid = !([...struct.check(input)].length);
+
+    if (valid) {
+      yield { message: message ?? formatActExp(`not ${struct}`, input) };
+    }
+  });
 }

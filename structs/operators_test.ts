@@ -1,7 +1,9 @@
-import { and, or } from "./operators.ts";
+import { and, not, or } from "./operators.ts";
 import { number, string } from "./cores.ts";
 import { maxSize, minSize } from "./subsets.ts";
 import { assertEquals, describe, it } from "../dev_deps.ts";
+
+const MESSAGE = "custom message";
 
 describe("and", () => {
   it("should return issue when input does not satisfy structs", () => {
@@ -22,7 +24,7 @@ describe("and", () => {
   it("should return name", () => {
     const Str5To10 = and(string()).and(maxSize(10)).and(minSize(5));
 
-    assertEquals(Str5To10[Symbol.toStringTag], `(string & maxSize & minSize)`);
+    assertEquals(Str5To10.toString(), `(string & maxSize & minSize)`);
   });
 });
 
@@ -44,12 +46,28 @@ describe("or", () => {
   it("should return string", () => {
     const Or = or(string()).or(number());
 
-    assertEquals(Or[Symbol.toStringTag], `(string | number)`);
+    assertEquals(Or.toString(), `(string | number)`);
   });
 
   it("should return empty list when input satisfy struct", () => {
     const Or = or(string()).or(number());
 
     assertEquals([...Or.check("")], []);
+  });
+});
+
+describe("not", () => {
+  it("should return issue when input satisfy struct", () => {
+    assertEquals([...not(string()).check("")], [{
+      message: "expected not string, actual ",
+    }]);
+  });
+
+  it("message override", () => {
+    assertEquals([...not(string(), MESSAGE).check("")], [{ message: MESSAGE }]);
+  });
+
+  it("should return empty list when input does not satisfy struct", () => {
+    assertEquals([...not(string()).check(0)], []);
   });
 });
