@@ -39,12 +39,6 @@ export type Infer<T> = IsTopType<T> extends true ? T
   : T extends Checkable<infer U, infer U> ? Infer<U>
   : { [k in keyof T]: Infer<T[k]> };
 
-/** Struct check options. */
-export interface CheckOptions {
-  /** Stop after first failure. */
-  readonly failFast?: boolean;
-}
-
 export interface StructMap {
   readonly [k: string]: Struct<unknown>;
 }

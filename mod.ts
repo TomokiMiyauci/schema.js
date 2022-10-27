@@ -2,12 +2,7 @@
 // This module is browser compatible.
 
 export { StructError } from "./error.ts";
-export {
-  type CheckOptions,
-  type Infer,
-  type Showable,
-  type Struct,
-} from "./types.ts";
+export { type Infer, type Showable, type Struct } from "./types.ts";
 export {
   array,
   bigint,
@@ -36,7 +31,13 @@ export {
   tuple,
   validDate,
 } from "./structs/subsets.ts";
-export { assert, is, validate, type ValidateResult } from "./checks.ts";
+export {
+  assert,
+  type CheckOptions,
+  is,
+  validate,
+  type ValidateResult,
+} from "./checks.ts";
 export {
   and,
   type Intersection,

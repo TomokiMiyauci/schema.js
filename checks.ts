@@ -1,7 +1,7 @@
 // Copyright 2022-latest Tomoki Miyauchi. All rights reserved. MIT license.
 // This module is browser compatible.
 
-import { Checkable, CheckOptions, Infer, Issue } from "./types.ts";
+import { Checkable, Infer, Issue } from "./types.ts";
 import { StructError } from "./error.ts";
 import { formatPlural } from "./utils.ts";
 import { iter, PartialBy } from "./deps.ts";
@@ -20,6 +20,12 @@ export type ValidateResult<T> = {
   /** Data structure issues. */
   errors: Issue[];
 };
+
+/** Struct check options. */
+export interface CheckOptions {
+  /** Stop after first failure. */
+  readonly failFast?: boolean;
+}
 
 /** Returns the checking result. If input satisfies struct, the `valid` field is
  * `true` and returns an object with type-inferred `data`. Otherwise, the `valid`
