@@ -17,7 +17,7 @@ import { getSize, isValidDate } from "../deps.ts";
  * assertEquals(is(maximum(5), 6), false);
  * ```
  */
-export function maximum(threshold: number, message?: string): Struct<number> {
+export function maximum<T>(threshold: T, message?: string): Struct<T> {
   return new Construct("maximum", function* (input) {
     if (threshold < input) {
       yield {
@@ -40,7 +40,7 @@ export function maximum(threshold: number, message?: string): Struct<number> {
  * assertEquals(is(minimum(5), 4), false);
  * ```
  */
-export function minimum(threshold: number, message?: string): Struct<number> {
+export function minimum<T>(threshold: T, message?: string): Struct<T> {
   return new Construct("minimum", function* (input) {
     if (threshold > input) {
       yield {

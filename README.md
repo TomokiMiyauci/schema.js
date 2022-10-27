@@ -444,6 +444,19 @@ assertEquals(is(maximum(5), 5), true);
 assertEquals(is(maximum(5), 6), false);
 ```
 
+Any type can be defined as a threshold. Internally, they are compared by
+comparison operators.
+
+```ts
+import { is, maximum } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+assertEquals(
+  is(maximum(new Date("2022-12-31")), new Date("2023-01-01")),
+  false,
+);
+```
+
 #### minimum
 
 Create minimum struct. Ensure the input grater than or equal to threshold.
@@ -454,6 +467,19 @@ import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts"
 
 assertEquals(is(minimum(5), 5), true);
 assertEquals(is(minimum(5), 4), false);
+```
+
+Any type can be defined as a threshold. Internally, they are compared by
+comparison operators.
+
+```ts
+import { is, minimum } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+assertEquals(
+  is(minimum(new Date("2000-01-01")), new Date("1999-12-31")),
+  false,
+);
 ```
 
 #### maxSize
