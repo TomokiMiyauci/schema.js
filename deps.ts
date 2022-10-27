@@ -8,6 +8,7 @@ export {
   isNonNullable,
   isNumber,
   isObject,
+  isPositiveNumber,
   isString,
   isSymbol,
   isValidDate,

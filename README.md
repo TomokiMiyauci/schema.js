@@ -609,6 +609,19 @@ assertEquals(is(int(), 1.0), true);
 assertEquals(is(int(), 1.1), false);
 ```
 
+### positive
+
+Create positive number struct. Ensure the input is positive number. Positive
+number means a number greater than zero.
+
+```ts
+import { is, positive } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+assertEquals(is(positive(), 0.1), true);
+assertEquals(is(positive(), 0), false);
+```
+
 ### validDate
 
 Create valid date struct. Ensure the input is valid date (non `NaN`) format.
@@ -749,6 +762,7 @@ The bundle size adapted to tree-shaking with ESbuild is as follows:
 | [partial](#partial)         | ![partial](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bpartial%7D)         |
 | [pattern](#pattern)         | ![pattern](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bpattern%7D)         |
 | [pick](#pick)               | ![pick](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bpick%7D)               |
+| [positive](#positive)       | ![positive](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bpositive%7D)       |
 | [record](#record)           | ![record](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Brecord%7D)           |
 | [size](#size)               | ![size](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bsize%7D)               |
 | [string](#string)           | ![string](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bstring%7D)           |

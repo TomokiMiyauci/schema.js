@@ -31,6 +31,7 @@ export {
   minSize,
   nonempty,
   pattern,
+  positive,
   size,
   tuple,
   validDate,

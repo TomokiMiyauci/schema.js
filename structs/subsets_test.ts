@@ -8,6 +8,7 @@ import {
   minSize,
   nonempty,
   pattern,
+  positive,
   size,
   tuple,
   validDate,
@@ -226,6 +227,22 @@ describe("int", () => {
 
   it("should return empty list when the input is integer", () => {
     assertEquals([...int().check(1.0)], []);
+  });
+});
+
+describe("positive", () => {
+  it("should return issue when the input is not positive number", () => {
+    assertEquals([...positive().check(0)], [{
+      message: "expected positive number, actual 0",
+    }]);
+  });
+
+  it("message override", () => {
+    assertEquals([...positive(MESSAGE).check(0)], [{ message: MESSAGE }]);
+  });
+
+  it("should return empty list when the input is positive number", () => {
+    assertEquals([...positive().check(0.1)], []);
   });
 });
 
