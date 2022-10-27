@@ -3,7 +3,7 @@
 
 import { Construct, formatActExp, formatPlural } from "../utils.ts";
 import { Struct } from "../types.ts";
-import { getSize } from "../deps.ts";
+import { getSize, isValidDate } from "../deps.ts";
 
 /** Create maximum struct. Ensure the input less than or equal to threshold.
  * @param threshold
@@ -285,6 +285,25 @@ export function int(message?: string): Struct<number> {
   return new Construct("int", function* (input) {
     if (!Number.isInteger(input)) {
       yield { message: message ?? formatActExp("integer", input) };
+    }
+  });
+}
+
+/** Create valid date struct. Ensure the input is valid date (non `NaN`) format.
+ * @param message Custom issue message.
+ * @example
+ * ```ts
+ * import { is, validDate } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+ *
+ * assertEquals(is(validDate(), new Date("2022-01-01")), true);
+ * assertEquals(is(validDate(), new Date("invalid date")), false);
+ * ```
+ */
+export function validDate(message?: string): Struct<Date> {
+  return new Construct("validDate", function* (input) {
+    if (!isValidDate(input)) {
+      yield { message: message ?? formatActExp("valid date", "invalid date") };
     }
   });
 }

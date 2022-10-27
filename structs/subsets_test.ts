@@ -10,6 +10,7 @@ import {
   pattern,
   size,
   tuple,
+  validDate,
 } from "./subsets.ts";
 import { assertEquals, describe, it } from "../dev_deps.ts";
 import { number, object, string } from "./cores.ts";
@@ -225,5 +226,23 @@ describe("int", () => {
 
   it("should return empty list when the input is integer", () => {
     assertEquals([...int().check(1.0)], []);
+  });
+});
+
+describe("validDate", () => {
+  it("should return issue when the input is not valid date", () => {
+    assertEquals([...validDate().check(new Date("invalid"))], [{
+      message: "expected valid date, actual invalid date",
+    }]);
+  });
+
+  it("message override", () => {
+    assertEquals([...validDate(MESSAGE).check(new Date("invalid"))], [{
+      message: MESSAGE,
+    }]);
+  });
+
+  it("should return empty list when the input is valid date", () => {
+    assertEquals([...validDate().check(new Date("2022-01-01"))], []);
   });
 });

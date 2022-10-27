@@ -33,6 +33,7 @@ export {
   pattern,
   size,
   tuple,
+  validDate,
 } from "./structs/subsets.ts";
 export { assert, is, validate, type ValidateResult } from "./checks.ts";
 export {

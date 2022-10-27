@@ -10,6 +10,7 @@ export {
   isObject,
   isString,
   isSymbol,
+  isValidDate,
 } from "https://deno.land/x/isx@1.0.0-beta.23/mod.ts";
 
 /** Create iterator from iterable object. */
