@@ -6,6 +6,7 @@ import {
   maxSize,
   minimum,
   minSize,
+  negative,
   nonempty,
   pattern,
   positive,
@@ -243,6 +244,22 @@ describe("positive", () => {
 
   it("should return empty list when the input is positive number", () => {
     assertEquals([...positive().check(0.1)], []);
+  });
+});
+
+describe("negative", () => {
+  it("should return issue when the input is not negative number", () => {
+    assertEquals([...negative().check(0)], [{
+      message: "expected negative number, actual 0",
+    }]);
+  });
+
+  it("message override", () => {
+    assertEquals([...negative(MESSAGE).check(0)], [{ message: MESSAGE }]);
+  });
+
+  it("should return empty list when the input is negative number", () => {
+    assertEquals([...negative().check(-0.1)], []);
   });
 });
 

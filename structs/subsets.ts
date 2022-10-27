@@ -3,8 +3,12 @@
 
 import { Construct, formatActExp, formatPlural } from "../utils.ts";
 import { Struct } from "../types.ts";
-import { getSize, isValidDate } from "../deps.ts";
-import { isPositiveNumber } from "https://deno.land/x/isx@1.0.0-beta.23/numbers.ts";
+import {
+  getSize,
+  isNegativeNumber,
+  isPositiveNumber,
+  isValidDate,
+} from "../deps.ts";
 
 /** Create maximum struct. Ensure the input less than or equal to threshold.
  * @param threshold
@@ -306,6 +310,26 @@ export function positive(message?: string): Struct<number> {
   return new Construct("positive", function* (input) {
     if (!isPositiveNumber(input)) {
       yield { message: message ?? formatActExp("positive number", input) };
+    }
+  });
+}
+
+/** Create negative number struct. Ensure the input is negative number.
+ * Negative number means a number less than zero.
+ * @param message Custom issue message.
+ * @example
+ * ```ts
+ * import { is, negative } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+ *
+ * assertEquals(is(negative(), -0.1), true);
+ * assertEquals(is(negative(), 0), false);
+ * ```
+ */
+export function negative(message?: string): Struct<number> {
+  return new Construct("negative", function* (input) {
+    if (!isNegativeNumber(input)) {
+      yield { message: message ?? formatActExp("negative number", input) };
     }
   });
 }

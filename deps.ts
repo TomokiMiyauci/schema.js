@@ -5,6 +5,7 @@ export {
   isBigint,
   isBoolean,
   isFunction,
+  isNegativeNumber,
   isNonNullable,
   isNumber,
   isObject,
