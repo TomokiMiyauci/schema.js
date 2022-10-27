@@ -2,7 +2,7 @@
 // This module is browser compatible.
 
 import { isNonNullable, PartialBy } from "./deps.ts";
-import { Issue, Struct, type } from "./types.ts";
+import { Issue, type Struct } from "./types.ts";
 
 /** Get constructor name.
  * When the value can not construct, return `"null"` or `"undefined"`.
@@ -23,7 +23,7 @@ export class Construct<In, Out extends In> implements Struct<In, Out> {
     this.#name = name;
   }
 
-  declare [type]: Out;
+  declare [Struct.type]: Out;
 
   toString(): string {
     return this.#name;

@@ -3,8 +3,12 @@
 
 import { IsTopType, PartialBy } from "./deps.ts";
 
-export const type = Symbol("type");
-export type type = typeof type;
+const Type = Symbol("Struct.type");
+
+export const Struct: {
+  /** Symbol for struct type. */
+  readonly type: typeof Type;
+} = { type: Type };
 
 /** Checkable API. */
 export interface Checkable<In, Out extends In> {
@@ -12,7 +16,7 @@ export interface Checkable<In, Out extends In> {
   readonly check: (input: In) => Iterable<PartialBy<Issue, "paths">>;
 
   /** Guaranteed input types. */
-  readonly [type]: Out;
+  readonly [Struct.type]: Out;
 }
 
 export interface Definable<S> {

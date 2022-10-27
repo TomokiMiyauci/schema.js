@@ -2,7 +2,7 @@
 // This module is browser compatible.
 
 export { StructError } from "./error.ts";
-export { type Infer, type Showable, type Struct } from "./types.ts";
+export { type Checkable, type Infer, type Showable, Struct } from "./types.ts";
 export {
   array,
   bigint,

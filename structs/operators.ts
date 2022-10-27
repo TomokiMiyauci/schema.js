@@ -1,7 +1,7 @@
 // Copyright 2022-latest Tomoki Miyauchi. All rights reserved. MIT license.
 // This module is browser compatible.
 
-import { Checkable, Issue, Struct, type } from "../types.ts";
+import { Checkable, Issue, Struct } from "../types.ts";
 import { Construct, formatActExp } from "../utils.ts";
 import { IsTopType, iter, PartialBy } from "../deps.ts";
 
@@ -59,7 +59,7 @@ export function or<In, Out extends In>(
       return `(${name})`;
     }
 
-    declare [type]: Out;
+    declare [Struct.type]: Out;
 
     or = <T extends In>(struct: Struct<In, T>): UnionStruct => {
       return new UnionStruct([...this.structs, struct]);
@@ -116,7 +116,7 @@ export function and<In, Out extends In>(
       return `(${name})`;
     }
 
-    declare [type]: Out;
+    declare [Struct.type]: Out;
   }
 
   return new IntersectionStruct<In, Out>([struct]);

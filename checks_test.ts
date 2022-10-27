@@ -1,6 +1,6 @@
 import { assert, is, validate } from "./checks.ts";
 import { StructError } from "./error.ts";
-import { type } from "./types.ts";
+import { Struct } from "./types.ts";
 import { assertEquals, assertThrows, describe, it } from "./dev_deps.ts";
 
 describe("is", () => {
@@ -10,7 +10,7 @@ describe("is", () => {
         check: function* () {
           yield { message: ``, paths: [] };
         },
-        [type]: "",
+        [Struct.type]: "",
       }, ""),
       false,
     );
@@ -20,7 +20,7 @@ describe("is", () => {
     assertEquals(
       is({
         check: function* () {},
-        [type]: "",
+        [Struct.type]: "",
       }, ""),
       true,
     );
@@ -35,7 +35,7 @@ describe("assert", () => {
           check: function* () {
             yield { message: ``, paths: [] };
           },
-          [type]: "",
+          [Struct.type]: "",
         }, new StructError([])),
     );
   });
@@ -44,7 +44,7 @@ describe("assert", () => {
     assertEquals(
       assert({
         check: function* () {},
-        [type]: "",
+        [Struct.type]: "",
       }, ""),
       undefined,
     );
@@ -58,7 +58,7 @@ describe("validate", () => {
         check: function* () {
           yield { message: `Invalid`, paths: [] };
         },
-        [type]: "",
+        [Struct.type]: "",
       }, ""),
       { valid: false, errors: [{ message: `Invalid`, paths: [] }] },
     );
@@ -72,7 +72,7 @@ describe("validate", () => {
           yield { message: `2`, paths: [] };
           yield { message: `3`, paths: [] };
         },
-        [type]: "",
+        [Struct.type]: "",
       }, ""),
       {
         valid: false,
@@ -93,7 +93,7 @@ describe("validate", () => {
             yield { message: `2`, paths: [] };
             yield { message: `3`, paths: [] };
           },
-          [type]: "",
+          [Struct.type]: "",
         },
         "",
         { failFast: true },
@@ -110,7 +110,7 @@ describe("validate", () => {
       validate(
         {
           check: function* () {},
-          [type]: "",
+          [Struct.type]: "",
         },
         "",
       ),
