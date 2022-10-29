@@ -3,14 +3,14 @@
 
 import { object, value } from "./cores.ts";
 import { or } from "./operators.ts";
-import { Definable, Struct, StructMap } from "../types.ts";
+import { Definable, Struct, StructMap, Wrapper } from "../types.ts";
 import {
   Construct,
   formatActExp,
   formatType,
   mergeIssuePaths,
 } from "../utils.ts";
-import { isObject, Writeable } from "../deps.ts";
+import { isNull, isObject, Writeable } from "../deps.ts";
 
 /** Create `Record` struct. Ensure the input is object, and keys and values satisfy
  * struct.
@@ -149,4 +149,46 @@ export function omit<S extends StructMap, K extends keyof S>(
   }
 
   return object(definition);
+}
+
+/** Create nullable struct. Add `null` tolerance to struct.
+ * @param struct Top type struct.
+ * @param message Custom issue message.
+ * @example
+ * ```ts
+ * import {
+ *   is,
+ *   nullable,
+ *   string,
+ * } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+ *
+ * const strOrNull = nullable(string());
+ *
+ * assertEquals(is(strOrNull, "typestruct"), true);
+ * assertEquals(is(strOrNull, null), true);
+ * assertEquals(is(strOrNull, undefined), false);
+ * ```
+ */
+export function nullable<Out, T>(
+  struct: Struct<unknown, Out> & T,
+  message?: string,
+): Struct<unknown, Out | null> & Wrapper<T> {
+  const name = `(${struct} | null)`;
+
+  class OrNull extends Construct<unknown, Out | null> implements Wrapper<T> {
+    unwrap(): T {
+      return struct;
+    }
+  }
+
+  return new OrNull(name, function* (input) {
+    if (isNull(input)) return;
+
+    const results = [...struct.check(input)];
+
+    if (!results.length) return;
+
+    yield { message: message ?? formatActExp(name, input) };
+  });
 }

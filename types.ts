@@ -23,6 +23,7 @@ export interface Definable<S> {
   readonly definition: S;
 }
 
+/** Issue API. */
 export interface Issue {
   /** Issue message. */
   readonly message: string;
@@ -31,7 +32,9 @@ export interface Issue {
   readonly paths: readonly string[];
 }
 
+/** String Convertible API. */
 export interface Showable {
+  /** overwrite`Object.prototype.string`. */
   readonly toString: () => string;
 }
 
@@ -45,4 +48,10 @@ export type Infer<T> = IsTopType<T> extends true ? T
 
 export interface StructMap {
   readonly [k: string]: Struct<unknown>;
+}
+
+/** Wrapper container API. */
+export interface Wrapper<T> {
+  /** Unwrap wrapper. */
+  unwrap: (this: Wrapper<T>) => T;
 }

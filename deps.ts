@@ -7,6 +7,7 @@ export {
   isFunction,
   isNegativeNumber,
   isNonNullable,
+  isNull,
   isNumber,
   isObject,
   isPositiveNumber,

@@ -2,7 +2,13 @@
 // This module is browser compatible.
 
 export { StructError } from "./error.ts";
-export { type Checkable, type Infer, type Showable, Struct } from "./types.ts";
+export {
+  type Checkable,
+  type Infer,
+  type Showable,
+  Struct,
+  type Wrapper,
+} from "./types.ts";
 export {
   array,
   bigint,
@@ -15,7 +21,7 @@ export {
   symbol,
   value,
 } from "./structs/cores.ts";
-export { omit, partial, pick, record } from "./structs/utils.ts";
+export { nullable, omit, partial, pick, record } from "./structs/utils.ts";
 export {
   empty,
   int,

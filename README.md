@@ -361,6 +361,25 @@ assertEquals(is(User, {}), false);
 assertEquals(is(partial(User), {}), true);
 ```
 
+#### nullable
+
+Create nullable struct. Add `null` tolerance to struct.
+
+```ts
+import {
+  is,
+  nullable,
+  string,
+} from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+const strOrNull = nullable(string());
+
+assertEquals(is(strOrNull, "typestruct"), true);
+assertEquals(is(strOrNull, null), true);
+assertEquals(is(strOrNull, undefined), false);
+```
+
 ### Operator Struct
 
 Logical operations for Struct.
@@ -762,6 +781,7 @@ The bundle size adapted to tree-shaking with ESbuild is as follows:
 | Module                      | Size                                                                                                                           |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | *                           | ![*](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts)                                       |
+| [Struct](#struct)           | ![Struct](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7BStruct%7D)           |
 | [StructError](#structerror) | ![StructError](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7BStructError%7D) |
 | [and](#and)                 | ![and](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Band%7D)                 |
 | [array](#array)             | ![array](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Barray%7D)             |
@@ -782,6 +802,7 @@ The bundle size adapted to tree-shaking with ESbuild is as follows:
 | [negative](#negative)       | ![negative](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bnegative%7D)       |
 | [nonempty](#nonempty)       | ![nonempty](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bnonempty%7D)       |
 | [not](#not)                 | ![not](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bnot%7D)                 |
+| [nullable](#nullable)       | ![nullable](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bnullable%7D)       |
 | [number](#number)           | ![number](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bnumber%7D)           |
 | [object](#object)           | ![object](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bobject%7D)           |
 | [omit](#omit)               | ![omit](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bomit%7D)               |
