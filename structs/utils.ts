@@ -9,6 +9,7 @@ import {
   formatActExp,
   formatType,
   mergeIssuePaths,
+  wrap,
 } from "../utils.ts";
 import { isNull, isObject, isUndefined, Writeable } from "../deps.ts";
 
@@ -170,27 +171,23 @@ export function omit<S extends StructMap, K extends keyof S>(
  * assertEquals(is(strOrNull, undefined), false);
  * ```
  */
-export function nullable<Out, T>(
+export function nullable<Out extends In, T>(
   struct: Struct<unknown, Out> & T,
   message?: string,
 ): Struct<unknown, Out | null> & Wrapper<T> {
   const name = `(${struct} | null)`;
 
-  class OrNull extends Construct<unknown, Out | null> implements Wrapper<T> {
-    unwrap(): T {
-      return struct;
-    }
-  }
-
-  return new OrNull(name, function* (input) {
+  const construct = new Construct<unknown, Out | null>(name, function* (input) {
     if (isNull(input)) return;
 
-    const results = [...struct.check(input)];
+    const issues = [...struct.check(input)];
 
-    if (!results.length) return;
+    if (!issues.length) return;
 
     yield { message: message ?? formatActExp(name, input) };
   });
+
+  return Object.assign(construct, wrap(struct as T));
 }
 
 /** Create optional struct. Add `undefined` tolerance to struct.
@@ -218,18 +215,18 @@ export function optional<Out, T>(
 ): Struct<unknown, Out | undefined> & Wrapper<T> {
   const name = `(${struct} | undefined)`;
 
-  class OrUndefined extends Construct<unknown, Out | undefined>
-    implements Wrapper<T> {
-    unwrap = (): T => struct;
-  }
+  const construct = new Construct<unknown, Out | undefined>(
+    name,
+    function* (input) {
+      if (isUndefined(input)) return;
 
-  return new OrUndefined(name, function* (input) {
-    if (isUndefined(input)) return;
+      const issues = [...struct.check(input)];
 
-    const issues = [...struct.check(input)];
+      if (!issues.length) return;
 
-    if (!issues.length) return;
+      yield { message: message ?? formatActExp(name, input) };
+    },
+  );
 
-    yield { message: message ?? formatActExp(name, input) };
-  });
+  return Object.assign(construct, wrap(struct as T));
 }

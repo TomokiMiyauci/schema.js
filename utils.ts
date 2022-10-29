@@ -2,7 +2,7 @@
 // This module is browser compatible.
 
 import { isNonNullable, PartialBy } from "./deps.ts";
-import { Issue, type Struct } from "./types.ts";
+import { Issue, type Struct, Wrapper } from "./types.ts";
 
 /** Get constructor name.
  * When the value can not construct, return `"null"` or `"undefined"`.
@@ -68,4 +68,12 @@ export function* mergeIssuePaths(
   for (const issue of issues) {
     yield { message: issue.message, paths: [...paths, ...issue.paths ?? []] };
   }
+}
+
+/** Create `Wrapper`.
+ * @param input Any input.
+ * @internal
+ */
+export function wrap<T>(input: T): Wrapper<T> {
+  return { unwrap: () => input };
 }
