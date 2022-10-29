@@ -314,6 +314,25 @@ export function positive(message?: string): Struct<number> {
   });
 }
 
+/** Create `NaN` struct. Ensure the input is `NaN`.
+ * @message Custom issue message.
+ * @example
+ * ```ts
+ * import { is, nan } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+ *
+ * assertEquals(is(nan(), NaN), true);
+ * assertEquals(is(nan(), 0), false);
+ * ```
+ */
+export function nan(message?: string): Struct<number> {
+  return new Construct("nan", function* (input) {
+    if (!Number.isNaN(input)) {
+      return yield { message: message ?? formatActExp(NaN, input) };
+    }
+  });
+}
+
 /** Create negative number struct. Ensure the input is negative number.
  * Negative number means a number less than zero.
  * @param message Custom issue message.

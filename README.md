@@ -635,6 +635,18 @@ assertEquals(is(negative(), -0.1), true);
 assertEquals(is(negative(), 0), false);
 ```
 
+### nan
+
+Create `NaN` struct. Ensure the input is `NaN`.
+
+```ts
+import { is, nan } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+assertEquals(is(nan(), NaN), true);
+assertEquals(is(nan(), 0), false);
+```
+
 ### validDate
 
 Create valid date struct. Ensure the input is valid date (non `NaN`) format.

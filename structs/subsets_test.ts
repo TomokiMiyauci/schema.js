@@ -6,6 +6,7 @@ import {
   maxSize,
   minimum,
   minSize,
+  nan,
   negative,
   nonempty,
   pattern,
@@ -260,6 +261,22 @@ describe("negative", () => {
 
   it("should return empty list when the input is negative number", () => {
     assertEquals([...negative().check(-0.1)], []);
+  });
+});
+
+describe("nan", () => {
+  it("should return issue when the input is not NaN", () => {
+    assertEquals([...nan().check(0)], [{
+      message: "expected NaN, actual 0",
+    }]);
+  });
+
+  it("message override", () => {
+    assertEquals([...nan(MESSAGE).check(0)], [{ message: MESSAGE }]);
+  });
+
+  it("should return empty list when the input is NaN", () => {
+    assertEquals([...nan().check(NaN)], []);
   });
 });
 

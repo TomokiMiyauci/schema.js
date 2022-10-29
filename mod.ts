@@ -24,6 +24,7 @@ export {
   maxSize,
   minimum,
   minSize,
+  nan,
   negative,
   nonempty,
   pattern,
