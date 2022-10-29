@@ -1,5 +1,5 @@
 import { number, object, string } from "./cores.ts";
-import { nullable, omit, partial, pick, record } from "./utils.ts";
+import { nullable, omit, optional, partial, pick, record } from "./utils.ts";
 import { assertEquals, describe, it } from "../dev_deps.ts";
 import { and } from "./operators.ts";
 import { pattern } from "./subsets.ts";
@@ -170,5 +170,40 @@ describe("nullable", () => {
 
     assertEquals([...strOrNull.check("")], []);
     assertEquals([...strOrNull.check(null)], []);
+  });
+});
+
+describe("optional", () => {
+  it("should return wrapped struct", () => {
+    const inner = string();
+
+    assertEquals(optional(inner).unwrap(), inner);
+    assertEquals(optional(inner).toString(), `(string | undefined)`);
+    assertEquals([...optional(inner).check("")], []);
+  });
+
+  it("should return nested wrapped struct", () => {
+    const inner = string();
+
+    assertEquals(optional(optional(inner)).unwrap().unwrap(), inner);
+  });
+
+  it("should return issue when input does not satisfy struct", () => {
+    assertEquals([...optional(string()).check(0)], [{
+      message: `expected (string | undefined), actual 0`,
+    }]);
+  });
+
+  it("message override", () => {
+    assertEquals([...optional(string(), MESSAGE).check(0)], [{
+      message: MESSAGE,
+    }]);
+  });
+
+  it("should return empty list when input satisfy struct", () => {
+    const strOrUndefined = optional(string());
+
+    assertEquals([...strOrUndefined.check("")], []);
+    assertEquals([...strOrUndefined.check(undefined)], []);
   });
 });

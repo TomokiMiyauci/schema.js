@@ -380,6 +380,25 @@ assertEquals(is(strOrNull, null), true);
 assertEquals(is(strOrNull, undefined), false);
 ```
 
+#### optional
+
+Create optional struct. Add `undefined` tolerance to struct.
+
+```ts
+import {
+  is,
+  optional,
+  string,
+} from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+const strOr = optional(string());
+
+assertEquals(is(strOr, "typestruct"), true);
+assertEquals(is(strOr, undefined), true);
+assertEquals(is(strOr, null), false);
+```
+
 ### Operator Struct
 
 Logical operations for Struct.
@@ -806,6 +825,7 @@ The bundle size adapted to tree-shaking with ESbuild is as follows:
 | [number](#number)           | ![number](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bnumber%7D)           |
 | [object](#object)           | ![object](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bobject%7D)           |
 | [omit](#omit)               | ![omit](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bomit%7D)               |
+| [optional](#optional)       | ![optional](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Boptional%7D)       |
 | [or](#or)                   | ![or](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bor%7D)                   |
 | [partial](#partial)         | ![partial](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bpartial%7D)         |
 | [pattern](#pattern)         | ![pattern](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bpattern%7D)         |

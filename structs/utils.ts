@@ -10,7 +10,7 @@ import {
   formatType,
   mergeIssuePaths,
 } from "../utils.ts";
-import { isNull, isObject, Writeable } from "../deps.ts";
+import { isNull, isObject, isUndefined, Writeable } from "../deps.ts";
 
 /** Create `Record` struct. Ensure the input is object, and keys and values satisfy
  * struct.
@@ -188,6 +188,47 @@ export function nullable<Out, T>(
     const results = [...struct.check(input)];
 
     if (!results.length) return;
+
+    yield { message: message ?? formatActExp(name, input) };
+  });
+}
+
+/** Create optional struct. Add `undefined` tolerance to struct.
+ * @param struct Top type struct.
+ * @param message Custom issue message.
+ * @example
+ * ```ts
+ * import {
+ *   is,
+ *   optional,
+ *   string,
+ * } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+ *
+ * const strOr = optional(string());
+ *
+ * assertEquals(is(strOr, "typestruct"), true);
+ * assertEquals(is(strOr, undefined), true);
+ * assertEquals(is(strOr, null), false);
+ * ```
+ */
+export function optional<Out, T>(
+  struct: Struct<unknown, Out> & T,
+  message?: string,
+): Struct<unknown, Out | undefined> & Wrapper<T> {
+  const name = `(${struct} | undefined)`;
+
+  class OrUndefined extends Construct<unknown, Out | undefined>
+    implements Wrapper<T> {
+    unwrap = (): T => struct;
+  }
+
+  return new OrUndefined(name, function* (input) {
+    if (isUndefined(input)) return;
+
+    const issues = [...struct.check(input)];
+
+    if (!issues.length) return;
 
     yield { message: message ?? formatActExp(name, input) };
   });

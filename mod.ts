@@ -21,7 +21,14 @@ export {
   symbol,
   value,
 } from "./structs/cores.ts";
-export { nullable, omit, partial, pick, record } from "./structs/utils.ts";
+export {
+  nullable,
+  omit,
+  optional,
+  partial,
+  pick,
+  record,
+} from "./structs/utils.ts";
 export {
   empty,
   int,
