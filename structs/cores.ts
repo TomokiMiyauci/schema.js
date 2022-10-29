@@ -204,11 +204,12 @@ export function object<S extends StructMap>(
 export function object(message?: string): Struct<unknown, object>;
 export function object(
   structMapOrMessage?: StructMap | string,
-  message?: string,
+  messageOr?: string,
 ): Struct<unknown, object> {
-  const structMap = isObject(structMapOrMessage) ? structMapOrMessage : {};
-  message = message ??
-    (isString(structMapOrMessage) ? structMapOrMessage : undefined);
+  const { message, structMap } = resolveArgs(
+    structMapOrMessage,
+    messageOr,
+  );
 
   const check = new Construct<unknown, StructMap>(
     "object",
@@ -230,6 +231,21 @@ export function object(
   );
 
   return Object.assign(check, { definition: structMap });
+}
+
+function resolveArgs(
+  structMapOrMessage?: StructMap | string,
+  messageOr?: string,
+): {
+  structMap: StructMap;
+  message: string | undefined;
+} {
+  const structMap = isObject(structMapOrMessage) ? structMapOrMessage : {};
+  const message = isString(structMapOrMessage)
+    ? structMapOrMessage
+    : (isString(messageOr) ? messageOr : undefined);
+
+  return { structMap, message };
 }
 
 /** Create `Array` data type struct.
