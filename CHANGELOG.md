@@ -1,3 +1,17 @@
+# [1.0.0-beta.3](https://github.com/TomokiMiyauci/typestruct/compare/1.0.0-beta.2...1.0.0-beta.3) (2022-10-29)
+
+
+### Features
+
+* **subsets:** add `nagative` factory that ensure nagative number ([ae18d5e](https://github.com/TomokiMiyauci/typestruct/commit/ae18d5ee7acdbb85b061c4c66ef8895acf0166c5))
+* **subsets:** add `nan` factory that ensure input is `NaN` ([0d957af](https://github.com/TomokiMiyauci/typestruct/commit/0d957af3f54006d4ac9f4c53e420131511822252))
+* **subsets:** add `positive` factory that ensure positive number ([692cb9c](https://github.com/TomokiMiyauci/typestruct/commit/692cb9c7ecb1ad37f4439ae0f1d3f73f21dc2bfc))
+* **subsets:** add `validDate` factory for ensure valid `Date` ([23ef948](https://github.com/TomokiMiyauci/typestruct/commit/23ef948ec921bea34469202b5c172ee2a040a23b))
+* **subsets:** improve types of `maximum` and `minimum` ([b8d8fb7](https://github.com/TomokiMiyauci/typestruct/commit/b8d8fb704911953198e89b2150fdf0dcf98b5b94))
+* **types:** change checkable interface ([8011e4e](https://github.com/TomokiMiyauci/typestruct/commit/8011e4e4ce22b2ddd17064475e8387ff0bfb5ee2))
+* **utils:** add `nullable` struct factory that add null tolerance to struct ([d0fe894](https://github.com/TomokiMiyauci/typestruct/commit/d0fe8943280edbf12c5a72856f8738ce14aa37f0))
+* **utils:** add `optional` factory struct that add `undefined` tolerance to struct ([b8dacaa](https://github.com/TomokiMiyauci/typestruct/commit/b8dacaa06c003721c3708d753ef862093cee7641))
+
 # [1.0.0-beta.2](https://github.com/TomokiMiyauci/typestruct/compare/1.0.0-beta.1...1.0.0-beta.2) (2022-10-26)
 
 
