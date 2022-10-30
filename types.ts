@@ -61,3 +61,30 @@ export interface Wrapper<T> {
   /** Unwrap wrapper. */
   unwrap: (this: Wrapper<T>) => T;
 }
+
+/** Dynamic messenger API. */
+export interface Messenger<Context> {
+  /** Lazy message. */
+  (context: Context): string;
+}
+
+/** JavaScript data type. `null` is not `object`. */
+export type DataType =
+  | "null"
+  | "string"
+  | "number"
+  | "bigint"
+  | "boolean"
+  | "function"
+  | "object"
+  | "undefined"
+  | "symbol";
+
+/** Context of result. */
+export interface ResultContext<T> {
+  /** Actual value or expression. */
+  readonly actual: T;
+
+  /** Expected value or expression. */
+  readonly expected: T;
+}

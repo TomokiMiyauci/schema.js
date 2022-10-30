@@ -7,8 +7,8 @@ import { Definable, InferOut, Struct, StructMap, Wrapper } from "../types.ts";
 import {
   Construct,
   formatActExp,
-  formatType,
   mergeIssuePaths,
+  typeOf,
   wrap,
 } from "../utils.ts";
 import { isNull, isObject, isUndefined, Writeable } from "../deps.ts";
@@ -43,7 +43,7 @@ export function record<K extends string, V>(
     function* (input) {
       if (!isObject(input)) {
         return yield {
-          message: message ?? formatActExp("object", formatType(input)),
+          message: message ?? formatActExp("object", typeOf(input)),
         };
       }
       for (const k in input) {

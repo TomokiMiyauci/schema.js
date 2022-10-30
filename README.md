@@ -146,6 +146,23 @@ assertEquals(is(string(), ""), true);
 assertEquals(is(string(), 0), false);
 ```
 
+##### custom message
+
+Default message
+
+```txt
+expected string, actual ${typeof INPUT}
+```
+
+Full customize
+
+```ts
+import { string } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+
+string("Custom message");
+string(({ actual, expected }) => `expected ${expected}, actual ${actual}`);
+```
+
 #### number
 
 Create `number` data type struct.

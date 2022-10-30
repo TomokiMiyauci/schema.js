@@ -23,6 +23,7 @@ describe("string", () => {
 
   it("message override", () => {
     assertEquals([...string(MESSAGE).check(0)], [{ message: MESSAGE }]);
+    assertEquals([...string(() => MESSAGE).check(0)], [{ message: MESSAGE }]);
   });
 
   it("should return empty list when input type is string", () => {

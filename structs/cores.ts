@@ -1,7 +1,15 @@
 // Copyright 2022-latest Tomoki Miyauchi. All rights reserved. MIT license.
 // This module is browser compatible.
 
-import { Definable, Struct, StructMap } from "../types.ts";
+import {
+  DataType,
+  Definable,
+  Issue,
+  Messenger,
+  ResultContext,
+  Struct,
+  StructMap,
+} from "../types.ts";
 import {
   isBigint,
   isBoolean,
@@ -10,13 +18,15 @@ import {
   isObject,
   isString,
   isSymbol,
+  PartialBy,
 } from "../deps.ts";
 import {
   Construct,
   constructorName,
   formatActExp,
-  formatType,
   mergeIssuePaths,
+  resolveMessage,
+  typeOf,
 } from "../utils.ts";
 
 /** Create `string` data type struct.
@@ -30,12 +40,11 @@ import {
  * assertEquals(is(string(), 0), false);
  * ```
  */
-export function string(message?: string): Struct<unknown, string> {
-  return new Construct("string", function* (input) {
-    if (!isString(input)) {
-      yield { message: message ?? formatActExp("string", typeof input) };
-    }
-  });
+export function string(
+  message?: string | Messenger<ResultContext<DataType>>,
+): Struct<unknown, string> {
+  const type = "string";
+  return new Construct(type, createTypeCheck(type, message));
 }
 
 /** Create `number` data type struct.
@@ -216,7 +225,7 @@ export function object(
     function* (input) {
       if (!isObject(input)) {
         return yield {
-          message: message ?? formatActExp("object", formatType(input)),
+          message: message ?? formatActExp("object", typeOf(input)),
         };
       }
 
@@ -297,4 +306,28 @@ export function instance<T extends abstract new (...args: any) => any>(
       };
     }
   });
+}
+
+function defaultTypeMessage(
+  { actual, expected }: ResultContext<DataType>,
+): string {
+  return formatActExp(expected, actual);
+}
+
+function createTypeCheck(
+  type: DataType,
+  messenger?: string | Messenger<ResultContext<DataType>>,
+): (input: unknown) => Generator<PartialBy<Issue, "paths">, void, unknown> {
+  return function* (input) {
+    const $ = typeOf(input);
+
+    if ($ === type) return;
+
+    const message = resolveMessage(
+      messenger ?? defaultTypeMessage,
+      { actual: $, expected: type },
+    );
+
+    yield { message };
+  };
 }

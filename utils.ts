@@ -1,8 +1,8 @@
 // Copyright 2022-latest Tomoki Miyauchi. All rights reserved. MIT license.
 // This module is browser compatible.
 
-import { isNonNullable, PartialBy } from "./deps.ts";
-import { Issue, type Struct, Wrapper } from "./types.ts";
+import { isNonNullable, isString, PartialBy } from "./deps.ts";
+import { DataType, Issue, Messenger, type Struct, Wrapper } from "./types.ts";
 
 /** Get constructor name.
  * When the value can not construct, return `"null"` or `"undefined"`.
@@ -43,21 +43,6 @@ export function formatPlural(value: string, number: number): string {
   return `${number} ${value}`;
 }
 
-type DataType =
-  | "null"
-  | "string"
-  | "number"
-  | "bigint"
-  | "boolean"
-  | "function"
-  | "object"
-  | "undefined"
-  | "symbol";
-
-export function formatType(value: unknown): DataType {
-  return value === null ? "null" : typeof value;
-}
-
 /** Utility for merging issue paths.
  * @internal
  */
@@ -76,4 +61,26 @@ export function* mergeIssuePaths(
  */
 export function wrap<T>(input: T): Wrapper<T> {
   return { unwrap: () => input };
+}
+
+/** Improved `typeof`. `null` is not `object`
+ * @param input Any input.
+ * @internal
+ */
+export function typeOf(input: unknown): DataType {
+  return input === null ? "null" : typeof input;
+}
+
+/** Resolve message.
+ * @param message Message or lazy message.
+ * @param context Context.
+ * @internal
+ */
+export function resolveMessage<C>(
+  message: string | Messenger<C>,
+  context: C,
+): string {
+  if (isString(message)) return message;
+
+  return message(context);
 }
