@@ -690,6 +690,23 @@ assertEquals(is(negative(), -0.1), true);
 assertEquals(is(negative(), 0), false);
 ```
 
+### nonnegative
+
+Create negative value struct. Ensure the input is non-negative number.
+Non-negative number means greater than or equal to zero.
+
+```ts
+import {
+  is,
+  nonnegative,
+} from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+assertEquals(is(nonnegative(), 0), true);
+assertEquals(is(nonnegative(), 1), true);
+assertEquals(is(nonnegative(), -1), false);
+```
+
 ### nan
 
 Create `NaN` struct. Ensure the input is `NaN`.
@@ -837,6 +854,7 @@ The bundle size adapted to tree-shaking with ESbuild is as follows:
 | [nan](#nan)                 | ![nan](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bnan%7D)                 |
 | [negative](#negative)       | ![negative](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bnegative%7D)       |
 | [nonempty](#nonempty)       | ![nonempty](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bnonempty%7D)       |
+| [nonnegative](#nonnegative) | ![nonnegative](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bnonnegative%7D) |
 | [nonpositive](#nonpositive) | ![nonpositive](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bnonpositive%7D) |
 | [not](#not)                 | ![not](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bnot%7D)                 |
 | [nullable](#nullable)       | ![nullable](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bnullable%7D)       |

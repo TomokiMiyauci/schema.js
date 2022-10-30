@@ -9,6 +9,7 @@ import {
   nan,
   negative,
   nonempty,
+  nonnegative,
   nonpositive,
   pattern,
   positive,
@@ -278,6 +279,22 @@ describe("negative", () => {
 
   it("should return empty list when the input is negative number", () => {
     assertEquals([...negative().check(-0.1)], []);
+  });
+});
+
+describe("nonnegative", () => {
+  it("should return issue when the input is not non-negative number", () => {
+    assertEquals([...nonnegative().check(-1)], [{
+      message: "expected non-negative number, actual -1",
+    }]);
+  });
+
+  it("message override", () => {
+    assertEquals([...nonnegative(MESSAGE).check(-1)], [{ message: MESSAGE }]);
+  });
+
+  it("should return empty list when the input is non-negative number", () => {
+    assertEquals([...nonnegative().check(0)], []);
   });
 });
 

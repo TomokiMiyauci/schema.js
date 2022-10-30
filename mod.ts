@@ -40,6 +40,7 @@ export {
   nan,
   negative,
   nonempty,
+  nonnegative,
   nonpositive,
   pattern,
   positive,

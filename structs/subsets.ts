@@ -6,6 +6,7 @@ import { Struct } from "../types.ts";
 import {
   getSize,
   isNegativeNumber,
+  isNonNegativeNumber,
   isNonPositiveNumber,
   isPositiveNumber,
   isValidDate,
@@ -374,6 +375,30 @@ export function negative(message?: string): Struct<number> {
   return new Construct("negative", function* (input) {
     if (!isNegativeNumber(input)) {
       yield { message: message ?? formatActExp("negative number", input) };
+    }
+  });
+}
+
+/** Create negative value struct. Ensure the input is non-negative number.
+ * Non-negative number means greater than or equal to zero.
+ * @param message Custom issue message.
+ * @example
+ * ```ts
+ * import {
+ *   is,
+ *   nonnegative,
+ * } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+ * import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+ *
+ * assertEquals(is(nonnegative(), 0), true);
+ * assertEquals(is(nonnegative(), 1), true);
+ * assertEquals(is(nonnegative(), -1), false);
+ * ```
+ */
+export function nonnegative(message?: string): Struct<number> {
+  return new Construct("nonnegative", function* (input) {
+    if (!isNonNegativeNumber(input)) {
+      yield { message: message ?? formatActExp("non-negative number", input) };
     }
   });
 }
