@@ -3,7 +3,7 @@
 
 import { object, value } from "./cores.ts";
 import { or } from "./operators.ts";
-import { Definable, Struct, StructMap, Wrapper } from "../types.ts";
+import { Definable, InferOut, Struct, StructMap, Wrapper } from "../types.ts";
 import {
   Construct,
   formatActExp,
@@ -171,23 +171,26 @@ export function omit<S extends StructMap, K extends keyof S>(
  * assertEquals(is(strOrNull, undefined), false);
  * ```
  */
-export function nullable<Out extends In, T>(
-  struct: Struct<unknown, Out> & T,
+export function nullable<S extends Struct<unknown>>(
+  struct: S,
   message?: string,
-): Struct<unknown, Out | null> & Wrapper<T> {
+): Struct<unknown, InferOut<S> | null> & Wrapper<S> {
   const name = `(${struct} | null)`;
 
-  const construct = new Construct<unknown, Out | null>(name, function* (input) {
-    if (isNull(input)) return;
+  const construct = new Construct<unknown, InferOut<S> | null>(
+    name,
+    function* (input) {
+      if (isNull(input)) return;
 
-    const issues = [...struct.check(input)];
+      const issues = [...struct.check(input)];
 
-    if (!issues.length) return;
+      if (!issues.length) return;
 
-    yield { message: message ?? formatActExp(name, input) };
-  });
+      yield { message: message ?? formatActExp(name, input) };
+    },
+  );
 
-  return Object.assign(construct, wrap(struct as T));
+  return Object.assign(construct, wrap(struct));
 }
 
 /** Create optional struct. Add `undefined` tolerance to struct.
@@ -209,13 +212,13 @@ export function nullable<Out extends In, T>(
  * assertEquals(is(strOr, null), false);
  * ```
  */
-export function optional<Out, T>(
-  struct: Struct<unknown, Out> & T,
+export function optional<S extends Struct<unknown>>(
+  struct: S,
   message?: string,
-): Struct<unknown, Out | undefined> & Wrapper<T> {
+): Struct<unknown, InferOut<S> | undefined> & Wrapper<S> {
   const name = `(${struct} | undefined)`;
 
-  const construct = new Construct<unknown, Out | undefined>(
+  const construct = new Construct<unknown, InferOut<S> | undefined>(
     name,
     function* (input) {
       if (isUndefined(input)) return;
@@ -228,5 +231,5 @@ export function optional<Out, T>(
     },
   );
 
-  return Object.assign(construct, wrap(struct as T));
+  return Object.assign(construct, wrap(struct));
 }

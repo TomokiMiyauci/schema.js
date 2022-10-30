@@ -39,3 +39,9 @@ export type Writeable<T> = {
 
 /** Whether the type is Top-type or not. */
 export type IsTopType<T> = unknown extends T ? true : false;
+
+type Arg<F extends (...args: any) => any, I extends number> = Parameters<
+  F
+>[I];
+
+export type FirstArg<F extends (...args: any) => any> = Arg<F, 0>;

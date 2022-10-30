@@ -1,7 +1,7 @@
 // Copyright 2022-latest Tomoki Miyauchi. All rights reserved. MIT license.
 // This module is browser compatible.
 
-import { IsTopType, PartialBy } from "./deps.ts";
+import { FirstArg, IsTopType, PartialBy } from "./deps.ts";
 
 const Type = Symbol("Struct.type");
 
@@ -45,6 +45,12 @@ export interface Struct<In, Out extends In = any>
 export type Infer<T> = IsTopType<T> extends true ? T
   : T extends Checkable<infer U, infer U> ? Infer<U>
   : { [k in keyof T]: Infer<T[k]> };
+
+/** Infer `Struct` input. */
+export type InferIn<S extends Struct<any>> = Infer<FirstArg<S["check"]>>;
+
+/** Infer `Struct` output. */
+export type InferOut<S extends Struct<any>> = Infer<S[typeof Type]>;
 
 export interface StructMap {
   readonly [k: string]: Struct<unknown>;
