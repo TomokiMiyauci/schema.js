@@ -27,6 +27,22 @@ export function getSize(iterable: Iterable<unknown>): number {
   return [...iterable].length;
 }
 
+/** Whether the input is non-negative number or not.
+ * Non-negative number means greater than or equal to zero.
+ * @param input - Any `number`.
+ */
+export function isNonNegativeNumber(input: number): boolean {
+  return Number.isFinite(input) && 0 <= input;
+}
+
+/** Whether the input is non-positive number or not.
+ * Non-positive number means less than or equal to zero.
+ * @param input - Any `number`.
+ */
+export function isNonPositiveNumber(input: number): boolean {
+  return Number.isFinite(input) && input <= 0;
+}
+
 export type PartialBy<T, U extends keyof T> =
   & { [k in keyof T as U extends k ? never : k]: T[k] }
   & {

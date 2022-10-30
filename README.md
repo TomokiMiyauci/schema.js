@@ -650,7 +650,7 @@ assertEquals(is(int(), 1.1), false);
 ### positive
 
 Create positive number struct. Ensure the input is positive number. Positive
-number means a number greater than zero.
+number means greater than zero.
 
 ```ts
 import { is, positive } from "https://deno.land/x/typestruct@$VERSION/mod.ts";
@@ -658,6 +658,23 @@ import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts"
 
 assertEquals(is(positive(), 0.1), true);
 assertEquals(is(positive(), 0), false);
+```
+
+### nonpositive
+
+Create non-positive value struct. Ensure the input is non-positive number.
+Non-positive number means less than or equal to zero.
+
+```ts
+import {
+  is,
+  nonpositive,
+} from "https://deno.land/x/typestruct@$VERSION/mod.ts";
+import { assertEquals } from "https://deno.land/std@$VERSION/testing/asserts.ts";
+
+assertEquals(is(nonpositive(), 0), true);
+assertEquals(is(nonpositive(), -1), true);
+assertEquals(is(nonpositive(), 1), false);
 ```
 
 ### negative
@@ -820,6 +837,7 @@ The bundle size adapted to tree-shaking with ESbuild is as follows:
 | [nan](#nan)                 | ![nan](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bnan%7D)                 |
 | [negative](#negative)       | ![negative](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bnegative%7D)       |
 | [nonempty](#nonempty)       | ![nonempty](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bnonempty%7D)       |
+| [nonpositive](#nonpositive) | ![nonpositive](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bnonpositive%7D) |
 | [not](#not)                 | ![not](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bnot%7D)                 |
 | [nullable](#nullable)       | ![nullable](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bnullable%7D)       |
 | [number](#number)           | ![number](https://bundlejs.com/api/badge?q=https%3A%2F%2Fdeno.land%2Fx%2Ftypestruct%2Fmod.ts&treeshake=%7Bnumber%7D)           |
