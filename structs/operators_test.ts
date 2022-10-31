@@ -54,6 +54,13 @@ describe("or", () => {
 
     assertEquals([...Or.check("")], []);
   });
+
+  it("message override", () => {
+    assertEquals([...or(string(), MESSAGE).check(0)], [{ message: MESSAGE }]);
+    assertEquals([...or(string(), () => MESSAGE).check(0)], [{
+      message: MESSAGE,
+    }]);
+  });
 });
 
 describe("not", () => {

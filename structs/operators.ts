@@ -8,12 +8,7 @@ import {
   ResultContext,
   Struct,
 } from "../types.ts";
-import {
-  Construct,
-  formatActExp,
-  formatMessage,
-  resolveMessage,
-} from "../utils.ts";
+import { Construct, formatMessage, resolveMessage } from "../utils.ts";
 import { IsTopType, iter, PartialBy } from "../deps.ts";
 
 /** Union type API. */
@@ -51,6 +46,7 @@ export interface Intersection<In, Out extends In> {
  */
 export function or<In, Out extends In>(
   struct: Struct<In, Out>,
+  message?: string | Messenger<ResultContext>,
 ): Struct<In, Out> & Union<In, Out> {
   class UnionStruct implements Struct<In, Out> {
     constructor(private structs: Struct<any, any>[]) {}
@@ -62,7 +58,12 @@ export function or<In, Out extends In>(
         if (!issues.length) return;
       }
 
-      yield { message: formatActExp(this.toString(), input) };
+      const msg = resolveMessage(message ?? formatMessage, {
+        expected: this.toString(),
+        actual: input,
+      });
+
+      yield { message: msg };
     }
 
     toString(): string {
