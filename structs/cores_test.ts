@@ -180,10 +180,14 @@ describe("object", () => {
 
   it("message override for plain", () => {
     assertEquals([...object(MESSAGE).check("")], [{ message: MESSAGE }]);
+    assertEquals([...object(() => MESSAGE).check("")], [{ message: MESSAGE }]);
   });
 
   it("message override for record", () => {
     assertEquals([...object({}, MESSAGE).check("")], [{
+      message: MESSAGE,
+    }]);
+    assertEquals([...object({}, () => MESSAGE).check("")], [{
       message: MESSAGE,
     }]);
   });

@@ -12,7 +12,7 @@ import {
   Struct,
   StructMap,
 } from "../types.ts";
-import { isObject, isString, PartialBy } from "../deps.ts";
+import { isFunction, isObject, isString, PartialBy } from "../deps.ts";
 import {
   Construct,
   constructorName,
@@ -190,7 +190,7 @@ export function value<
  */
 export function object<S extends StructMap>(
   structMap: S,
-  message?: string,
+  message?: string | Messenger<DataTypeContext>,
 ): Struct<unknown, S & Record<PropertyKey, unknown>> & Definable<S>;
 /** Create `object` data type struct. Treat `null` as not an `object`.
  * @param message Custom issue message.
@@ -203,50 +203,49 @@ export function object<S extends StructMap>(
  * assertEquals(is(object(), null), false);
  * ```
  */
-export function object(message?: string): Struct<unknown, object>;
 export function object(
-  structMapOrMessage?: StructMap | string,
-  messageOr?: string,
+  message?: string | Messenger<DataTypeContext>,
+): Struct<unknown, object>;
+export function object(
+  structMapOrMessage?: StructMap | string | Messenger<DataTypeContext>,
+  messageOr?: string | Messenger<DataTypeContext>,
 ): Struct<unknown, object> {
-  const { message, structMap } = resolveArgs(
+  const { message = formatDataType, structMap } = resolveArgs(
     structMapOrMessage,
     messageOr,
   );
   const type = "object";
 
-  const check = new Construct<unknown, StructMap>(
-    type,
-    function* (input) {
-      if (typeOf(input) !== type) {
-        return yield {
-          message: message ?? formatActExp(type, typeOf(input)),
-        };
-      }
+  const check = new Construct<unknown, StructMap>(type, function* (input) {
+    if (typeOf(input) !== type) {
+      const msg = resolveMessage(message, { actual: input, expected: type });
+      return yield { message: msg };
+    }
 
-      // in operator will improve type inference in TypeScript v4.9
-      for (const key in structMap) {
-        yield* mergeIssuePaths(
-          structMap[key]!.check((input as Record<any, unknown>)[key]),
-          [key],
-        );
-      }
-    },
-  );
+    // in operator will improve type inference in TypeScript v4.9
+    for (const key in structMap) {
+      yield* mergeIssuePaths(
+        structMap[key]!.check((input as Record<any, unknown>)[key]),
+        [key],
+      );
+    }
+  });
 
   return Object.assign(check, { definition: structMap });
 }
 
 function resolveArgs(
-  structMapOrMessage?: StructMap | string,
-  messageOr?: string,
+  structMapOrMessage?: StructMap | string | Messenger<DataTypeContext>,
+  messageOr?: string | Messenger<DataTypeContext>,
 ): {
   structMap: StructMap;
-  message: string | undefined;
+  message: string | undefined | Messenger<DataTypeContext>;
 } {
+  if (isFunction(structMapOrMessage)) {
+    return { structMap: {}, message: structMapOrMessage };
+  }
   const structMap = isObject(structMapOrMessage) ? structMapOrMessage : {};
-  const message = isString(structMapOrMessage)
-    ? structMapOrMessage
-    : (isString(messageOr) ? messageOr : undefined);
+  const message = isString(structMapOrMessage) ? structMapOrMessage : messageOr;
 
   return { structMap, message };
 }
@@ -298,9 +297,7 @@ export function instance<T extends abstract new (...args: any) => any>(
   });
 }
 
-function format(
-  { actual, expected }: ResultContext,
-): string {
+function format({ actual, expected }: ResultContext): string {
   return formatActExp(show(expected), show(actual));
 }
 

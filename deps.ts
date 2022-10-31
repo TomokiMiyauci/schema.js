@@ -2,6 +2,7 @@
 // This module is browser compatible.
 
 export {
+  isFunction,
   isNegativeNumber,
   isNonNullable,
   isNull,
