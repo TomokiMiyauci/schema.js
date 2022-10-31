@@ -2,17 +2,12 @@
 // This module is browser compatible.
 
 export {
-  isBigint,
-  isBoolean,
-  isFunction,
   isNegativeNumber,
   isNonNullable,
   isNull,
-  isNumber,
   isObject,
   isPositiveNumber,
   isString,
-  isSymbol,
   isUndefined,
   isValidDate,
 } from "https://deno.land/x/isx@1.0.0-beta.23/mod.ts";

@@ -40,6 +40,7 @@ describe("number", () => {
 
   it("message override", () => {
     assertEquals([...number(MESSAGE).check("")], [{ message: MESSAGE }]);
+    assertEquals([...number(() => MESSAGE).check("")], [{ message: MESSAGE }]);
   });
 
   it("should return empty list when input type is number", () => {
@@ -56,6 +57,7 @@ describe("bigint", () => {
 
   it("message override", () => {
     assertEquals([...bigint(MESSAGE).check("")], [{ message: MESSAGE }]);
+    assertEquals([...bigint(() => MESSAGE).check("")], [{ message: MESSAGE }]);
   });
 
   it("should return empty list when input type is bigint", () => {
@@ -72,6 +74,7 @@ describe("boolean", () => {
 
   it("message override", () => {
     assertEquals([...boolean(MESSAGE).check("")], [{ message: MESSAGE }]);
+    assertEquals([...boolean(() => MESSAGE).check("")], [{ message: MESSAGE }]);
   });
 
   it("should return empty list when input type is boolean", () => {
@@ -88,6 +91,7 @@ describe("func", () => {
 
   it("message override", () => {
     assertEquals([...func(MESSAGE).check("")], [{ message: MESSAGE }]);
+    assertEquals([...func(() => MESSAGE).check("")], [{ message: MESSAGE }]);
   });
 
   it("should return empty list when input type is Function", () => {
@@ -104,6 +108,7 @@ describe("symbol", () => {
 
   it("message override", () => {
     assertEquals([...symbol(MESSAGE).check("")], [{ message: MESSAGE }]);
+    assertEquals([...symbol(() => MESSAGE).check("")], [{ message: MESSAGE }]);
   });
 
   it("should return empty list when input type is symbol", () => {

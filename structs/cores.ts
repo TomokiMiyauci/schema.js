@@ -3,23 +3,14 @@
 
 import {
   DataType,
+  DataTypeContext,
   Definable,
   Issue,
   Messenger,
-  ResultContext,
   Struct,
   StructMap,
 } from "../types.ts";
-import {
-  isBigint,
-  isBoolean,
-  isFunction,
-  isNumber,
-  isObject,
-  isString,
-  isSymbol,
-  PartialBy,
-} from "../deps.ts";
+import { isObject, isString, PartialBy } from "../deps.ts";
 import {
   Construct,
   constructorName,
@@ -41,7 +32,7 @@ import {
  * ```
  */
 export function string(
-  message?: string | Messenger<ResultContext<DataType>>,
+  message?: string | Messenger<DataTypeContext>,
 ): Struct<unknown, string> {
   const type = "string";
   return new Construct(type, createTypeCheck(type, message));
@@ -58,12 +49,11 @@ export function string(
  * assertEquals(is(number(), ""), false);
  * ```
  */
-export function number(message?: string): Struct<unknown, number> {
-  return new Construct("number", function* (input) {
-    if (!isNumber(input)) {
-      yield { message: message ?? formatActExp("number", typeof input) };
-    }
-  });
+export function number(
+  message?: string | Messenger<DataTypeContext>,
+): Struct<unknown, number> {
+  const type = "number";
+  return new Construct(type, createTypeCheck(type, message));
 }
 
 /** Create `bigint` data type struct.
@@ -77,12 +67,11 @@ export function number(message?: string): Struct<unknown, number> {
  * assertEquals(is(bigint(), 0n), false);
  * ```
  */
-export function bigint(message?: string): Struct<unknown, bigint> {
-  return new Construct("bigint", function* (input) {
-    if (!isBigint(input)) {
-      yield { message: message ?? formatActExp("bigint", typeof input) };
-    }
-  });
+export function bigint(
+  message?: string | Messenger<DataTypeContext>,
+): Struct<unknown, bigint> {
+  const type = "bigint";
+  return new Construct(type, createTypeCheck(type, message));
 }
 
 /** Create `boolean` data type struct.
@@ -96,12 +85,11 @@ export function bigint(message?: string): Struct<unknown, bigint> {
  * assertEquals(is(boolean(), ""), false);
  * ```
  */
-export function boolean(message?: string): Struct<unknown, boolean> {
-  return new Construct("boolean", function* (input) {
-    if (!isBoolean(input)) {
-      yield { message: message ?? formatActExp("boolean", typeof input) };
-    }
-  });
+export function boolean(
+  message?: string | Messenger<DataTypeContext>,
+): Struct<unknown, boolean> {
+  const type = "boolean";
+  return new Construct(type, createTypeCheck(type, message));
 }
 
 /** Create `function` data type struct.
@@ -115,12 +103,10 @@ export function boolean(message?: string): Struct<unknown, boolean> {
  * assertEquals(is(func(), {}), false);
  * ```
  */
-export function func(message?: string): Struct<unknown, Function> {
-  return new Construct("func", function* (input) {
-    if (!isFunction(input)) {
-      yield { message: message ?? formatActExp("function", typeof input) };
-    }
-  });
+export function func(
+  message?: string | Messenger<DataTypeContext>,
+): Struct<unknown, Function> {
+  return new Construct("func", createTypeCheck("function", message));
 }
 
 /** Create `symbol` data type struct.
@@ -134,12 +120,11 @@ export function func(message?: string): Struct<unknown, Function> {
  * assertEquals(is(symbol(), {}), false);
  * ```
  */
-export function symbol(message?: string): Struct<unknown, symbol> {
-  return new Construct("symbol", function* (input) {
-    if (!isSymbol(input)) {
-      yield { message: message ?? formatActExp("symbol", typeof input) };
-    }
-  });
+export function symbol(
+  message?: string | Messenger<DataTypeContext>,
+): Struct<unknown, symbol> {
+  const type = "symbol";
+  return new Construct(type, createTypeCheck(type, message));
 }
 
 /** Create primitive value struct.
@@ -219,13 +204,14 @@ export function object(
     structMapOrMessage,
     messageOr,
   );
+  const type = "object";
 
   const check = new Construct<unknown, StructMap>(
-    "object",
+    type,
     function* (input) {
-      if (!isObject(input)) {
+      if (typeOf(input) !== type) {
         return yield {
-          message: message ?? formatActExp("object", typeOf(input)),
+          message: message ?? formatActExp(type, typeOf(input)),
         };
       }
 
@@ -309,14 +295,14 @@ export function instance<T extends abstract new (...args: any) => any>(
 }
 
 function defaultTypeMessage(
-  { actual, expected }: ResultContext<DataType>,
+  { actual, expected }: DataTypeContext,
 ): string {
   return formatActExp(expected, actual);
 }
 
 function createTypeCheck(
   type: DataType,
-  messenger?: string | Messenger<ResultContext<DataType>>,
+  messenger?: string | Messenger<DataTypeContext>,
 ): (input: unknown) => Generator<PartialBy<Issue, "paths">, void, unknown> {
   return function* (input) {
     const $ = typeOf(input);
