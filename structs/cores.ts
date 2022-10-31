@@ -303,6 +303,10 @@ function defaultActExp(
   return formatActExp(expected, actual);
 }
 
+function formatDataType({ actual, expected }: DataTypeContext): string {
+  return formatActExp(expected, typeOf(actual));
+}
+
 function formatConstructor({ actual, expected }: ConstructorContext) {
   return formatActExp(`instance of ${expected.name}`, constructorName(actual));
 }
@@ -312,13 +316,11 @@ function createTypeCheck(
   messenger?: string | Messenger<DataTypeContext>,
 ): (input: unknown) => Generator<PartialBy<Issue, "paths">, void, unknown> {
   return function* (input) {
-    const $ = typeOf(input);
-
-    if ($ === type) return;
+    if (typeOf(input) === type) return;
 
     const message = resolveMessage(
-      messenger ?? defaultActExp,
-      { actual: $, expected: type },
+      messenger ?? formatDataType,
+      { actual: input, expected: type },
     );
 
     yield { message };

@@ -91,9 +91,6 @@ export interface ResultContext {
 
 /** Context of data type. */
 export interface DataTypeContext extends ResultContext {
-  /** Actual data type. */
-  readonly actual: DataType;
-
   /** Expected data type. */
   readonly expected: DataType;
 }
