@@ -35,6 +35,9 @@ describe("maximum", () => {
 
   it("message override", () => {
     assertEquals([...maximum(5, MESSAGE).check(6)], [{ message: MESSAGE }]);
+    assertEquals([...maximum(5, () => MESSAGE).check(6)], [{
+      message: MESSAGE,
+    }]);
   });
 });
 
@@ -51,6 +54,9 @@ describe("minimum", () => {
 
   it("message override", () => {
     assertEquals([...minimum(5, MESSAGE).check(4)], [{ message: MESSAGE }]);
+    assertEquals([...minimum(5, () => MESSAGE).check(4)], [{
+      message: MESSAGE,
+    }]);
   });
 });
 
@@ -132,12 +138,15 @@ describe("empty", () => {
 describe("nonempty", () => {
   it("should return issue when the input is empty", () => {
     assertEquals([...nonempty().check("")], [{
-      message: "expected non empty, actual empty",
+      message: "expected non-empty, actual 0 element",
     }]);
   });
 
   it("message override", () => {
     assertEquals([...nonempty(MESSAGE).check("")], [{ message: MESSAGE }]);
+    assertEquals([...nonempty(() => MESSAGE).check("")], [{
+      message: MESSAGE,
+    }]);
   });
 
   it("should return empty list when the input is non empty", () => {

@@ -1,8 +1,14 @@
 // Copyright 2022-latest Tomoki Miyauchi. All rights reserved. MIT license.
 // This module is browser compatible.
 
-import { Construct, formatActExp, formatPlural } from "../utils.ts";
-import { Struct } from "../types.ts";
+import {
+  Construct,
+  formatActExp,
+  formatMessage,
+  formatPlural,
+  resolveMessage,
+} from "../utils.ts";
+import { Messenger, ResultContext, Struct } from "../types.ts";
 import {
   getSize,
   isNegativeNumber,
@@ -24,13 +30,17 @@ import {
  * assertEquals(is(maximum(5), 6), false);
  * ```
  */
-export function maximum<T>(threshold: T, message?: string): Struct<T> {
+export function maximum<T>(
+  threshold: T,
+  message?: string | Messenger<ResultContext<T>>,
+): Struct<T> {
   return new Construct("maximum", function* (input) {
     if (threshold < input) {
-      yield {
-        message: message ??
-          formatActExp(`less than or equal to ${threshold}`, input),
-      };
+      const msg = resolveMessage(message ?? formatMessage, {
+        actual: input,
+        expected: `less than or equal to ${threshold}`,
+      });
+      yield { message: msg };
     }
   });
 }
@@ -47,13 +57,18 @@ export function maximum<T>(threshold: T, message?: string): Struct<T> {
  * assertEquals(is(minimum(5), 4), false);
  * ```
  */
-export function minimum<T>(threshold: T, message?: string): Struct<T> {
+export function minimum<T>(
+  threshold: T,
+  message?: string | Messenger<ResultContext<T>>,
+): Struct<T> {
   return new Construct("minimum", function* (input) {
     if (threshold > input) {
-      yield {
-        message: message ??
-          formatActExp(`greater than or equal to ${threshold}`, input),
-      };
+      const msg = resolveMessage(message ?? formatMessage, {
+        actual: input,
+        expected: `greater than or equal to ${threshold}`,
+      });
+
+      yield { message: msg };
     }
   });
 }
@@ -158,14 +173,18 @@ export function size(
  * assertEquals(is(empty(), [1]), false);
  * ```
  */
-export function empty(message?: string): Struct<Iterable<unknown>> {
+export function empty(
+  message?: string | Messenger<ResultContext<Iterable<unknown>>>,
+): Struct<Iterable<unknown>> {
   return new Construct("empty", function* (input) {
     const size = getSize(input);
     if (size) {
-      yield {
-        message: message ??
-          formatActExp("empty", formatPlural("element", size)),
-      };
+      const msg = resolveMessage(message ?? formatIterable, {
+        actual: input,
+        expected: "empty",
+      });
+
+      yield { message: msg };
     }
   });
 }
@@ -181,11 +200,17 @@ export function empty(message?: string): Struct<Iterable<unknown>> {
  * assertEquals(is(nonempty(), new Map()), false);
  * ```
  */
-export function nonempty(message?: string): Struct<Iterable<unknown>> {
+export function nonempty(
+  message?: string | Messenger<ResultContext<Iterable<unknown>>>,
+): Struct<Iterable<unknown>> {
   return new Construct("empty", function* (input) {
     const size = getSize(input);
     if (!size) {
-      yield { message: message ?? formatActExp("non empty", `empty`) };
+      const msg = resolveMessage(message ?? formatIterable, {
+        actual: input,
+        expected: "non-empty",
+      });
+      yield { message: msg };
     }
   });
 }
@@ -420,4 +445,10 @@ export function validDate(message?: string): Struct<Date> {
       yield { message: message ?? formatActExp("valid date", "invalid date") };
     }
   });
+}
+
+function formatIterable(
+  { actual, expected }: ResultContext<Iterable<unknown>>,
+): string {
+  return formatActExp(expected, formatPlural("element", getSize(actual)));
 }
