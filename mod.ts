@@ -4,6 +4,7 @@
 export { StructError } from "./error.ts";
 export {
   type Checkable,
+  type ConstructorContext,
   type DataType,
   type DataTypeContext,
   type Infer,

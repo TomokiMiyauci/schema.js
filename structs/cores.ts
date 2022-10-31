@@ -2,11 +2,13 @@
 // This module is browser compatible.
 
 import {
+  ConstructorContext,
   DataType,
   DataTypeContext,
   Definable,
   Issue,
   Messenger,
+  ResultContext,
   Struct,
   StructMap,
 } from "../types.ts";
@@ -143,11 +145,16 @@ export function value<
   T extends string | number | bigint | null | undefined | symbol | boolean,
 >(
   primitive: T,
-  message?: string,
+  message?: string | Messenger<ResultContext>,
 ): Struct<unknown, T> {
   return new Construct(String(primitive), function* (input) {
     if (!Object.is(input, primitive)) {
-      yield { message: message ?? formatActExp(primitive, input) };
+      const msg = resolveMessage(message ?? defaultActExp, {
+        actual: input,
+        expected: primitive,
+      });
+
+      yield { message: msg };
     }
   });
 }
@@ -254,14 +261,12 @@ function resolveArgs(
  * assertEquals(is(array(), {}), false);
  * ```
  */
-export function array(message?: string): Struct<unknown, unknown[]> {
-  return new Construct("array", function* (input) {
-    if (!Array.isArray(input)) {
-      return yield {
-        message: message ?? formatActExp("Array", constructorName(input)),
-      };
-    }
-  });
+export function array(
+  message?: string | Messenger<ConstructorContext>,
+): Struct<unknown, unknown[]> {
+  const struct = instance(Array, message);
+
+  return Object.assign(struct, { toString: () => "array" });
 }
 
 /** Create `instanceof` struct. Ensure that the input is an instance of a defined
@@ -279,25 +284,27 @@ export function array(message?: string): Struct<unknown, unknown[]> {
  */
 export function instance<T extends abstract new (...args: any) => any>(
   constructor: T,
-  message?: string,
+  message?: string | Messenger<ConstructorContext>,
 ): Struct<unknown, InstanceType<T>> {
   return new Construct("instance", function* (input) {
     if (!(input instanceof constructor)) {
-      yield {
-        message: message ??
-          formatActExp(
-            `instance of ${constructor.name}`,
-            constructorName(input),
-          ),
-      };
+      const msg = resolveMessage(message ?? formatConstructor, {
+        expected: constructor,
+        actual: input,
+      });
+      yield { message: msg };
     }
   });
 }
 
-function defaultTypeMessage(
-  { actual, expected }: DataTypeContext,
+function defaultActExp(
+  { actual, expected }: ResultContext,
 ): string {
   return formatActExp(expected, actual);
+}
+
+function formatConstructor({ actual, expected }: ConstructorContext) {
+  return formatActExp(`instance of ${expected.name}`, constructorName(actual));
 }
 
 function createTypeCheck(
@@ -310,7 +317,7 @@ function createTypeCheck(
     if ($ === type) return;
 
     const message = resolveMessage(
-      messenger ?? defaultTypeMessage,
+      messenger ?? defaultActExp,
       { actual: $, expected: type },
     );
 

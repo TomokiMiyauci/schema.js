@@ -97,3 +97,9 @@ export interface DataTypeContext extends ResultContext {
   /** Expected data type. */
   readonly expected: DataType;
 }
+
+/** Context of constructor. */
+export interface ConstructorContext extends ResultContext {
+  /** Expected constructor. */
+  readonly expected: abstract new (...args: any) => any;
+}

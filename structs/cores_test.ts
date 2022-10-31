@@ -123,6 +123,7 @@ describe("value", () => {
 
   it("message override", () => {
     assertEquals([...value(0, MESSAGE).check(1)], [{ message: MESSAGE }]);
+    assertEquals([...value(0, () => MESSAGE).check(1)], [{ message: MESSAGE }]);
   });
 
   it("should return empty list when input equal to definition", () => {
@@ -191,12 +192,13 @@ describe("object", () => {
 describe("array", () => {
   it("should return issue when input is not Array", () => {
     assertEquals([...array().check("")], [{
-      message: "expected Array, actual String",
+      message: "expected instance of Array, actual String",
     }]);
   });
 
   it("message override", () => {
     assertEquals([...array(MESSAGE).check("")], [{ message: MESSAGE }]);
+    assertEquals([...array(() => MESSAGE).check("")], [{ message: MESSAGE }]);
   });
 
   it("should return empty list when input is Array", () => {
@@ -214,6 +216,9 @@ describe("instance", () => {
 
   it("message override", () => {
     assertEquals([...instance(Array, MESSAGE).check(null)], [{
+      message: MESSAGE,
+    }]);
+    assertEquals([...instance(Array, () => MESSAGE).check(null)], [{
       message: MESSAGE,
     }]);
   });
