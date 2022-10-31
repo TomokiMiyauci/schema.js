@@ -1,3 +1,16 @@
+# [1.0.0-beta.4](https://github.com/TomokiMiyauci/typestruct/compare/1.0.0-beta.3...1.0.0-beta.4) (2022-10-31)
+
+
+### Features
+
+* **cores:** add custom lazy message to `object` factory ([bea9387](https://github.com/TomokiMiyauci/typestruct/commit/bea938740b3501e3a286968703cb5d93d156291a))
+* **cores:** add custom lazy message with constructor context ([c307618](https://github.com/TomokiMiyauci/typestruct/commit/c3076189d6a24a463b33411b9f07060cb5619438))
+* **cores:** add custom lazy messager feature ([19077e9](https://github.com/TomokiMiyauci/typestruct/commit/19077e9aabba8d78fefd9019045a5bbecc18a599))
+* **cores:** add dynamic custom message ([70b1bbd](https://github.com/TomokiMiyauci/typestruct/commit/70b1bbd26ec93a68f3cab0eff6e2d92c40a33a61))
+* **subsets:** add `nonnegative` factory that ensure the input is non-negative number ([0a9f842](https://github.com/TomokiMiyauci/typestruct/commit/0a9f84210c68367e33b7f3591a350f5597b0e265))
+* **subsets:** add `nonpositive` factory that ensure the input is non-positive number ([c3ffc96](https://github.com/TomokiMiyauci/typestruct/commit/c3ffc96468cbf7c4a6313e4b67221adea0612188))
+* **types:** improve data type context types ([55a51df](https://github.com/TomokiMiyauci/typestruct/commit/55a51dfc3be7b5af5c40b5325af1ce5e594f7ce1))
+
 # [1.0.0-beta.3](https://github.com/TomokiMiyauci/typestruct/compare/1.0.0-beta.2...1.0.0-beta.3) (2022-10-29)
 
 
