@@ -19,6 +19,7 @@ import {
   formatActExp,
   mergeIssuePaths,
   resolveMessage,
+  show,
   typeOf,
 } from "../utils.ts";
 
@@ -149,7 +150,7 @@ export function value<
 ): Struct<unknown, T> {
   return new Construct(String(primitive), function* (input) {
     if (!Object.is(input, primitive)) {
-      const msg = resolveMessage(message ?? defaultActExp, {
+      const msg = resolveMessage(message ?? format, {
         actual: input,
         expected: primitive,
       });
@@ -297,10 +298,10 @@ export function instance<T extends abstract new (...args: any) => any>(
   });
 }
 
-function defaultActExp(
+function format(
   { actual, expected }: ResultContext,
 ): string {
-  return formatActExp(expected, actual);
+  return formatActExp(show(expected), show(actual));
 }
 
 function formatDataType({ actual, expected }: DataTypeContext): string {

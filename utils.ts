@@ -84,3 +84,13 @@ export function resolveMessage<C>(
 
   return message(context);
 }
+
+/** Convert input to string.
+ * @param input Any input.
+ * @internal
+ */
+export function show(input: unknown): string {
+  if (isString(input)) return `"${input}"`;
+
+  return String(input);
+}
