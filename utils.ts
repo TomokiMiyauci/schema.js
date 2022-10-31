@@ -2,7 +2,14 @@
 // This module is browser compatible.
 
 import { isNonNullable, isString, PartialBy } from "./deps.ts";
-import { DataType, Issue, Messenger, type Struct, Wrapper } from "./types.ts";
+import {
+  DataType,
+  Issue,
+  Messenger,
+  ResultContext,
+  type Struct,
+  Wrapper,
+} from "./types.ts";
 
 /** Get constructor name.
  * When the value can not construct, return `"null"` or `"undefined"`.
@@ -93,4 +100,11 @@ export function show(input: unknown): string {
   if (isString(input)) return `"${input}"`;
 
   return String(input);
+}
+
+/** Format result.
+ * @internal
+ */
+export function formatMessage({ actual, expected }: ResultContext): string {
+  return formatActExp(expected, actual);
 }

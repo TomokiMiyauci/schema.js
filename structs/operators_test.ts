@@ -65,6 +65,9 @@ describe("not", () => {
 
   it("message override", () => {
     assertEquals([...not(string(), MESSAGE).check("")], [{ message: MESSAGE }]);
+    assertEquals([...not(string(), () => MESSAGE).check("")], [{
+      message: MESSAGE,
+    }]);
   });
 
   it("should return empty list when input does not satisfy struct", () => {

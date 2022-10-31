@@ -1,8 +1,19 @@
 // Copyright 2022-latest Tomoki Miyauchi. All rights reserved. MIT license.
 // This module is browser compatible.
 
-import { Checkable, Issue, Struct } from "../types.ts";
-import { Construct, formatActExp } from "../utils.ts";
+import {
+  Checkable,
+  Issue,
+  Messenger,
+  ResultContext,
+  Struct,
+} from "../types.ts";
+import {
+  Construct,
+  formatActExp,
+  formatMessage,
+  resolveMessage,
+} from "../utils.ts";
 import { IsTopType, iter, PartialBy } from "../deps.ts";
 
 /** Union type API. */
@@ -141,13 +152,17 @@ export function and<In, Out extends In>(
  */
 export function not<In, Out extends In>(
   struct: Struct<In, Out>,
-  message?: string,
+  message?: string | Messenger<ResultContext>,
 ): Struct<In, Out> {
   return new Construct(`not(${struct})`, function* (input) {
     const valid = !([...struct.check(input)].length);
 
     if (valid) {
-      yield { message: message ?? formatActExp(`not ${struct}`, input) };
+      const msg = resolveMessage(message ?? formatMessage, {
+        expected: `not ${struct}`,
+        actual: input,
+      });
+      yield { message: msg };
     }
   });
 }
