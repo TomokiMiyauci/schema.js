@@ -97,6 +97,9 @@ describe("minSize", () => {
     assertEquals([...minSize(5, MESSAGE).check("a".repeat(4))], [{
       message: MESSAGE,
     }]);
+    assertEquals([...minSize(5, () => MESSAGE).check("a".repeat(4))], [{
+      message: MESSAGE,
+    }]);
   });
 });
 

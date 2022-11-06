@@ -115,17 +115,16 @@ export function maxSize(
  */
 export function minSize(
   size: number,
-  message?: string,
+  message?: string | Messenger<ResultContext>,
 ): Struct<Iterable<unknown>> {
   return new Construct("minSize", function* (input) {
     const length = getSize(input);
     if (size > length) {
-      yield {
-        message: message ?? formatActExp(
-          `greater than or equal to ${formatPlural("element", size)}`,
-          formatPlural("element", length),
-        ),
-      };
+      const msg = resolveMessage(message ?? formatMessage, {
+        actual: formatPlural("element", length),
+        expected: `greater than or equal to ${formatPlural("element", size)}`,
+      });
+      yield { message: msg };
     }
   });
 }
