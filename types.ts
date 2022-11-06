@@ -81,9 +81,9 @@ export type DataType =
   | "symbol";
 
 /** Context of result. */
-export interface ResultContext {
+export interface ResultContext<A = unknown> {
   /** Actual value or expression. */
-  readonly actual: unknown;
+  readonly actual: A;
 
   /** Expected value or expression. */
   readonly expected: unknown;
