@@ -1,3 +1,16 @@
+# [1.0.0-beta.5](https://github.com/TomokiMiyauci/typestruct/compare/1.0.0-beta.4...1.0.0-beta.5) (2022-11-06)
+
+
+### Features
+
+* **operators:** add custom lazy message to `not` factory ([aae48dd](https://github.com/TomokiMiyauci/typestruct/commit/aae48ddea8120e8e3382998e3f46bd441fd34ef3))
+* **operators:** add custom lazy message to `or` factory ([c19a239](https://github.com/TomokiMiyauci/typestruct/commit/c19a239e15b03619514b3cd06fa461d3510096b6))
+* **subsets:** add custom lazy message to `maxSize` ([b09810c](https://github.com/TomokiMiyauci/typestruct/commit/b09810cf9bc9685bf070b22c5eb25aa97cb8452d))
+* **subsets:** add custom lazy message to `minSize` ([8e7275c](https://github.com/TomokiMiyauci/typestruct/commit/8e7275cb91b50ec057c34e559b95b75d7548c1ba))
+* **subsets:** add custom lazy message to `size` ([ac1aa49](https://github.com/TomokiMiyauci/typestruct/commit/ac1aa499d92ecf8369631391acc909e7a0186496))
+* **subsets:** add custom lazy message to subset struct ([25d7098](https://github.com/TomokiMiyauci/typestruct/commit/25d7098c3b254fbf61407cbd9affd74c4550736e))
+* **types:** change `ResultContext` types ([bb05414](https://github.com/TomokiMiyauci/typestruct/commit/bb05414880acdd5e8f2a8ac86a32b5e050016fbd))
+
 # [1.0.0-beta.4](https://github.com/TomokiMiyauci/typestruct/compare/1.0.0-beta.3...1.0.0-beta.4) (2022-10-31)
 
 
