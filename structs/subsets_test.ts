@@ -75,6 +75,9 @@ describe("maxSize", () => {
     assertEquals([...maxSize(5, MESSAGE).check("a".repeat(6))], [{
       message: MESSAGE,
     }]);
+    assertEquals([...maxSize(5, () => MESSAGE).check("a".repeat(6))], [{
+      message: MESSAGE,
+    }]);
   });
 });
 
