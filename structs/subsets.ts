@@ -143,19 +143,17 @@ export function minSize(
  */
 export function size(
   size: number,
-  message?: string,
+  message?: string | Messenger<ResultContext>,
 ): Struct<Iterable<unknown>> {
   return new Construct("size", function* (input) {
     const length = getSize(input);
 
     if (size !== length) {
-      yield {
-        message: message ??
-          formatActExp(
-            formatPlural("element", size),
-            formatPlural("element", length),
-          ),
-      };
+      const msg = resolveMessage(message ?? formatMessage, {
+        expected: formatPlural("element", size),
+        actual: formatPlural("element", length),
+      });
+      yield { message: msg };
     }
   });
 }

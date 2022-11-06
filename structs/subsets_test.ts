@@ -112,6 +112,7 @@ describe("size", () => {
 
   it("message override", () => {
     assertEquals([...size(1, MESSAGE).check("")], [{ message: MESSAGE }]);
+    assertEquals([...size(1, () => MESSAGE).check("")], [{ message: MESSAGE }]);
   });
 
   it("should return empty list when the input element size equal to definition", () => {
